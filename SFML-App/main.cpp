@@ -41,7 +41,7 @@ private void UpdateControllerState(PlayerInput *input, unsigned int c);
 int main(int, char const**)
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(1000,800), "SFML Game");
+    sf::RenderWindow window(sf::VideoMode(2200,1600), "SFML Game");
     window.setFramerateLimit(60);
 
     // Set the Icon
@@ -61,7 +61,7 @@ int main(int, char const**)
         // Clear screen
         window.clear();
         
-        // auto start = high_resolution_clock::now();
+        //auto start = high_resolution_clock::now();
         
         // Poll window for events
         sf::Event event;
@@ -76,12 +76,12 @@ int main(int, char const**)
         playerInput.tick();
         UpdateControllerState(&playerInput, 0);
         
-        controller.Tick();
         controller.ProcessInput(playerInput);
+        controller.Tick();
         controller.Render(&window);
         
-        // auto end = high_resolution_clock::now();
-        // cout << duration_cast<microseconds>(end - start).count() << endl;
+        //auto end = high_resolution_clock::now();
+        //cout << duration_cast<microseconds>(end - start).count() << endl;
         
         // Update the window
         window.display();

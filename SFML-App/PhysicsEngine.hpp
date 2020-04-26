@@ -19,11 +19,6 @@ using std::pair;
 using std::cout;
 using std::endl;
 
-class PhysicsDelegate {
-public:
-    virtual void collision(Entity *e1, Entity *e2, const sf::Vector2f &push_vec) {}
-};
-
 /* PhysicsEngine stores and processes all the physics information of the scene.
  * It contains all the entities (plus their positions, velocities, collision boxes, etc.)
  * And calculates the physics for each time step (frame) of the game.
@@ -31,8 +26,16 @@ public:
  */
 class PhysicsEngine {
 public:
+    /* Check if the bounding boxes of the two entities intersect */
+    static bool intersects(const Entity &e1, const Entity &e2) {
+        Rectangle b1 = e1.BoundingBox(), b2 = e2.BoundingBox();
+        if (b1.x >= b2.x + b2.w || b2.x >= b1.x + b1.w) return false;
+        if (b1.y >= b2.y + b2.h || b2.y >= b1.y + b1.h) return false;
+        return true;
+    }
+    
+public:
     PhysicsEngine() {}
-    void SetDelegate(PhysicsDelegate *d) { delegate_ = d; }
     void Update();
         
     void AddEntity(Entity *e) { entities_.push_back(e); }
@@ -58,7 +61,6 @@ private:
     pair<bool, sf::Vector2f> checkCollision(const Polygon &p1, const Polygon &p2);
     
 private:
-    PhysicsDelegate *delegate_;
     vector<Entity*> entities_;
 };
 

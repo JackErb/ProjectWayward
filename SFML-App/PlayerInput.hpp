@@ -12,6 +12,7 @@
 #include <iostream>
 #include <SFML/Window.hpp>
 #include <map>
+#include <math.h>
 
 class PlayerInput {
 public:
@@ -22,6 +23,14 @@ public:
     typedef struct StickState {
         float xAxis;
         float yAxis;
+        
+        float hyp() const {
+            return sqrt(xAxis * xAxis + yAxis * yAxis);
+        }
+        
+        float angle() const {
+            return atan2(-yAxis, xAxis);
+        }
     } StickState;
     
 public:

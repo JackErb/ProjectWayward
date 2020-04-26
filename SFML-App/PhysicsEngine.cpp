@@ -55,7 +55,7 @@ void PhysicsEngine::Update() {
         for (int j = i + 1; j < entities_.size(); j++) {
             auto res = checkCollision(*(entities_[i]), *(entities_[j]));
             if (res.first) {
-                delegate_->collision(entities_[i], entities_[j], res.second);
+                entities_[i]->HandleCollision(*(entities_[j]), res.second);
             }
         }
     }
@@ -145,7 +145,7 @@ pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
     if (max1 >= min2 && max2 >= min1) {
         // Calculate push vector
         float d = min(max2 - min1, max1 - min2);
-        sf::Vector2f push_vector((d/dot(axis, axis) + 1e-10f) * axis);
+        sf::Vector2f push_vector((d/dot(axis, axis) + 1e-4f) * axis);
         
         return make_pair(false, push_vector);
     } else {

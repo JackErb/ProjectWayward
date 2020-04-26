@@ -7,24 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
 		26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26AE5F722454A90800862C68 /* PhysicsEngine.cpp */; };
+		26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B08BAA24560AB700E86352 /* NeutralState.cpp */; };
 		26C589F22455276500D854F5 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F02455276500D854F5 /* player.png */; };
 		26C589F32455276500D854F5 /* stage.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F12455276500D854F5 /* stage.png */; };
-		26C589F824552DEA00D854F5 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26C589F624552DEA00D854F5 /* Character.cpp */; };
 		26D81F2D245549AB00CEAB55 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26DE8461245368AD003D05FE /* icon.png */; };
 		26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8455245368AD003D05FE /* ResourcePath.mm */; };
 		26DE8459245368AD003D05FE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8458245368AD003D05FE /* main.cpp */; };
 		26DE846A24537D4A003D05FE /* GameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26DE846824537D4A003D05FE /* GameController.cpp */; };
+		26FE2E3324563D4600051897 /* platform.png in Resources */ = {isa = PBXBuildFile; fileRef = 26FE2E3224563D4500051897 /* platform.png */; };
+		26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FE2E342456484100051897 /* JumpsquatState.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		26384FEF2456358D00C966A1 /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
+		26384FF22456372400C966A1 /* PlatformEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlatformEntity.hpp; sourceTree = "<group>"; };
 		26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerInput.hpp; sourceTree = "<group>"; };
 		26AE5F702453AFEA00862C68 /* Event.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
 		26AE5F722454A90800862C68 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicsEngine.cpp; sourceTree = "<group>"; };
 		26AE5F732454A90800862C68 /* PhysicsEngine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PhysicsEngine.hpp; sourceTree = "<group>"; };
+		26B08B9E2455FD2A00E86352 /* CharacterState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CharacterState.hpp; sourceTree = "<group>"; };
+		26B08BA62456064900E86352 /* StageEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = StageEntity.hpp; sourceTree = "<group>"; };
+		26B08BAA24560AB700E86352 /* NeutralState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NeutralState.cpp; sourceTree = "<group>"; };
+		26B08BAB24560AB700E86352 /* NeutralState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NeutralState.hpp; sourceTree = "<group>"; };
 		26C589F02455276500D854F5 /* player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player.png; sourceTree = "<group>"; };
 		26C589F12455276500D854F5 /* stage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stage.png; sourceTree = "<group>"; };
-		26C589F624552DEA00D854F5 /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
 		26C589F724552DEA00D854F5 /* Character.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Character.hpp; sourceTree = "<group>"; };
 		26D74C8B2454D15E00B8BB5A /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
 		26DE8450245368AD003D05FE /* SFML-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SFML-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -35,6 +43,9 @@
 		26DE8461245368AD003D05FE /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../icon.png; sourceTree = "<group>"; };
 		26DE846824537D4A003D05FE /* GameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GameController.cpp; sourceTree = "<group>"; };
 		26DE846924537D4A003D05FE /* GameController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GameController.hpp; sourceTree = "<group>"; };
+		26FE2E3224563D4500051897 /* platform.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = platform.png; sourceTree = "<group>"; };
+		26FE2E342456484100051897 /* JumpsquatState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JumpsquatState.cpp; sourceTree = "<group>"; };
+		26FE2E352456484100051897 /* JumpsquatState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JumpsquatState.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,24 +59,58 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		26C589F424552DB100D854F5 /* Setup */ = {
+		26384FED2456348F00C966A1 /* Physics */ = {
 			isa = PBXGroup;
 			children = (
-				26DE8455245368AD003D05FE /* ResourcePath.mm */,
-				26DE8457245368AD003D05FE /* ResourcePath.hpp */,
-				26DE8458245368AD003D05FE /* main.cpp */,
+				26AE5F732454A90800862C68 /* PhysicsEngine.hpp */,
+				26AE5F722454A90800862C68 /* PhysicsEngine.cpp */,
 			);
-			path = Setup;
+			name = Physics;
 			sourceTree = "<group>";
 		};
-		26C589F524552DC700D854F5 /* Entities */ = {
+		26384FEE2456349B00C966A1 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */,
+			);
+			name = Input;
+			sourceTree = "<group>";
+		};
+		26B08BA32456024700E86352 /* Setup */ = {
+			isa = PBXGroup;
+			children = (
+				26DE8457245368AD003D05FE /* ResourcePath.hpp */,
+				26DE8455245368AD003D05FE /* ResourcePath.mm */,
+				26DE8458245368AD003D05FE /* main.cpp */,
+				26DE846924537D4A003D05FE /* GameController.hpp */,
+				26DE846824537D4A003D05FE /* GameController.cpp */,
+			);
+			name = Setup;
+			sourceTree = "<group>";
+		};
+		26B08BA42456025500E86352 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
 				26D74C8B2454D15E00B8BB5A /* Entity.hpp */,
 				26C589F724552DEA00D854F5 /* Character.hpp */,
-				26C589F624552DEA00D854F5 /* Character.cpp */,
+				26384FEF2456358D00C966A1 /* Character.cpp */,
+				26B08BA62456064900E86352 /* StageEntity.hpp */,
+				26384FF22456372400C966A1 /* PlatformEntity.hpp */,
+				26B08BA924560A9D00E86352 /* CharacterState */,
 			);
-			path = Entities;
+			name = Entities;
+			sourceTree = "<group>";
+		};
+		26B08BA924560A9D00E86352 /* CharacterState */ = {
+			isa = PBXGroup;
+			children = (
+				26B08B9E2455FD2A00E86352 /* CharacterState.hpp */,
+				26B08BAB24560AB700E86352 /* NeutralState.hpp */,
+				26B08BAA24560AB700E86352 /* NeutralState.cpp */,
+				26FE2E352456484100051897 /* JumpsquatState.hpp */,
+				26FE2E342456484100051897 /* JumpsquatState.cpp */,
+			);
+			name = CharacterState;
 			sourceTree = "<group>";
 		};
 		26DE8446245368AD003D05FE = {
@@ -87,13 +132,10 @@
 		26DE8452245368AD003D05FE /* SFML-App */ = {
 			isa = PBXGroup;
 			children = (
-				26C589F424552DB100D854F5 /* Setup */,
-				26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */,
-				26DE846924537D4A003D05FE /* GameController.hpp */,
-				26DE846824537D4A003D05FE /* GameController.cpp */,
-				26AE5F732454A90800862C68 /* PhysicsEngine.hpp */,
-				26AE5F722454A90800862C68 /* PhysicsEngine.cpp */,
-				26C589F524552DC700D854F5 /* Entities */,
+				26B08BA32456024700E86352 /* Setup */,
+				26384FEE2456349B00C966A1 /* Input */,
+				26384FED2456348F00C966A1 /* Physics */,
+				26B08BA42456025500E86352 /* Entities */,
 				26DE845A245368AD003D05FE /* Resources */,
 				26DE8453245368AD003D05FE /* Supporting Files */,
 			);
@@ -112,6 +154,7 @@
 		26DE845A245368AD003D05FE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				26FE2E3224563D4500051897 /* platform.png */,
 				26C589F02455276500D854F5 /* player.png */,
 				26C589F12455276500D854F5 /* stage.png */,
 				26DE8461245368AD003D05FE /* icon.png */,
@@ -177,6 +220,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26FE2E3324563D4600051897 /* platform.png in Resources */,
 				26D81F2D245549AB00CEAB55 /* icon.png in Resources */,
 				26C589F22455276500D854F5 /* player.png in Resources */,
 				26C589F32455276500D854F5 /* stage.png in Resources */,
@@ -212,9 +256,11 @@
 			files = (
 				26DE8459245368AD003D05FE /* main.cpp in Sources */,
 				26DE846A24537D4A003D05FE /* GameController.cpp in Sources */,
+				26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */,
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
-				26C589F824552DEA00D854F5 /* Character.cpp in Sources */,
+				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,
+				26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +270,7 @@
 		26DE8463245368AD003D05FE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -268,6 +315,7 @@
 		26DE8464245368AD003D05FE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";

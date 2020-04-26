@@ -17,20 +17,20 @@
 #include "PhysicsEngine.hpp"
 #include "Entity.hpp"
 #include "Character.hpp"
+#include "PlatformEntity.hpp"
 
-class GameController : PhysicsDelegate {
+class GameController {
 public:
     GameController();
     
     void Tick();
     void ProcessInput(const PlayerInput &input);
     void Render(sf::RenderWindow *window);
-    
-    void collision(Entity *e1, Entity *e2, const sf::Vector2f &push_vec);
-    
+        
 private:
     Character player_;
-    Entity box_;
+    StageEntity stage_;
+    PlatformEntity platform_;
     PhysicsEngine engine_;
     std::vector<sf::Texture*> textures_;
 };
