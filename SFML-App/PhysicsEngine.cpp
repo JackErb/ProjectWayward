@@ -1,0 +1,154 @@
+//
+//  PhysicsEngine.cpp
+//  SFML-App
+//
+//  Created by Jack Erb on 4/25/20.
+//  Copyright © 2020 Jack Erb. All rights reserved.
+//
+
+#include "PhysicsEngine.hpp"
+#include "Entity.hpp"
+
+#include <iostream>
+#include <vector>
+#include <limits>
+#include <algorithm>
+
+#include <SFML/Graphics.hpp>
+
+using std::pair;
+using std::make_pair;
+using std::cout;
+using std::endl;
+using std::min;
+using std::max;
+
+vector<sf::Vector2f> get_orthogonals(const Polygon &p);
+
+pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis, const Polygon &p1, const Polygon &p2);
+
+float dot(const sf::Vector2f &v1, const sf::Vector2f &v2) {
+    return v1.x * v2.x + v1.y * v2.y;
+}
+
+sf::Vector2f geometric_center(const Polygon &p) {
+    sf::Vector2f center;
+    for (auto it = p.begin(); it != p.end(); it++) {
+        center.x += it->x;
+        center.y += it->y;
+    }
+    
+    center.x /= p.size();
+    center.y /= p.size();
+    return center;
+}
+
+void PhysicsEngine::Update() {
+    // Apply velocity to entity position, and update velocity
+    // due to physical impulses (traction, gravity, etc.)
+    for (auto it = entities_.begin(); it != entities_.end(); it++) {
+        (*it)->Tick();
+    }
+    
+    // Check for collisions
+    for (int i = 0; i < entities_.size(); i++) {
+        for (int j = i + 1; j < entities_.size(); j++) {
+            auto res = checkCollision(*(entities_[i]), *(entities_[j]));
+            if (res.first) {
+                delegate_->collision(entities_[i], entities_[j], res.second);
+            }
+        }
+    }
+}
+
+pair<bool, sf::Vector2f> PhysicsEngine::checkCollision(const Polygon &p1, const Polygon &p2) {
+    // Separating Axis Theorem
+    
+    // Get the perpendicular vectors for each side of both polygons
+    vector<sf::Vector2f> orthogonals = get_orthogonals(p1);
+    for (sf::Vector2f vec : get_orthogonals(p2)) {
+        orthogonals.push_back(vec);
+    }
+    
+    // Check if there is a separating axis along each orthogonal
+    vector<sf::Vector2f> push_vectors;
+    for (const auto &vec : orthogonals) {
+        pair<bool, sf::Vector2f> res = is_separating_axis(vec, p1, p2);
+        if (res.first) {
+            // The polygons do not collide
+            return make_pair(false, sf::Vector2f(0,0));
+        } else {
+            push_vectors.push_back(res.second);
+        }
+    }
+    
+    sf::Vector2f min_pv = push_vectors[0];
+    for (int i = 1; i < push_vectors.size(); i++) {
+        sf::Vector2f pv = push_vectors[i];
+        if (dot(pv, pv) < dot(min_pv, min_pv)) min_pv = pv;
+    }
+    
+    // Check that the push vector is pointing the right direction
+    sf::Vector2f displacement = geometric_center(p2) - geometric_center(p1);
+    if (dot(displacement, min_pv) > 0) {
+        min_pv.x *= -1;
+        min_pv.y *= -1;
+    }
+    
+    return make_pair(true, min_pv);
+}
+
+/* Returns the orthogonal vectors of all sides of this polygon. */
+vector<sf::Vector2f> get_orthogonals(const Polygon &p) {
+    vector<sf::Vector2f> res;
+    int n = p.size();
+    
+    // Get the edge vectors
+    for (int i = 0; i < n; i++) {
+        res.push_back(p[(i+1) % n] - p[i]);
+    }
+    
+    // Calculate their orthogonal
+    for (int i = 0; i < n; i++) {
+        float x = res[i].x, y = res[i].y;
+        res[i].x = -y;
+        res[i].y = x;
+    }
+    
+    return res;
+}
+
+/* Calculate if the given axis is a separating axis for the two polygons.
+ * If it is, returns a pair (true, pv) where pv is the push vector
+ * If not, returns the pair (false, pv) where pv is (0,0)
+ */
+pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
+                                            const Polygon &p1,
+                                            const Polygon &p2) {
+    float min1 = std::numeric_limits<float>::max(),
+          max1 = std::numeric_limits<float>::min(),
+          min2 = min1,
+          max2 = max1;
+        
+    for (const sf::Vector2f &vert : p1) {
+        float proj = dot(axis, vert);
+        min1 = min(proj, min1);
+        max1 = max(proj, max1);
+    }
+    
+    for (const sf::Vector2f &vert : p2) {
+        float proj = dot(axis, vert);
+        min2 = min(proj, min2);
+        max2 = max(proj, max2);
+    }
+    
+    if (max1 >= min2 && max2 >= min1) {
+        // Calculate push vector
+        float d = min(max2 - min1, max1 - min2);
+        sf::Vector2f push_vector((d/dot(axis, axis) + 1e-10f) * axis);
+        
+        return make_pair(false, push_vector);
+    } else {
+        return make_pair(true, sf::Vector2f(0.f,0.f));
+    }
+}
