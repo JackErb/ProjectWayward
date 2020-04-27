@@ -25,9 +25,11 @@ typedef enum EntityType {
     CHARACTER, STAGE, PLATFORM
 } EntityType;
 
+class PhysicsEngine;
+
 class Entity {
 public:
-    Entity(int id_, sf::Vector2f position) : id(id_), position_(position) {}
+    Entity(int id_, sf::Vector2f position) : id(id_), position_(position), engine(nullptr) {}
     
     
     /* Game Processing Functions */
@@ -53,7 +55,7 @@ public:
             }
         }
         
-        return {position_.x + min_x - 1, position_.y + min_y - 1, max_x - min_x + 1, max_y - min_y + 1};
+        return {position_.x + min_x - 1, position_.y + min_y - 1, max_x - min_x + 2, max_y - min_y + 2};
     }
     
     void Transform(sf::Vector2f v) {
@@ -92,11 +94,12 @@ public:
         
 public:
     int id;
-    sf::Vector2f velocity = {0.f, 0.f};
     
     // If this object is static, it can be collided with but otherwise is not
     // affected by physics (gravity, etc.)
     bool isStatic = false;
+    
+    PhysicsEngine *engine;
     
 private:
     // Each polygon is a vector of (x,y) pairs describing the vertices in the

@@ -11,19 +11,20 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <math.h>
 
 #include "Entity.hpp"
 #include "PlayerInput.hpp"
 #include "StageEntity.hpp"
-#include "PhysicsEngine.hpp"
 
 class CharacterState;
 
 class Character : public Entity {
 public:
-    typedef enum State {
-        AIRBORNE, GROUNDED
-    } State;
+    typedef enum JumpType {
+        LEFT, UP, RIGHT,
+        DJUMP
+    } JumpType;
     
 public:
     Character(int id, sf::Vector2f position);
@@ -32,47 +33,43 @@ public:
     void Tick();
     void HandleCollision(const Entity &entity, sf::Vector2f pv);
     
-    EntityType Type() const {
-        return CHARACTER;
-    }
+    void SetActionState(CharacterState *s);
+    EntityType Type() const { return CHARACTER; }
+    sf::Vector2f Velocity() const { return velocity_; }
     
+    /* Methods involving action, and should only be called by the current actionState_ */
+    void Jump(JumpType type, bool fullhop);
+    void FastFall() { velocity_.y = FastFallSpeed; }
+    void NullVelocityY() { velocity_.y = 0; }
+    void Dash(float m);
+    void Vector(float angle);
     void ApplyGravity() {
-        velocity.y += gravity;
-        velocity.y = fmin(maxFallSpeed, velocity.y);
+        velocity_.y += Gravity;
+        velocity_.y = fmin(MaxFallSpeed, velocity_.y);
     }
-    
-    void ApplyVelocity() {
-        Transform(velocity);
-    }
-    
-    void SetState(State s) {
-        state_ = s;
-    }
-    
-    /* Methods involving state, state change, or action */
-    void Jumpsquat();
-    void Jump();
-        
-public:
-    StageEntity *stage_;
+    void ApplyVelocity() { Transform(velocity_); }
+    void ApplyFriction();
     
 private:
-    void setActionState(CharacterState *s) {
-        cleanupState_ = actionState_;
-        actionState_ = s;
-    }
-    
-private:
-    State state_;
     CharacterState *actionState_;
     CharacterState *cleanupState_ = nullptr;
     unsigned int jumps_;
     
-    float gravity = 2.f;
-    float maxFallSpeed = 30.f;
+    sf::Vector2f velocity_ = {0.f, 0.f};
     
-    friend class CharacterState;
-    friend class NeutralState;
+    const float GroundAccel = 2.5f;
+    const float MaxGroundSpeed = 25.f;
+    const float GroundFriction = 0.9f;
+    
+    const float AirAccel = 3.0f;
+    const float MaxAirSpeed = 30.5f;
+    const float AirFriction = 0.95f;
+    
+    const float Gravity = 3.4f;
+    const float MaxFallSpeed = 40.f;
+    const float FastFallSpeed = 47.f;
+    
+    const float JumpSpeed = -40.f;
 };
 
 #endif /* Character_hpp */

@@ -73,7 +73,7 @@ int main(int, char const**)
         }
         
         // Update the player input
-        playerInput.tick();
+        playerInput.Tick();
         UpdateControllerState(&playerInput, 0);
         
         controller.ProcessInput(playerInput);

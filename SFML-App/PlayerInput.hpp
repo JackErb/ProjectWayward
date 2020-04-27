@@ -33,10 +33,14 @@ public:
         }
     } StickState;
     
+    static bool InRange(float a, float l, float h) {
+        return a >= l && a <= h;
+    }
+    
 public:
     PlayerInput() : buttons() {}
     
-    void tick() {
+    void Tick() {
         // Update all the button's state
         for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
             if (it->second == ButtonState::Pressed) {
@@ -64,6 +68,11 @@ public:
     bool IsHeld(unsigned int button) const {
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Held;
+    }
+    
+    bool IsReleased(unsigned int button) const {
+        auto res = buttons.find(button);
+        return res != buttons.end() && res->second == Released;
     }
 
 public:

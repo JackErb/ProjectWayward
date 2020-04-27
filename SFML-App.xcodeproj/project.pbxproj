@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
+		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
+		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
 		26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26AE5F722454A90800862C68 /* PhysicsEngine.cpp */; };
 		26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B08BAA24560AB700E86352 /* NeutralState.cpp */; };
 		26C589F22455276500D854F5 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F02455276500D854F5 /* player.png */; };
@@ -23,6 +25,12 @@
 /* Begin PBXFileReference section */
 		26384FEF2456358D00C966A1 /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
 		26384FF22456372400C966A1 /* PlatformEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlatformEntity.hpp; sourceTree = "<group>"; };
+		2682B67A245752D40096E3E9 /* DashState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DashState.cpp; sourceTree = "<group>"; };
+		2682B67B245752D40096E3E9 /* DashState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DashState.hpp; sourceTree = "<group>"; };
+		2682B6812457674E0096E3E9 /* GroundedState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GroundedState.hpp; sourceTree = "<group>"; };
+		2682B683245767960096E3E9 /* AirborneNeutralState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirborneNeutralState.cpp; sourceTree = "<group>"; };
+		2682B684245767960096E3E9 /* AirborneNeutralState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneNeutralState.hpp; sourceTree = "<group>"; };
+		2682B6872457684E0096E3E9 /* AirborneState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneState.hpp; sourceTree = "<group>"; };
 		26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerInput.hpp; sourceTree = "<group>"; };
 		26AE5F702453AFEA00862C68 /* Event.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
 		26AE5F722454A90800862C68 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicsEngine.cpp; sourceTree = "<group>"; };
@@ -105,8 +113,14 @@
 			isa = PBXGroup;
 			children = (
 				26B08B9E2455FD2A00E86352 /* CharacterState.hpp */,
+				2682B6812457674E0096E3E9 /* GroundedState.hpp */,
+				2682B6872457684E0096E3E9 /* AirborneState.hpp */,
+				2682B684245767960096E3E9 /* AirborneNeutralState.hpp */,
+				2682B683245767960096E3E9 /* AirborneNeutralState.cpp */,
 				26B08BAB24560AB700E86352 /* NeutralState.hpp */,
 				26B08BAA24560AB700E86352 /* NeutralState.cpp */,
+				2682B67B245752D40096E3E9 /* DashState.hpp */,
+				2682B67A245752D40096E3E9 /* DashState.cpp */,
 				26FE2E352456484100051897 /* JumpsquatState.hpp */,
 				26FE2E342456484100051897 /* JumpsquatState.cpp */,
 			);
@@ -260,7 +274,9 @@
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
 				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,
+				2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */,
 				26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */,
+				2682B67C245752D40096E3E9 /* DashState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,6 +312,7 @@
 					"$(SFML_AUDIO)",
 					"$(SFML_NETWORK)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "jackerb.SFML-App";
 				SFML_AUDIO = "$(SFML_LINK_PREFIX) sfml-audio$(SFML_LINK_SUFFIX)";
 				SFML_BINARY_TYPE = DYLIBS;
 				SFML_GRAPHICS = "$(SFML_LINK_PREFIX) sfml-graphics$(SFML_LINK_SUFFIX)";
@@ -341,6 +358,7 @@
 					"$(SFML_AUDIO)",
 					"$(SFML_NETWORK)",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "jackerb.SFML-App";
 				SFML_AUDIO = "$(SFML_LINK_PREFIX) sfml-audio$(SFML_LINK_SUFFIX)";
 				SFML_BINARY_TYPE = DYLIBS;
 				SFML_GRAPHICS = "$(SFML_LINK_PREFIX) sfml-graphics$(SFML_LINK_SUFFIX)";

@@ -43,19 +43,26 @@ sf::Vector2f geometric_center(const Polygon &p) {
     return center;
 }
 
+bool PhysicsEngine::Intersects(const Entity &e1, const Entity &e2) {
+    Rectangle b1 = e1.BoundingBox(), b2 = e2.BoundingBox();
+    if (b1.x >= b2.x + b2.w || b2.x >= b1.x + b1.w) return false;
+    if (b1.y >= b2.y + b2.h || b2.y >= b1.y + b1.h) return false;
+    return true;
+}
+
 void PhysicsEngine::Update() {
     // Apply velocity to entity position, and update velocity
     // due to physical impulses (traction, gravity, etc.)
-    for (auto it = entities_.begin(); it != entities_.end(); it++) {
-        (*it)->Tick();
+    for (Entity *e : entities_) {
+        e->Tick();
     }
     
     // Check for collisions
-    for (int i = 0; i < entities_.size(); i++) {
-        for (int j = i + 1; j < entities_.size(); j++) {
-            auto res = checkCollision(*(entities_[i]), *(entities_[j]));
+    for (Character *character : characters_) {
+        for (Entity *stage : stage_) {
+            auto res = checkCollision(*character, *stage);
             if (res.first) {
-                entities_[i]->HandleCollision(*(entities_[j]), res.second);
+                character->HandleCollision(*stage, res.second);
             }
         }
     }

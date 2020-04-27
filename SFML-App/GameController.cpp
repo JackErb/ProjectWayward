@@ -36,7 +36,6 @@ platform_(2, {850.f, 750.f}) {
     
     stage_.SetPolygons({{{0.f, 0.f}, {1400.f, 0.f}, {1400.f, 329.f}, {0.f, 329.f}}});
     stage_.isStatic = true;
-    player_.stage_ = &stage_;
     sf::Texture *btexture = new sf::Texture();
     textures_.push_back(btexture);
     if (!btexture->loadFromFile(resourcePath() + "stage.png")) {
@@ -56,9 +55,9 @@ platform_(2, {850.f, 750.f}) {
     platform_.SetSprite(sf::Sprite(*pltexture));
                   
     engine_ = PhysicsEngine();
-    engine_.AddEntity(&player_);
-    engine_.AddEntity(&stage_);
-    engine_.AddEntity(&platform_);
+    engine_.AddCharacter(&player_);
+    engine_.AddStage(&stage_);
+    engine_.AddStage(&platform_);
 }
 
 void GameController::Tick() {

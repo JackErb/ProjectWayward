@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "Entity.hpp"
+#include "Character.hpp"
 
 using std::vector;
 using std::pair;
@@ -27,24 +28,42 @@ using std::endl;
 class PhysicsEngine {
 public:
     /* Check if the bounding boxes of the two entities intersect */
-    static bool intersects(const Entity &e1, const Entity &e2) {
-        Rectangle b1 = e1.BoundingBox(), b2 = e2.BoundingBox();
-        if (b1.x >= b2.x + b2.w || b2.x >= b1.x + b1.w) return false;
-        if (b1.y >= b2.y + b2.h || b2.y >= b1.y + b1.h) return false;
-        return true;
-    }
+    static bool Intersects(const Entity &e1, const Entity &e2);
     
 public:
     PhysicsEngine() {}
     void Update();
         
-    void AddEntity(Entity *e) { entities_.push_back(e); }
+    void AddEntity(Entity *e) {
+        entities_.push_back(e);
+        e->engine = this;
+    }
+    
+    void AddCharacter(Character *c) {
+        characters_.push_back(c);
+        AddEntity(c);
+    }
+    
+    void AddStage(Entity *e) {
+        assert(e->Type() == STAGE || e->Type() == PLATFORM);
+        stage_.push_back(e);
+        AddEntity(e);
+    }
+    
     void RemoveEntity(int id) {
         for (auto it = entities_.begin(); it != entities_.end(); it++) {
             if ((*it)->id == id) {
                 entities_.erase(it);
+                return;
             }
         }
+    }
+    
+    bool CheckBoundingBoxCollisionWithStage(Character *character) {
+        for (Entity *stage : stage_) {
+            if (Intersects(*character, *stage)) return true;
+        }
+        return false;
     }
     
 private:
@@ -62,6 +81,8 @@ private:
     
 private:
     vector<Entity*> entities_;
+    vector<Entity*> stage_;
+    vector<Character*> characters_;
 };
 
 #endif /* PhysicsEngine_hpp */

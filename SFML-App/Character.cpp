@@ -8,11 +8,11 @@
 
 #include "Character.hpp"
 #include "NeutralState.hpp"
-#include "JumpsquatState.hpp"
+#include "PhysicsEngine.hpp"
+#include "AirborneNeutralState.hpp"
 
 Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
-    SetState(AIRBORNE);
-    actionState_ = new NeutralState(this);
+    SetActionState(new AirborneNeutralState(this));
 }
 
 void Character::ProcessInput(const PlayerInput &input) {
@@ -25,10 +25,10 @@ void Character::Tick() {
         cleanupState_ = nullptr;
     }
     
-    if (state_ == GROUNDED && !PhysicsEngine::intersects(*this, *stage_)) {
-        SetState(AIRBORNE);
+    if (actionState_->GetState() == CharacterState::GROUNDED && !engine->CheckBoundingBoxCollisionWithStage(this)) {
+        actionState_->SwitchState(AirborneNeutralState::AIRBORNE);
     }
-    
+
     actionState_->Tick();
 }
 
@@ -36,21 +36,58 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     actionState_->HandleCollision(entity, pv);
 }
 
-
-void Character::Jumpsquat() {
-    if (state_ != GROUNDED) return;
+void Character::Jump(JumpType type, bool fullhop) {
+    if (actionState_->GetState() != CharacterState::AIRBORNE) {
+        std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
+        return;
+    }
     
-    setActionState(new JumpsquatState(this));
-}
-
-void Character::Jump() {
-    switch (state_) {
-        case GROUNDED:
-            setActionState(new JumpsquatState(this));
+    float xv;
+    switch (type) {
+        case LEFT:
+            xv = -MaxGroundSpeed;
             break;
-        case AIRBORNE:
-            setActionState(new NeutralState(this));
-            velocity.y = -40;
+        case UP:
+            xv = 0.f;
+            break;
+        case RIGHT:
+            xv = MaxGroundSpeed;
+            break;
+        case DJUMP:
+            xv = velocity_.x;
             break;
     }
+    // TODO: JumpState
+    SetActionState(new AirborneNeutralState(this));
+    velocity_.y = JumpSpeed;
+    velocity_.x = xv;
+}
+
+void Character::Dash(float m) {
+    if (actionState_->GetState() != CharacterState::GROUNDED) {
+        std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
+        return;
+    }
+    
+    velocity_.x = m * MaxGroundSpeed;
+}
+
+void Character::Vector(float m) {
+    if (actionState_->GetState() != CharacterState::AIRBORNE) {
+        std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
+        return;
+    }
+    
+    velocity_.x += m * AirAccel;
+    velocity_.x = fmin(MaxAirSpeed, velocity_.x);
+}
+
+void Character::ApplyFriction() {
+    velocity_.x *= (actionState_->GetState() == CharacterState::GROUNDED) ? GroundFriction : AirFriction;
+}
+
+void Character::SetActionState(CharacterState *s) {
+    cleanupState_ = actionState_;
+    actionState_ = s;
+    std::cout << s->GetState() << std::endl;
 }
