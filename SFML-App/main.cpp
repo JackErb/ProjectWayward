@@ -58,10 +58,10 @@ int main(int, char const**)
 
     // Start the game loop
     while (window.isOpen()) {
+        auto start = high_resolution_clock::now();
+        
         // Clear screen
         window.clear();
-        
-        //auto start = high_resolution_clock::now();
         
         // Poll window for events
         sf::Event event;
@@ -72,6 +72,8 @@ int main(int, char const**)
             }
         }
         
+        sf::Joystick::update();
+        
         // Update the player input
         playerInput.Tick();
         UpdateControllerState(&playerInput, 0);
@@ -80,11 +82,11 @@ int main(int, char const**)
         controller.Tick();
         controller.Render(&window);
         
-        //auto end = high_resolution_clock::now();
-        //cout << duration_cast<microseconds>(end - start).count() << endl;
-        
         // Update the window
         window.display();
+        
+        auto end = high_resolution_clock::now();
+        //cout << duration_cast<microseconds>(end - start).count() << endl;
     }
 
     return EXIT_SUCCESS;

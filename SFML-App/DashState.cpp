@@ -12,32 +12,32 @@
 #include "AirborneNeutralState.hpp"
 #include "JumpsquatState.hpp"
 
-void DashState::setDirInfluence(float a) {    
-    if (PlayerInput::InRange(a, 1.f / 3.f * M_PI, 2.f / 3.f * M_PI)
-        || PlayerInput::InRange(a, -1.f / 3.f * M_PI, -2.f / 3.f * M_PI)) {
-        // Walk
-        
-        // m is constrained to [0, 1/6 * pi]
-        float m = abs(abs(a) - 1.f / 2.f);
-        dirInfluence_ = (1.f / 6.f * M_PI) / m;
-    } else {
-        dirInfluence_ = 1;
+void DashState::setDirInfluence(float a, float x) {
+    if (fabs(x) > PlayerInput::DEAD_ZONE) {
+        if (PlayerInput::InRange(a, 1.f / 3.f * M_PI, 2.f / 3.f * M_PI)
+            || PlayerInput::InRange(a, -2.f / 3.f * M_PI, -1.f / 3.f * M_PI)) {
+            // Walk
+            
+            dirInfluence_ = x / 60.f;
+        } else {
+            dirInfluence_ = 1;
+            if (a >= M_PI / 2.f || a <= - M_PI / 2.f) dirInfluence_ *= -1;
+        }
     }
-    if (a >= M_PI / 2.f || a <= - M_PI / 2.f) dirInfluence_ *= -1;
 }
 
 void DashState::ProcessInput(const PlayerInput &input) {
-    if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
-        character_->SetActionState(new NeutralState(character_));
-        return;
-    }
-    
     if (input.IsPressed(3)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
-    setDirInfluence(input.stick.angle());
+    if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
+        character_->SetActionState(new NeutralState(character_));
+        return;
+    }
+    
+    setDirInfluence(input.stick.angle(), input.stick.xAxis);
 }
 
 void DashState::Tick() {

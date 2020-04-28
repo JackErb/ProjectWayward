@@ -17,13 +17,14 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     
     float a = input.stick.angle();
     float hyp = input.stick.hyp();
-    if (PlayerInput::InRange(a, -3.f / 4.f * M_PI, - 1.f / 4.f * M_PI) && hyp > 65.f) {
+    if (input.stick.inDirection(DOWN_T) && hyp > 50.f) {
         character_->FastFall();
         fastfall_ = true;
     }
     
     if (hyp > PlayerInput::DEAD_ZONE) {
-        float m = (input.stick.xAxis > 60.f ? 60.f : input.stick.xAxis) / 60.f;
+        float m = (abs(input.stick.xAxis) > 60.f ? 60.f : abs(input.stick.xAxis)) / 60.f;
+        if (input.stick.xAxis < 0) m *= -1;
         character_->Vector(m);
     } else {
         character_->ApplyFriction();
@@ -36,7 +37,6 @@ void AirborneNeutralState::Tick() {
 }
 
 void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
-    std::cout << "COLLIDE" << std::endl;
     if (entity.Type() == STAGE) {
         // Apply the push vector to prevent overlap
         character_->Transform(pv);

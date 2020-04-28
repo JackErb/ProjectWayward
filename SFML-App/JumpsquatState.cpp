@@ -12,12 +12,9 @@
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
     if (input.stick.hyp() > 40.f) {
         float a = input.stick.angle();
-        if ((PlayerInput::InRange(a, 7.f / 8.f * M_PI, M_PI)
-             || PlayerInput::InRange(a, -7.f / 8.f * M_PI, -M_PI))
-             && type == Character::UP) {
+        if (input.stick.inDirection(LEFT) && type == Character::UP) {
             type = Character::LEFT;
-        } else if (PlayerInput::InRange(a, -1.f / 8.f * M_PI, 1.f / 8.f * M_PI)
-                   && type == Character::UP) {
+        } else if (input.stick.inDirection(RIGHT) && type == Character::UP) {
             type = Character::RIGHT;
         }
     }

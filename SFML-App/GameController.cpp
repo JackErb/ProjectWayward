@@ -24,7 +24,7 @@ using std::cerr;
 using std::endl;
 
 GameController::GameController() : player_(0, {1100.f, 0.f}), stage_(1, {400.f, 1000.f}),
-platform_(2, {850.f, 750.f}) {
+platform_(2, {850.f, 700.f}) {
     player_.SetPolygons({{{0.f, 0.f}, {100.f, 0.f}, {100.f, 100.f}, {0.f, 100.f}}});
     sf::Texture *ptexture = new sf::Texture();
     textures_.push_back(ptexture);

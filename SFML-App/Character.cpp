@@ -59,7 +59,7 @@ void Character::Jump(JumpType type, bool fullhop) {
     }
     // TODO: JumpState
     SetActionState(new AirborneNeutralState(this));
-    velocity_.y = JumpSpeed;
+    velocity_.y = fullhop ? FullhopJump : ShorthopJump;
     velocity_.x = xv;
 }
 
@@ -68,7 +68,7 @@ void Character::Dash(float m) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
-    
+        
     velocity_.x = m * MaxGroundSpeed;
 }
 
@@ -89,5 +89,4 @@ void Character::ApplyFriction() {
 void Character::SetActionState(CharacterState *s) {
     cleanupState_ = actionState_;
     actionState_ = s;
-    std::cout << "STATE: " << s->GetState() << std::endl;
 }

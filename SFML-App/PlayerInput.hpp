@@ -14,6 +14,13 @@
 #include <map>
 #include <math.h>
 
+typedef enum Direction {
+    /* UP: [pi/4, 3pi/4], RIGHT: [-pi/4, pi/4], etc. */
+    UP, RIGHT, DOWN, LEFT,
+    /* UP_T: [pi/3,2pi/3], RIGHT_T: [-pi/6, pi/6], etc. */
+    UP_T, RIGHT_T, DOWN_T, LEFT_T
+} Direction;
+
 class PlayerInput {
 public:
     typedef enum ButtonState {
@@ -28,8 +35,43 @@ public:
             return sqrt(xAxis * xAxis + yAxis * yAxis);
         }
         
+        /* In range [-pi, pi] */
         float angle() const {
             return atan2(-yAxis, xAxis);
+        }
+        
+        bool inDirection(Direction dir, float deadZone = DEAD_ZONE) const {
+            if (hyp() < DEAD_ZONE) return false;
+            
+            float a = angle();
+            float lo, hi;
+            switch(dir) {
+                case UP:
+                    lo = M_PI / 4.f; hi = M_PI * 3.f / 4.f;
+                    break;
+                case RIGHT:
+                    lo = - M_PI / 4.f; hi = M_PI / 4.f;
+                    break;
+                case DOWN:
+                    lo = - M_PI * 3.f / 4.f; hi = - M_PI / 4.f;
+                    break;
+                case LEFT:
+                    lo = M_PI / 3.f / 4.f; hi = - M_PI * 3.f / 4.f;
+                    break;
+                case UP_T:
+                    lo = M_PI / 3.f; hi = M_PI * 2.f / 3.f;
+                    break;
+                case RIGHT_T:
+                    lo = - M_PI / 6.f; hi = M_PI / 6.f;
+                    break;
+                case DOWN_T:
+                    lo = - M_PI * 2.f / 3.f; hi = - M_PI * 1.f / 3.f;
+                    break;
+                case LEFT_T:
+                    lo = M_PI * 5.f / 6.f; hi = - M_PI * 5.f / 6.f;
+                    break;
+            }
+            return a >= lo && a <= hi;
         }
     } StickState;
     
@@ -37,7 +79,7 @@ public:
         return a >= l && a <= h;
     }
     
-    constexpr static float DEAD_ZONE = 6.f;
+    constexpr static float DEAD_ZONE = 8.f;
     
 public:
     PlayerInput() : buttons() {}

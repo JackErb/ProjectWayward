@@ -14,20 +14,21 @@
 #define PI 3.14159
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
-    float hyp = input.stick.hyp();
-    if (hyp >= DEAD_ZONE) {
-        character_->SetActionState(new DashState(character_, input.stick.angle()));
+    if (input.IsPressed(3)) {
+        character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
-    if (input.IsPressed(3)) {
-        character_->SetActionState(new JumpsquatState(character_));
+    float hyp = input.stick.hyp();
+    if (hyp >= DEAD_ZONE) {
+        character_->SetActionState(new DashState(character_, input.stick.angle(), input.stick.xAxis));
         return;
     }
 }
 
 void NeutralState::Tick() {
     character_->ApplyFriction();
+    character_->ApplyVelocity();
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

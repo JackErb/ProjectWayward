@@ -59,17 +59,18 @@ private:
     
     const float GroundAccel = 2.5f;
     const float MaxGroundSpeed = 25.f;
-    const float GroundFriction = 0.95f;
+    const float GroundFriction = 0.88f;
     
     const float AirAccel = 3.0f;
     const float MaxAirSpeed = 30.5f;
-    const float AirFriction = 0.95f;
+    const float AirFriction = 0.9f;
     
     const float Gravity = 3.4f;
     const float MaxFallSpeed = 40.f;
     const float FastFallSpeed = 60.f;
     
-    const float JumpSpeed = -50.f;
+    const float FullhopJump = -62.f;
+    const float ShorthopJump = -40.f;
 };
 
 #endif /* Character_hpp */
