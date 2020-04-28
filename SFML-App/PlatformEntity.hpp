@@ -9,11 +9,11 @@
 #ifndef PlatformEntity_hpp
 #define PlatformEntity_hpp
 
-#include "Entity.hpp"
+#include "StageEntity.hpp"
 
-class PlatformEntity : public Entity {
+class PlatformEntity : public StageEntity {
 public:
-    PlatformEntity(int id, sf::Vector2f pos) : Entity(id, pos) {}
+    PlatformEntity(int id, sf::Vector2f pos) : StageEntity(id, pos) {}
     
     void Tick() {}
     void HandleCollision(const Entity &e1, sf::Vector2f pv) {}

@@ -13,7 +13,7 @@
 
 class JumpsquatState : public GroundedState {
 public:
-    JumpsquatState(Character *ch) : GroundedState(ch), type(Character::UP) {
+    JumpsquatState(Character *ch, Entity* const s) : GroundedState(ch, s), type(Character::UP) {
         stateFrame_ = 1;
     }
     ~JumpsquatState() {}

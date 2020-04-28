@@ -13,7 +13,7 @@
 
 class NeutralState : public GroundedState {
 public:
-    NeutralState(Character *ch) : GroundedState(ch), fastfall(false) {
+    NeutralState(Character *ch, Entity* const s) : GroundedState(ch, s), fastfall(false) {
         ch->NullVelocityY();
     }
     ~NeutralState() {}

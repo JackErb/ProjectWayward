@@ -49,11 +49,15 @@ public:
     }
     void ApplyVelocity() { Transform(velocity_); }
     void ApplyFriction();
+    void FallthroughPlatform(Entity *s);
     
 private:
     CharacterState *actionState_;
     CharacterState *cleanupState_ = nullptr;
     unsigned int jumps_;
+    
+    Entity *fallthrough_ = nullptr;
+    int ftCount;
     
     sf::Vector2f velocity_ = {0.f, 0.f};
     

@@ -13,7 +13,7 @@
 
 class DashState : public GroundedState {
 public:
-    DashState(Character *ch, float angle, float x) : GroundedState(ch) {
+    DashState(Character *ch, Entity* const s, float angle, float x) : GroundedState(ch, s) {
         setDirInfluence(angle, x);
     }
     ~DashState() {}

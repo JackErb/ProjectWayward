@@ -44,7 +44,8 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
         if (pv.x == 0 && pv.y < 0 && character_->Velocity().y > 0) {
             // Land on the stage
             character_->NullVelocityY();
-            character_->SetActionState(new LandingLagState(character_, 2));
+            character_->SetActionState(new LandingLagState(character_,
+                                            const_cast<Entity* const>(&entity), 2));
             return;
         }
     } else if (entity.Type() == PLATFORM) {
@@ -60,7 +61,8 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
                 // Apply the push vector to prevent overlap
                 character_->Transform(pv);
                 
-                character_->SetActionState(new LandingLagState(character_, 2));
+                character_->SetActionState(new LandingLagState(character_,
+                                                const_cast<Entity *const>(&entity), 2));
                 return;
             }
         }

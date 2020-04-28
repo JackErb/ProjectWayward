@@ -25,6 +25,12 @@ void Character::Tick() {
         cleanupState_ = nullptr;
     }
     
+    if (actionState_->GetState() == CharacterState::AIRBORNE &&
+        fallthrough_ != nullptr)  {
+        ftCount--;
+        if (ftCount == 0) fallthrough_ = nullptr;
+    }
+
     if (actionState_->GetState() == CharacterState::GROUNDED && !engine->CheckBoundingBoxCollisionWithStage(this)) {
         actionState_->SwitchState(AirborneNeutralState::AIRBORNE);
     }
@@ -33,6 +39,9 @@ void Character::Tick() {
 }
 
 void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+    if (fallthrough_ != nullptr && &entity == fallthrough_) {
+        return;
+    }
     actionState_->HandleCollision(entity, pv);
 }
 
@@ -68,6 +77,11 @@ void Character::Dash(float m) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
+    
+    if (abs(m) > 1.01f) {
+        std::cerr << "INVALID DASH MODIFIER" << std::endl;
+        return;
+    }
         
     velocity_.x = m * MaxGroundSpeed;
 }
@@ -89,4 +103,14 @@ void Character::ApplyFriction() {
 void Character::SetActionState(CharacterState *s) {
     cleanupState_ = actionState_;
     actionState_ = s;
+}
+
+void Character::FallthroughPlatform(Entity *s) {
+    if (s->Type() != EntityType::PLATFORM) {
+        std::cerr << "ERROR Attempt to fall through " << s->Type() << std::endl;
+        return;
+    }
+    
+    fallthrough_ = s;
+    ftCount = 5;
 }

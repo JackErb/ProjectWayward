@@ -15,13 +15,21 @@
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
-        character_->SetActionState(new JumpsquatState(character_));
+        character_->SetActionState(new JumpsquatState(character_, GetStage()));
         return;
     }
     
     float hyp = input.stick.hyp();
     if (hyp >= DEAD_ZONE) {
-        character_->SetActionState(new DashState(character_, input.stick.angle(), input.stick.xAxis));
+        if (input.stick.inDirection(DOWN_T) && GetStage()->Type() == EntityType::PLATFORM) {
+            // Fall through platform
+            character_->FallthroughPlatform(GetStage());
+            character_->SetActionState(new AirborneNeutralState(character_));
+            return;
+        } else {
+            character_->SetActionState(new DashState(character_, GetStage(),
+                                                     input.stick.angle(), input.stick.xAxis));
+        }
         return;
     }
 }

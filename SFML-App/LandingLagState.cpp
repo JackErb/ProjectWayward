@@ -16,7 +16,7 @@ void LandingLagState::ProcessInput(const PlayerInput &input) {
 void LandingLagState::Tick() {
     frames_--;
     if (frames_ == 0) {
-        character_->SetActionState(new NeutralState(character_));
+        character_->SetActionState(new NeutralState(character_, GetStage()));
         return;
     }
 }

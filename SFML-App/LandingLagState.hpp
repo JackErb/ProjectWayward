@@ -13,7 +13,7 @@
 
 class LandingLagState : public GroundedState {
 public:
-    LandingLagState(Character *ch, int frames) : GroundedState(ch), frames_(frames) {}
+    LandingLagState(Character *ch, Entity* const stage, int frames) : GroundedState(ch, stage), frames_(frames) {}
     ~LandingLagState() {}
     
     void ProcessInput(const PlayerInput &input) override;

@@ -20,20 +20,22 @@ void DashState::setDirInfluence(float a, float x) {
             
             dirInfluence_ = x / 60.f;
         } else {
-            dirInfluence_ = 1;
+            dirInfluence_ = 1.f;
             if (a >= M_PI / 2.f || a <= - M_PI / 2.f) dirInfluence_ *= -1;
         }
+    } else {
+        dirInfluence_ = 0.f;
     }
 }
 
 void DashState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
-        character_->SetActionState(new JumpsquatState(character_));
+        character_->SetActionState(new JumpsquatState(character_, GetStage()));
         return;
     }
     
     if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
-        character_->SetActionState(new NeutralState(character_));
+        character_->SetActionState(new NeutralState(character_, GetStage()));
         return;
     }
     
@@ -41,7 +43,9 @@ void DashState::ProcessInput(const PlayerInput &input) {
 }
 
 void DashState::Tick() {
-    character_->Dash(dirInfluence_);
+    if (abs(dirInfluence_) > 0.f) {
+        character_->Dash(dirInfluence_);
+    }
     character_->ApplyVelocity();
 }
 
