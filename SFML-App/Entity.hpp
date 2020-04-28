@@ -64,17 +64,15 @@ public:
     
     void SetPosition(sf::Vector2f pos) {
         position_ = pos;
-        sprite_.setPosition(pos);
     }
     
     sf::Vector2f Position() const { return position_; }
     
-    void SetSprite(sf::Sprite s) {
+    void SetSprite(sf::Sprite *s) {
         sprite_ = s;
-        sprite_.setPosition(position_);
     }
     
-    sf::Sprite Sprite() { return sprite_; }
+    sf::Sprite* Sprite() { return sprite_; }
         
     void SetPolygons(std::vector<Polygon> polygons) { polygons_ = polygons; }
     
@@ -107,7 +105,7 @@ private:
     std::vector<Polygon> polygons_;
     // The top left corner of this player's bounding box
     sf::Vector2f position_;
-    sf::Sprite sprite_;
+    sf::Sprite *sprite_;
 };
 
 #endif /* Entity_hpp */

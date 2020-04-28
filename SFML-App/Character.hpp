@@ -52,7 +52,7 @@ public:
     void FallthroughPlatform(Entity *s);
     
 private:
-    CharacterState *actionState_;
+    CharacterState *actionState_ = nullptr;
     CharacterState *cleanupState_ = nullptr;
     unsigned int jumps_;
     

@@ -23,8 +23,8 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-GameController::GameController() : player_(0, {1100.f, 0.f}), stage_(1, {400.f, 1000.f}),
-platform_(2, {850.f, 700.f}) {
+GameController::GameController(float w, float h) : player_(0, {-50.f, -500.f}), stage_(1, {-700.f, 0.f}),
+platform_(2, {-250.f, -200.f}), camera_(&entities_, w, h) {
     player_.SetPolygons({{{0.f, 0.f}, {100.f, 0.f}, {100.f, 100.f}, {0.f, 100.f}}});
     sf::Texture *ptexture = new sf::Texture();
     textures_.push_back(ptexture);
@@ -32,7 +32,9 @@ platform_(2, {850.f, 700.f}) {
         // Couldn't load texture
         assert(false);
     }
-    player_.SetSprite(sf::Sprite(*ptexture));
+    sf::Sprite *s0 = new sf::Sprite(*ptexture);
+    sprites_.push_back(s0);
+    player_.SetSprite(s0);
     
     stage_.SetPolygons({{{0.f, 0.f}, {1400.f, 0.f}, {1400.f, 329.f}, {0.f, 329.f}}});
     stage_.isStatic = true;
@@ -42,7 +44,9 @@ platform_(2, {850.f, 700.f}) {
         // Couldn't load texture
         assert(false);
     }
-    stage_.SetSprite(sf::Sprite(*btexture));
+    sf::Sprite *s1 = new sf::Sprite(*btexture);
+    sprites_.push_back(s1);
+    stage_.SetSprite(s1);
     
     platform_.SetPolygons({{{0.f, 0.f}, {500.f, 0.f}, {500.f, 20.f}, {0.f, 20.f}}});
     platform_.isStatic = true;
@@ -52,12 +56,14 @@ platform_(2, {850.f, 700.f}) {
         // Couldn't load texture
         assert(false);
     }
-    platform_.SetSprite(sf::Sprite(*pltexture));
+    sf::Sprite *s2 = new sf::Sprite(*pltexture);
+    sprites_.push_back(s2);
+    platform_.SetSprite(s2);
                   
     engine_ = PhysicsEngine();
-    engine_.AddCharacter(&player_);
-    engine_.AddStage(&stage_);
-    engine_.AddStage(&platform_);
+    AddCharacter(&player_);
+    AddStage(&stage_);
+    AddStage(&platform_);
 }
 
 void GameController::Tick() {
@@ -69,7 +75,5 @@ void GameController::ProcessInput(const PlayerInput &input) {
 }
 
 void GameController::Render(sf::RenderWindow *window) {
-    window->draw(platform_.Sprite());
-    window->draw(player_.Sprite());
-    window->draw(stage_.Sprite());
+    camera_.Render(window);
 }

@@ -34,6 +34,7 @@
 		2682B6872457684E0096E3E9 /* AirborneState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneState.hpp; sourceTree = "<group>"; };
 		2682B6892457B27E0096E3E9 /* LandingLagState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LandingLagState.cpp; sourceTree = "<group>"; };
 		2682B68A2457B27E0096E3E9 /* LandingLagState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LandingLagState.hpp; sourceTree = "<group>"; };
+		2682B68F245895BB0096E3E9 /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CameraController.hpp; sourceTree = "<group>"; };
 		26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerInput.hpp; sourceTree = "<group>"; };
 		26AE5F702453AFEA00862C68 /* Event.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
 		26AE5F722454A90800862C68 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicsEngine.cpp; sourceTree = "<group>"; };
@@ -113,6 +114,16 @@
 			name = Grounded;
 			sourceTree = "<group>";
 		};
+		2682B691245897EB0096E3E9 /* Character */ = {
+			isa = PBXGroup;
+			children = (
+				26C589F724552DEA00D854F5 /* Character.hpp */,
+				26384FEF2456358D00C966A1 /* Character.cpp */,
+				26B08BA924560A9D00E86352 /* CharacterState */,
+			);
+			name = Character;
+			sourceTree = "<group>";
+		};
 		26B08BA32456024700E86352 /* Setup */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,6 +132,7 @@
 				26DE8458245368AD003D05FE /* main.cpp */,
 				26DE846924537D4A003D05FE /* GameController.hpp */,
 				26DE846824537D4A003D05FE /* GameController.cpp */,
+				2682B68F245895BB0096E3E9 /* CameraController.hpp */,
 			);
 			name = Setup;
 			sourceTree = "<group>";
@@ -129,10 +141,9 @@
 			isa = PBXGroup;
 			children = (
 				26D74C8B2454D15E00B8BB5A /* Entity.hpp */,
-				26C589F724552DEA00D854F5 /* Character.hpp */,
-				26384FEF2456358D00C966A1 /* Character.cpp */,
 				26B08BA62456064900E86352 /* StageEntity.hpp */,
 				26384FF22456372400C966A1 /* PlatformEntity.hpp */,
+				2682B691245897EB0096E3E9 /* Character */,
 			);
 			name = Entities;
 			sourceTree = "<group>";
@@ -169,7 +180,6 @@
 				26B08BA32456024700E86352 /* Setup */,
 				26384FEE2456349B00C966A1 /* Input */,
 				26384FED2456348F00C966A1 /* Physics */,
-				26B08BA924560A9D00E86352 /* CharacterState */,
 				26B08BA42456025500E86352 /* Entities */,
 				26DE845A245368AD003D05FE /* Resources */,
 				26DE8453245368AD003D05FE /* Supporting Files */,

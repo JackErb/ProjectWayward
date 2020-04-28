@@ -40,8 +40,11 @@ private void UpdateControllerState(PlayerInput *input, unsigned int c);
 
 int main(int, char const**)
 {
+    const float WIDTH = 2200;
+    const float HEIGHT = 1600;
+    
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(2200,1600), "SFML Game");
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Game");
     window.setFramerateLimit(60);
 
     // Set the Icon
@@ -51,7 +54,7 @@ int main(int, char const**)
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     
-    GameController controller;
+    GameController controller(WIDTH, HEIGHT);
     
     // Contains the state of the controller
     PlayerInput playerInput = PlayerInput();

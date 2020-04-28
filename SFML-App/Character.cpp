@@ -101,6 +101,7 @@ void Character::ApplyFriction() {
 }
 
 void Character::SetActionState(CharacterState *s) {
+    std::cerr << s->GetState() << std::endl;
     cleanupState_ = actionState_;
     actionState_ = s;
 }
