@@ -27,7 +27,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
 }
 
 void NeutralState::Tick() {
-
+    character_->ApplyFriction();
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

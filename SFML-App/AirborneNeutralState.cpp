@@ -8,6 +8,7 @@
 
 #include "AirborneNeutralState.hpp"
 #include "NeutralState.hpp"
+#include "LandingLagState.hpp"
 
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
@@ -21,9 +22,11 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         fastfall_ = true;
     }
     
-    if (hyp > 20.f) {
+    if (hyp > PlayerInput::DEAD_ZONE) {
         float m = (input.stick.xAxis > 60.f ? 60.f : input.stick.xAxis) / 60.f;
         character_->Vector(m);
+    } else {
+        character_->ApplyFriction();
     }
 }
 
@@ -41,7 +44,7 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
         if (pv.x == 0 && pv.y < 0 && character_->Velocity().y > 0) {
             // Land on the stage
             character_->NullVelocityY();
-            character_->SetActionState(new NeutralState(character_));
+            character_->SetActionState(new LandingLagState(character_, 2));
             return;
         }
     } else if (entity.Type() == PLATFORM) {
@@ -57,7 +60,7 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
                 // Apply the push vector to prevent overlap
                 character_->Transform(pv);
                 
-                character_->SetActionState(new NeutralState(character_));
+                character_->SetActionState(new LandingLagState(character_, 2));
                 return;
             }
         }

@@ -37,6 +37,8 @@ public:
         return a >= l && a <= h;
     }
     
+    constexpr static float DEAD_ZONE = 6.f;
+    
 public:
     PlayerInput() : buttons() {}
     

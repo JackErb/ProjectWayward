@@ -79,7 +79,7 @@ void Character::Vector(float m) {
     }
     
     velocity_.x += m * AirAccel;
-    velocity_.x = fmin(MaxAirSpeed, velocity_.x);
+    velocity_.x = (velocity_.x < 0 ? -1 : 1) * fmin(MaxAirSpeed, abs(velocity_.x));
 }
 
 void Character::ApplyFriction() {
@@ -89,5 +89,5 @@ void Character::ApplyFriction() {
 void Character::SetActionState(CharacterState *s) {
     cleanupState_ = actionState_;
     actionState_ = s;
-    std::cout << s->GetState() << std::endl;
+    std::cout << "STATE: " << s->GetState() << std::endl;
 }

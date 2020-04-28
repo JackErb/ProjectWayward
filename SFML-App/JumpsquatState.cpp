@@ -7,6 +7,7 @@
 //
 
 #include "JumpsquatState.hpp"
+#include "AirborneNeutralState.hpp"
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
     if (input.stick.hyp() > 40.f) {
@@ -28,6 +29,7 @@ void JumpsquatState::ProcessInput(const PlayerInput &input) {
 
 void JumpsquatState::Tick() {
     if (stateFrame_ >= 3) {
+        character_->SetActionState(new AirborneNeutralState(character_));
         character_->Jump(type, jumpHeld);
     }
     

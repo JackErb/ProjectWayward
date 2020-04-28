@@ -18,10 +18,10 @@ public:
     }
     ~JumpsquatState() {}
     
-    void HandleCollision(const Entity &entity, sf::Vector2f pv);
-    void ProcessInput(const PlayerInput &input);
-    void Tick();
-    void SwitchState(State state) {}
+    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void ProcessInput(const PlayerInput &input) override;
+    void Tick() override;
+    void SwitchState(State state) override {}
     
 private:
     int stateFrame_;

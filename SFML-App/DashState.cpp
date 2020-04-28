@@ -9,6 +9,8 @@
 #include "DashState.hpp"
 #include "PlayerInput.hpp"
 #include "NeutralState.hpp"
+#include "AirborneNeutralState.hpp"
+#include "JumpsquatState.hpp"
 
 void DashState::setDirInfluence(float a) {    
     if (PlayerInput::InRange(a, 1.f / 3.f * M_PI, 2.f / 3.f * M_PI)
@@ -17,7 +19,7 @@ void DashState::setDirInfluence(float a) {
         
         // m is constrained to [0, 1/6 * pi]
         float m = abs(abs(a) - 1.f / 2.f);
-        dirInfluence_ = m / (1.f / 6.f * M_PI);
+        dirInfluence_ = (1.f / 6.f * M_PI) / m;
     } else {
         dirInfluence_ = 1;
     }
@@ -25,6 +27,16 @@ void DashState::setDirInfluence(float a) {
 }
 
 void DashState::ProcessInput(const PlayerInput &input) {
+    if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
+        character_->SetActionState(new NeutralState(character_));
+        return;
+    }
+    
+    if (input.IsPressed(3)) {
+        character_->SetActionState(new JumpsquatState(character_));
+        return;
+    }
+    
     setDirInfluence(input.stick.angle());
 }
 
@@ -43,7 +55,7 @@ void DashState::SwitchState(State state) {
             std::cerr << "Switch to grounded state while actionState=Dash" << std::endl;
             return;
         case CharacterState::AIRBORNE:
-            character_->SetActionState(new NeutralState(character_));
+            character_->SetActionState(new AirborneNeutralState(character_));
             return;
     }
 }

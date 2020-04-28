@@ -10,6 +10,7 @@
 		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
 		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
 		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
+		2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6892457B27E0096E3E9 /* LandingLagState.cpp */; };
 		26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26AE5F722454A90800862C68 /* PhysicsEngine.cpp */; };
 		26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B08BAA24560AB700E86352 /* NeutralState.cpp */; };
 		26C589F22455276500D854F5 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F02455276500D854F5 /* player.png */; };
@@ -31,6 +32,8 @@
 		2682B683245767960096E3E9 /* AirborneNeutralState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirborneNeutralState.cpp; sourceTree = "<group>"; };
 		2682B684245767960096E3E9 /* AirborneNeutralState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneNeutralState.hpp; sourceTree = "<group>"; };
 		2682B6872457684E0096E3E9 /* AirborneState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneState.hpp; sourceTree = "<group>"; };
+		2682B6892457B27E0096E3E9 /* LandingLagState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LandingLagState.cpp; sourceTree = "<group>"; };
+		2682B68A2457B27E0096E3E9 /* LandingLagState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LandingLagState.hpp; sourceTree = "<group>"; };
 		26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerInput.hpp; sourceTree = "<group>"; };
 		26AE5F702453AFEA00862C68 /* Event.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
 		26AE5F722454A90800862C68 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicsEngine.cpp; sourceTree = "<group>"; };
@@ -117,6 +120,8 @@
 				2682B6872457684E0096E3E9 /* AirborneState.hpp */,
 				2682B684245767960096E3E9 /* AirborneNeutralState.hpp */,
 				2682B683245767960096E3E9 /* AirborneNeutralState.cpp */,
+				2682B68A2457B27E0096E3E9 /* LandingLagState.hpp */,
+				2682B6892457B27E0096E3E9 /* LandingLagState.cpp */,
 				26B08BAB24560AB700E86352 /* NeutralState.hpp */,
 				26B08BAA24560AB700E86352 /* NeutralState.cpp */,
 				2682B67B245752D40096E3E9 /* DashState.hpp */,
@@ -274,6 +279,7 @@
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
 				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,
+				2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */,
 				2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */,
 				26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */,
 				2682B67C245752D40096E3E9 /* DashState.cpp in Sources */,

@@ -14,11 +14,12 @@
 class AirborneNeutralState : public AirborneState {
 public:
     AirborneNeutralState(Character *ch) : AirborneState(ch) {}
+    ~AirborneNeutralState() {}
     
-    void ProcessInput(const PlayerInput &input);
-    void Tick();
-    void HandleCollision(const Entity &e1, sf::Vector2f);
-    void SwitchState(State s) {}
+    void ProcessInput(const PlayerInput &input) override;
+    void Tick() override;
+    void HandleCollision(const Entity &e1, sf::Vector2f) override;
+    void SwitchState(State s) override {}
     
 private:
     bool fastfall_;
