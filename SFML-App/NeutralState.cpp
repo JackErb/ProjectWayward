@@ -15,22 +15,22 @@
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
-        character_->SetActionState(new JumpsquatState(character_, GetStage()));
+        character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
     float hyp = input.stick.hyp();
     if (hyp >= DEAD_ZONE) {
-        if (input.stick.inDirection(DOWN_T) && GetStage()->Type() == EntityType::PLATFORM) {
+        if (input.stick.inDirection(DOWN_T) &&
+            character_->groundedData.stage->Type() == EntityType::PLATFORM) {
             // Fall through platform
-            character_->FallthroughPlatform(GetStage());
+            character_->FallthroughPlatform();
             character_->SetActionState(new AirborneNeutralState(character_));
             return;
         } else {
-            character_->SetActionState(new DashState(character_, GetStage(),
-                                                     input.stick.angle(), input.stick.xAxis));
+            character_->SetActionState(new DashState(character_, input.stick.angle(), input.stick.xAxis));
+            return;
         }
-        return;
     }
 }
 
@@ -42,8 +42,8 @@ void NeutralState::Tick() {
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
 }
 
-void NeutralState::SwitchState(State state) {
-    if (state == AIRBORNE) {
+void NeutralState::SwitchState(Character::CState state) {
+    if (state == Character::AIRBORNE) {
         character_->SetActionState(new AirborneNeutralState(character_));
         return;
     } else {

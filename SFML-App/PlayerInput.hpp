@@ -42,41 +42,41 @@ public:
         
         bool inDirection(Direction dir, float deadZone = DEAD_ZONE) const {
             if (hyp() < DEAD_ZONE) return false;
-            
-            float a = angle();
-            float lo, hi;
-            switch(dir) {
-                case UP:
-                    lo = M_PI / 4.f; hi = M_PI * 3.f / 4.f;
-                    break;
-                case RIGHT:
-                    lo = - M_PI / 4.f; hi = M_PI / 4.f;
-                    break;
-                case DOWN:
-                    lo = - M_PI * 3.f / 4.f; hi = - M_PI / 4.f;
-                    break;
-                case LEFT:
-                    lo = M_PI / 3.f / 4.f; hi = - M_PI * 3.f / 4.f;
-                    break;
-                case UP_T:
-                    lo = M_PI / 3.f; hi = M_PI * 2.f / 3.f;
-                    break;
-                case RIGHT_T:
-                    lo = - M_PI / 6.f; hi = M_PI / 6.f;
-                    break;
-                case DOWN_T:
-                    lo = - M_PI * 2.f / 3.f; hi = - M_PI * 1.f / 3.f;
-                    break;
-                case LEFT_T:
-                    lo = M_PI * 5.f / 6.f; hi = - M_PI * 5.f / 6.f;
-                    break;
-            }
-            return a >= lo && a <= hi;
+            return InDir(angle(), dir);
         }
     } StickState;
     
     static bool InRange(float a, float l, float h) {
         return a >= l && a <= h;
+    }
+    
+    static bool InDir(float a, Direction dir) {
+        float lo, hi;
+        switch(dir) {
+            case UP:
+                lo = M_PI / 4.f; hi = M_PI * 3.f / 4.f;
+                break;
+            case RIGHT:
+                lo = - M_PI / 4.f; hi = M_PI / 4.f;
+                break;
+            case DOWN:
+                lo = - M_PI * 3.f / 4.f; hi = - M_PI / 4.f;
+                break;
+            case LEFT:
+                return a >= M_PI / 3.f / 4.f || a <= - M_PI * 3.f / 4.f;
+            case UP_T:
+                lo = M_PI / 3.f; hi = M_PI * 2.f / 3.f;
+                break;
+            case RIGHT_T:
+                lo = - M_PI / 6.f; hi = M_PI / 6.f;
+                break;
+            case DOWN_T:
+                lo = - M_PI * 2.f / 3.f; hi = - M_PI * 1.f / 3.f;
+                break;
+            case LEFT_T:
+                return a >= M_PI * 5.f / 6.f || a <= - M_PI * 5.f / 6.f;
+        }
+        return a >= lo && a <= hi;
     }
     
     constexpr static float DEAD_ZONE = 8.f;

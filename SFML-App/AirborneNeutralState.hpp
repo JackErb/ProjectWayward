@@ -19,10 +19,7 @@ public:
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void HandleCollision(const Entity &e1, sf::Vector2f) override;
-    void SwitchState(State s) override {}
-    
-private:
-    bool fastfall_;
+    void SwitchState(Character::CState s) override {}
 };
 
 #endif /* AirborneNeutralState_hpp */

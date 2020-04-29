@@ -9,17 +9,23 @@
 #include "AirborneNeutralState.hpp"
 #include "NeutralState.hpp"
 #include "LandingLagState.hpp"
+#include "AirdodgeState.hpp"
 
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3)) {
+    if (input.IsPressed(3) && character_->airborneData.jumps > 0) {
         character_->Jump(Character::DJUMP, true);
+    }
+    
+    if (input.IsPressed(7) && character_->airborneData.airdodge) {
+        character_->Airdodge();
+        character_->SetActionState(new AirdodgeState(character_, input.stick.angle()));
+        return;
     }
     
     float a = input.stick.angle();
     float hyp = input.stick.hyp();
     if (input.stick.inDirection(DOWN_T) && hyp > 50.f) {
         character_->FastFall();
-        fastfall_ = true;
     }
     
     if (hyp > PlayerInput::DEAD_ZONE) {
@@ -32,7 +38,11 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
 }
 
 void AirborneNeutralState::Tick() {
-    character_->ApplyGravity();
+    if (!character_->airborneData.fastfall) {
+        character_->ApplyGravity();
+    } else {
+        character_->FastFall();
+    }
     character_->ApplyVelocity();
 }
 
@@ -43,10 +53,17 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
         
         if (pv.x == 0 && pv.y < 0 && character_->Velocity().y > 0) {
             // Land on the stage
+            character_->NullVelocityX();
             character_->NullVelocityY();
-            character_->SetActionState(new LandingLagState(character_,
-                                            const_cast<Entity* const>(&entity), 2));
+            character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
+            character_->SetActionState(new LandingLagState(character_, 2));
             return;
+        } else if (abs(pv.x) > 0 && pv.y == 0) {
+            if (pv.x < 0 && character_->input_->stick.inDirection(Direction::LEFT_T)) {
+                character_->WallJump(-1);
+            } else if (pv.x > 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)) {
+                character_->WallJump(1);
+            }
         }
     } else if (entity.Type() == PLATFORM) {
         if (pv.x == 0 && pv.y < 0) {
@@ -57,12 +74,13 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
             float py = b.y + b.h;
             if (vy > 0 && py - vy - 2.f < entity.Position().y) {
                 // Land on the platform
+                character_->NullVelocityX();
                 character_->NullVelocityY();
                 // Apply the push vector to prevent overlap
                 character_->Transform(pv);
                 
-                character_->SetActionState(new LandingLagState(character_,
-                                                const_cast<Entity *const>(&entity), 2));
+                character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
+                character_->SetActionState(new LandingLagState(character_, 2));
                 return;
             }
         }

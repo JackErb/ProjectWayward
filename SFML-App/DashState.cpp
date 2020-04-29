@@ -30,12 +30,12 @@ void DashState::setDirInfluence(float a, float x) {
 
 void DashState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
-        character_->SetActionState(new JumpsquatState(character_, GetStage()));
+        character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
     if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
-        character_->SetActionState(new NeutralState(character_, GetStage()));
+        character_->SetActionState(new NeutralState(character_));
         return;
     }
     
@@ -53,12 +53,12 @@ void DashState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
     
 }
 
-void DashState::SwitchState(State state) {
+void DashState::SwitchState(Character::CState state) {
     switch (state) {
-        case CharacterState::GROUNDED:
+        case Character::GROUNDED:
             std::cerr << "Switch to grounded state while actionState=Dash" << std::endl;
             return;
-        case CharacterState::AIRBORNE:
+        case Character::AIRBORNE:
             character_->SetActionState(new AirborneNeutralState(character_));
             return;
     }

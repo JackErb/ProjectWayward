@@ -13,7 +13,7 @@
 
 class JumpsquatState : public GroundedState {
 public:
-    JumpsquatState(Character *ch, Entity* const s) : GroundedState(ch, s), type(Character::UP) {
+    JumpsquatState(Character *ch) : GroundedState(ch), type(Character::UP) {
         stateFrame_ = 1;
     }
     ~JumpsquatState() {}
@@ -21,7 +21,7 @@ public:
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(State state) override {}
+    void SwitchState(Character::CState state) override {}
     
 private:
     int stateFrame_;

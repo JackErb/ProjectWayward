@@ -11,10 +11,12 @@
 		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
 		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
 		2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6892457B27E0096E3E9 /* LandingLagState.cpp */; };
+		2682B6942458B5650096E3E9 /* SpriteLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6922458B5650096E3E9 /* SpriteLoader.cpp */; };
 		26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26AE5F722454A90800862C68 /* PhysicsEngine.cpp */; };
 		26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26B08BAA24560AB700E86352 /* NeutralState.cpp */; };
 		26C589F22455276500D854F5 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F02455276500D854F5 /* player.png */; };
 		26C589F32455276500D854F5 /* stage.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F12455276500D854F5 /* stage.png */; };
+		26D148952458F3050098DD6A /* AirdodgeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D148932458F3050098DD6A /* AirdodgeState.cpp */; };
 		26D81F2D245549AB00CEAB55 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26DE8461245368AD003D05FE /* icon.png */; };
 		26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8455245368AD003D05FE /* ResourcePath.mm */; };
 		26DE8459245368AD003D05FE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8458245368AD003D05FE /* main.cpp */; };
@@ -35,6 +37,8 @@
 		2682B6892457B27E0096E3E9 /* LandingLagState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LandingLagState.cpp; sourceTree = "<group>"; };
 		2682B68A2457B27E0096E3E9 /* LandingLagState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LandingLagState.hpp; sourceTree = "<group>"; };
 		2682B68F245895BB0096E3E9 /* CameraController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CameraController.hpp; sourceTree = "<group>"; };
+		2682B6922458B5650096E3E9 /* SpriteLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpriteLoader.cpp; sourceTree = "<group>"; };
+		2682B6932458B5650096E3E9 /* SpriteLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SpriteLoader.hpp; sourceTree = "<group>"; };
 		26AE5F6D2453A8BC00862C68 /* PlayerInput.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlayerInput.hpp; sourceTree = "<group>"; };
 		26AE5F702453AFEA00862C68 /* Event.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Event.hpp; sourceTree = "<group>"; };
 		26AE5F722454A90800862C68 /* PhysicsEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PhysicsEngine.cpp; sourceTree = "<group>"; };
@@ -46,6 +50,8 @@
 		26C589F02455276500D854F5 /* player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player.png; sourceTree = "<group>"; };
 		26C589F12455276500D854F5 /* stage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stage.png; sourceTree = "<group>"; };
 		26C589F724552DEA00D854F5 /* Character.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Character.hpp; sourceTree = "<group>"; };
+		26D148932458F3050098DD6A /* AirdodgeState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirdodgeState.cpp; sourceTree = "<group>"; };
+		26D148942458F3050098DD6A /* AirdodgeState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirdodgeState.hpp; sourceTree = "<group>"; };
 		26D74C8B2454D15E00B8BB5A /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
 		26DE8450245368AD003D05FE /* SFML-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SFML-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		26DE8454245368AD003D05FE /* SFML-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SFML-App-Info.plist"; path = "../SFML-App-Info.plist"; sourceTree = "<group>"; };
@@ -94,6 +100,8 @@
 				2682B6872457684E0096E3E9 /* AirborneState.hpp */,
 				2682B684245767960096E3E9 /* AirborneNeutralState.hpp */,
 				2682B683245767960096E3E9 /* AirborneNeutralState.cpp */,
+				26D148942458F3050098DD6A /* AirdodgeState.hpp */,
+				26D148932458F3050098DD6A /* AirdodgeState.cpp */,
 			);
 			name = Airborne;
 			sourceTree = "<group>";
@@ -133,6 +141,8 @@
 				26DE846924537D4A003D05FE /* GameController.hpp */,
 				26DE846824537D4A003D05FE /* GameController.cpp */,
 				2682B68F245895BB0096E3E9 /* CameraController.hpp */,
+				2682B6932458B5650096E3E9 /* SpriteLoader.hpp */,
+				2682B6922458B5650096E3E9 /* SpriteLoader.cpp */,
 			);
 			name = Setup;
 			sourceTree = "<group>";
@@ -301,7 +311,9 @@
 			files = (
 				26DE8459245368AD003D05FE /* main.cpp in Sources */,
 				26DE846A24537D4A003D05FE /* GameController.cpp in Sources */,
+				26D148952458F3050098DD6A /* AirdodgeState.cpp in Sources */,
 				26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */,
+				2682B6942458B5650096E3E9 /* SpriteLoader.cpp in Sources */,
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
 				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,

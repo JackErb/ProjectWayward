@@ -13,7 +13,7 @@
 
 class NeutralState : public GroundedState {
 public:
-    NeutralState(Character *ch, Entity* const s) : GroundedState(ch, s), fastfall(false) {
+    NeutralState(Character *ch) : GroundedState(ch), fastfall(false) {
         ch->NullVelocityY();
     }
     ~NeutralState() {}
@@ -21,7 +21,7 @@ public:
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override ;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(State state) override;
+    void SwitchState(Character::CState state) override;
     
 public:
     const float DEAD_ZONE = 6.f;

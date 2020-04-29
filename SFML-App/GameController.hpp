@@ -40,9 +40,6 @@ public:
         
 private:
     Character player_;
-    StageEntity stage_;
-    PlatformEntity platform_;
-    
     PhysicsEngine engine_;
     CameraController camera_;
     std::vector<sf::Texture*> textures_;

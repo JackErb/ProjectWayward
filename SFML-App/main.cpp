@@ -71,7 +71,7 @@ int main(int, char const**)
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
-                break;
+                return EXIT_SUCCESS;
             }
         }
         

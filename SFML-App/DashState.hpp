@@ -13,7 +13,7 @@
 
 class DashState : public GroundedState {
 public:
-    DashState(Character *ch, Entity* const s, float angle, float x) : GroundedState(ch, s) {
+    DashState(Character *ch, float angle, float x) : GroundedState(ch) {
         setDirInfluence(angle, x);
     }
     ~DashState() {}
@@ -21,7 +21,7 @@ public:
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(State state) override;
+    void SwitchState(Character::CState state) override;
 
 private:
     float dirInfluence_;

@@ -18,9 +18,9 @@ public:
     virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) override = 0;
     virtual void ProcessInput(const PlayerInput &input) override = 0;
     virtual void Tick() override = 0;
-    virtual void SwitchState(State state) override = 0;
-    State GetState() override final {
-        return State::AIRBORNE;
+    virtual void SwitchState(Character::CState state) override = 0;
+    Character::CState GetState() override final {
+        return Character::AIRBORNE;
     }
 };
 
