@@ -42,7 +42,7 @@ public:
             if (dir == -1) {
                 float w = e->Sprite()->getTextureRect().width * 0.1515;
                 e->Sprite()->scale(-1, 1);
-                e->Sprite()->move(w, 0);
+                e->Sprite()->move(w / 2.f, 0);
             }
             
             if (e->Type() == CHARACTER) {
@@ -85,7 +85,7 @@ public:
     void SetScale(float s) { scale = s; }
     
 public:
-    float scale = 0.65f;
+    float scale = 0.75f;
     
 private:
     sf::Vector2f windowOffset_;

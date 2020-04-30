@@ -14,7 +14,9 @@
 class AirdodgeState : public AirborneState {
 public:
     AirdodgeState(Character *ch, float angle) : AirborneState(ch), angle_(angle) {
+        character_->Airdodge();
         character_->airborneData.fastfall = false;
+        frame_ = 0;
     }
     
     void ProcessInput(const PlayerInput &input) override;
@@ -23,7 +25,6 @@ public:
     void SwitchState(Character::CState state) override;
     
 private:
-    int frame_ = 0;
     int angle_;
 };
 

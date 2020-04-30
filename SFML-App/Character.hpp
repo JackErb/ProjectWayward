@@ -55,13 +55,11 @@ public:
     } CState;
     
     typedef struct GroundedData {
-        int direction;
         const StageEntity *stage;
     } GroundedData;
     
     typedef struct AirborneData {
         int jumps;
-        int direction;
         bool airdodge;
         bool walljump;
         bool fastfall;
@@ -72,13 +70,14 @@ public:
     ~Character();
     
     void ProcessInput(const PlayerInput &input);
-    void Tick();
-    void HandleCollision(const Entity &entity, sf::Vector2f pv);
+    void Tick() override;
+    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     
     void SetActionState(CharacterState *s);
-    EntityType Type() const { return CHARACTER; }
+    EntityType Type() const override { return CHARACTER; }
     sf::Vector2f Velocity() const { return velocity_; }
-    int Direction() const override;
+    int Direction() const override { return direction_; }
+    void SetDirection(int dir) { direction_ = dir; }
     
     /* Methods involving action, and should only be called by the current actionState_ */
     void Jump(JumpType type, bool fullhop);
@@ -98,7 +97,7 @@ public:
     void Airdodge();
     void UpB() { velocity_.y = -80.f; }
     
-    /* Animatiomns */
+    /* Animations */
     void SetAnimMap(AnimMap anims) {
         anims_ = anims;
     }
@@ -109,8 +108,6 @@ public:
     
 private:
     void initAirborneData() {
-        int dir = groundedData.direction;
-        airborneData.direction = dir;
         airborneData.jumps = 1;
         airborneData.walljump = true;
         airborneData.airdodge = true;
@@ -139,6 +136,8 @@ private:
     Attributes attr;
     
     AnimMap anims_;
+    
+    int direction_;
 };
 
 #endif /* Character_hpp */

@@ -14,7 +14,7 @@
 class JumpsquatState : public GroundedState {
 public:
     JumpsquatState(Character *ch) : GroundedState(ch), type(Character::UP) {
-        stateFrame_ = 1;
+        frame_ = 0;
     }
     ~JumpsquatState() {}
     
@@ -24,7 +24,6 @@ public:
     void SwitchState(Character::CState state) override {}
     
 private:
-    int stateFrame_;
     Character::JumpType type;
     bool jumpHeld = true;
 };

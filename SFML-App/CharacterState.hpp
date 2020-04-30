@@ -25,8 +25,9 @@ public:
     virtual void SwitchState(Character::CState state) = 0;
     virtual Character::CState GetState() = 0;
     
-public:
+protected:
     Character *character_;
+    int frame_;
 };
 
 #endif /* CharacterState_hpp */

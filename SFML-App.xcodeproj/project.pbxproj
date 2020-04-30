@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
+		264338C8245B8AC10047C2BE /* TurnaroundState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 264338C6245B8AC10047C2BE /* TurnaroundState.cpp */; };
 		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
 		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
 		2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6892457B27E0096E3E9 /* LandingLagState.cpp */; };
@@ -41,6 +42,8 @@
 /* Begin PBXFileReference section */
 		26384FEF2456358D00C966A1 /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
 		26384FF22456372400C966A1 /* PlatformEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlatformEntity.hpp; sourceTree = "<group>"; };
+		264338C6245B8AC10047C2BE /* TurnaroundState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TurnaroundState.cpp; sourceTree = "<group>"; };
+		264338C7245B8AC10047C2BE /* TurnaroundState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TurnaroundState.hpp; sourceTree = "<group>"; };
 		2682B67A245752D40096E3E9 /* DashState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DashState.cpp; sourceTree = "<group>"; };
 		2682B67B245752D40096E3E9 /* DashState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DashState.hpp; sourceTree = "<group>"; };
 		2682B6812457674E0096E3E9 /* GroundedState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GroundedState.hpp; sourceTree = "<group>"; };
@@ -148,6 +151,8 @@
 				2682B67A245752D40096E3E9 /* DashState.cpp */,
 				26FE2E352456484100051897 /* JumpsquatState.hpp */,
 				26FE2E342456484100051897 /* JumpsquatState.cpp */,
+				264338C7245B8AC10047C2BE /* TurnaroundState.hpp */,
+				264338C6245B8AC10047C2BE /* TurnaroundState.cpp */,
 			);
 			name = Grounded;
 			sourceTree = "<group>";
@@ -378,6 +383,7 @@
 				26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */,
 				2682B6942458B5650096E3E9 /* SpriteLoader.cpp in Sources */,
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
+				264338C8245B8AC10047C2BE /* TurnaroundState.cpp in Sources */,
 				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,
 				2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */,

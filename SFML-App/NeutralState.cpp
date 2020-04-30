@@ -20,12 +20,12 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     }
     
     if (input.IsPressed(2)) {
-        frame++;
-        std::cout << frame % 11 << std::endl;
+        frame_++;
+        std::cout << frame_ % 11 << std::endl;
     }
     
     float hyp = input.stick.hyp();
-    if (hyp >= DEAD_ZONE) {
+    if (hyp >= PlayerInput::DEAD_ZONE) {
         if (input.stick.inDirection(DOWN_T) &&
             character_->groundedData.stage->Type() == EntityType::PLATFORM) {
             // Fall through platform
@@ -42,7 +42,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
 void NeutralState::Tick() {
     character_->ApplyFriction();
     character_->ApplyVelocity();
-    character_->SetSprite(character_->GetSprite("dash", frame % 11));
+    character_->SetSprite(character_->GetSprite("dash", frame_ % 11));
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

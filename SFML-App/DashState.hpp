@@ -15,6 +15,7 @@ class DashState : public GroundedState {
 public:
     DashState(Character *ch, float angle, float x) : GroundedState(ch) {
         setDirInfluence(angle, x);
+        frame_ = 0;
     }
     ~DashState() {}
     
@@ -26,7 +27,6 @@ public:
 private:
     float dirInfluence_;
     void setDirInfluence(float angle, float x);
-    int frame_ = 0;
 };
 
 #endif /* DashState_hpp */

@@ -15,9 +15,9 @@ class PlatformEntity : public StageEntity {
 public:
     PlatformEntity(int id, sf::Vector2f pos) : StageEntity(id, pos) {}
     
-    void Tick() {}
-    void HandleCollision(const Entity &e1, sf::Vector2f pv) {}
-    EntityType Type() const { return PLATFORM; }
+    void Tick() override {}
+    void HandleCollision(const Entity &e1, sf::Vector2f pv) override {}
+    EntityType Type() const override { return PLATFORM; }
 };
 
 #endif /* PlatformEntity_hpp */

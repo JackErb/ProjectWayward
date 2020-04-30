@@ -56,14 +56,6 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     actionState_->HandleCollision(entity, pv);
 }
 
-int Character::Direction() const {
-    if (actionState_->GetState() == AIRBORNE) {
-        return airborneData.direction;
-    } else {
-        return groundedData.direction;
-    }
-}
-
 void Character::Jump(JumpType type, bool fullhop) {
     if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
@@ -116,7 +108,7 @@ void Character::Dash(float m) {
         return;
     }
     
-    groundedData.direction = m < 0 ? -1 : 1;
+    SetDirection(m < 0 ? -1 : 1);
         
     velocity_.x = m * attr.MaxGroundSpeed;
 }

@@ -14,10 +14,10 @@ void LandingLagState::ProcessInput(const PlayerInput &input) {
 }
 
 void LandingLagState::Tick() {
-    frames_--;
+    frame_--;
     character_->ApplyFriction();
     character_->ApplyVelocity();
-    if (frames_ == 0) {
+    if (frame_ == 0) {
         character_->SetActionState(new NeutralState(character_));
         return;
     }

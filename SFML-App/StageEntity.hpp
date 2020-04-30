@@ -15,9 +15,9 @@ class StageEntity : public Entity {
 public:
     StageEntity(int id, sf::Vector2f pos) : Entity(id, pos) {}
     
-    void Tick() {}
-    void HandleCollision(const Entity &e1, sf::Vector2f pv) {}
-    EntityType Type() const { return STAGE; }
+    void Tick() override {}
+    void HandleCollision(const Entity &e1, sf::Vector2f pv) override {}
+    EntityType Type() const override { return STAGE; }
 };
 
 #endif /* StageEntity_hpp */

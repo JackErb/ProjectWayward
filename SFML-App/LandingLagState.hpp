@@ -13,16 +13,15 @@
 
 class LandingLagState : public GroundedState {
 public:
-    LandingLagState(Character *ch, int frames) : GroundedState(ch), frames_(frames) {}
+    LandingLagState(Character *ch, int frames) : GroundedState(ch) {
+        frame_ = 0;
+    }
     ~LandingLagState() {}
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void HandleCollision(const Entity& e1, sf::Vector2f) override;
     void SwitchState(Character::CState s) override {}
-    
-private:
-    int frames_;
 };
 
 #endif /* LandingLagState_hpp */

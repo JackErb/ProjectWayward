@@ -13,8 +13,9 @@
 
 class NeutralState : public GroundedState {
 public:
-    NeutralState(Character *ch) : GroundedState(ch), fastfall(false) {
+    NeutralState(Character *ch) : GroundedState(ch) {
         ch->NullVelocityY();
+        frame_ = 0;
     }
     ~NeutralState() {}
     
@@ -22,11 +23,6 @@ public:
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void SwitchState(Character::CState state) override;
-    
-public:
-    int frame = 0;
-    const float DEAD_ZONE = 6.f;
-    bool fastfall;
 };
 
 #endif /* NeutralState_hpp */

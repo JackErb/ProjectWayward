@@ -25,12 +25,13 @@ void JumpsquatState::ProcessInput(const PlayerInput &input) {
 }
 
 void JumpsquatState::Tick() {
-    if (stateFrame_ >= 3) {
+    if (frame_ >= 3) {
         character_->SetActionState(new AirborneNeutralState(character_));
         character_->Jump(type, jumpHeld);
+        return;
     }
     
-    stateFrame_++;
+    frame_++;
 }
 
 void JumpsquatState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
