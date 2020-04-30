@@ -19,6 +19,11 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
+    if (input.IsPressed(2)) {
+        frame++;
+        std::cout << frame % 11 << std::endl;
+    }
+    
     float hyp = input.stick.hyp();
     if (hyp >= DEAD_ZONE) {
         if (input.stick.inDirection(DOWN_T) &&
@@ -37,6 +42,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
 void NeutralState::Tick() {
     character_->ApplyFriction();
     character_->ApplyVelocity();
+    character_->SetSprite(character_->GetSprite("dash", frame % 11));
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

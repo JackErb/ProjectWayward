@@ -22,9 +22,14 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
+    if (input.IsPressed(0) && input.stick.inDirection(UP_T)) {
+        character_->UpB();
+        return;
+    }
+    
     float a = input.stick.angle();
     float hyp = input.stick.hyp();
-    if (input.stick.inDirection(DOWN_T) && hyp > 50.f) {
+    if (input.stick.inDirection(DOWN_T) && hyp > 50.f && character_->Velocity().y > 0.f) {
         character_->FastFall();
     }
     
@@ -57,12 +62,16 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
             character_->NullVelocityY();
             character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
             character_->SetActionState(new LandingLagState(character_, 2));
+            int dir = character_->airborneData.direction;
+            character_->groundedData.direction = dir;
             return;
         } else if (abs(pv.x) > 0 && pv.y == 0) {
             if (pv.x < 0 && character_->input_->stick.inDirection(Direction::LEFT_T)) {
                 character_->WallJump(-1);
+                character_->airborneData.direction = -1;
             } else if (pv.x > 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)) {
                 character_->WallJump(1);
+                character_->airborneData.direction = 1;
             }
         }
     } else if (entity.Type() == PLATFORM) {
@@ -81,6 +90,8 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
                 
                 character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                 character_->SetActionState(new LandingLagState(character_, 2));
+                int dir = character_->airborneData.direction;
+                character_->groundedData.direction = dir;
                 return;
             }
         }

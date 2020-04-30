@@ -79,7 +79,7 @@ public:
         return a >= lo && a <= hi;
     }
     
-    constexpr static float DEAD_ZONE = 8.f;
+    constexpr static float DEAD_ZONE = 10.f;
     
 public:
     PlayerInput() : buttons() {}

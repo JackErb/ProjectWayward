@@ -59,11 +59,8 @@ public:
         }
     }
     
-    bool CheckBoundingBoxCollisionWithStage(Character *character) {
-        for (Entity *stage : stage_) {
-            if (Intersects(*character, *stage)) return true;
-        }
-        return false;
+    bool CheckBoundingBoxCollision(const Entity *e1, const Entity *e2) {
+        return Intersects(*e1, *e2);
     }
     
 private:

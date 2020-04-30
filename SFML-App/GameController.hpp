@@ -23,6 +23,21 @@
 class GameController {
 public:
     GameController(float w, float h);
+    ~GameController() {
+        for (sf::Texture *t : textures_) {
+            delete t;
+        }
+        
+        for (sf::Sprite* s : sprites_) {
+            delete s;
+        }
+        
+        for (Entity *e : entities_) {
+            if (e != &player_) {
+                delete e;
+            }
+        }
+    }
     
     void Tick();
     void ProcessInput(const PlayerInput &input);

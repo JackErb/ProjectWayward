@@ -103,6 +103,7 @@ private void UpdateControllerState(PlayerInput *input, unsigned int c) {
             if (sf::Joystick::isButtonPressed(0, i) && !contains) {
                 // This button was just pressed
                 input->buttons[i] = PlayerInput::Pressed;
+                cout << "Button: " << i << std::endl;
             } else if (!sf::Joystick::isButtonPressed(0, i) && contains) {
                 input->buttons[i] = PlayerInput::Released;
             }

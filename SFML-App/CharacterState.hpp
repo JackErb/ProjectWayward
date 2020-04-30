@@ -10,13 +10,14 @@
 #define CharacterState_hpp
 
 #include "Character.hpp"
+#include "MathHelper.hpp"
 
 class Character;
 
 class CharacterState {
 public:
     CharacterState(Character *ch) : character_(ch) {}
-    virtual ~CharacterState() {};
+    virtual ~CharacterState() {}
     
     virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) = 0;
     virtual void ProcessInput(const PlayerInput &input) = 0;

@@ -19,10 +19,11 @@ void AirdodgeState::Tick() {
     character_->ApplyVelocity();
     character_->ApplyFriction();
     if (PlayerInput::InDir(angle_, UP)) {
-        character_->ApplyGravity();
+        character_->ApplyGravity(0.85f);
+    } else if (!PlayerInput::InDir(angle_, DOWN)){
+        character_->ApplyGravity(0.2f);
     }
     
-    character_->ApplyGravity(0.4f);
     if (frame_ == 25) {
         character_->SetActionState(new AirborneNeutralState(character_));
         return;

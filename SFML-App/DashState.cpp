@@ -14,15 +14,7 @@
 
 void DashState::setDirInfluence(float a, float x) {
     if (fabs(x) > PlayerInput::DEAD_ZONE) {
-        if (PlayerInput::InRange(a, 1.f / 3.f * M_PI, 2.f / 3.f * M_PI)
-            || PlayerInput::InRange(a, -2.f / 3.f * M_PI, -1.f / 3.f * M_PI)) {
-            // Walk
-            
-            dirInfluence_ = x / 60.f;
-        } else {
-            dirInfluence_ = 1.f;
-            if (a >= M_PI / 2.f || a <= - M_PI / 2.f) dirInfluence_ *= -1;
-        }
+        dirInfluence_ = clamp(x / 55.f, -1.f, 1.f);
     } else {
         dirInfluence_ = 0.f;
     }
@@ -43,6 +35,9 @@ void DashState::ProcessInput(const PlayerInput &input) {
 }
 
 void DashState::Tick() {
+    character_->SetSprite(character_->GetSprite("dash", (frame_ / 4) % 11));
+    frame_++;
+                          
     if (abs(dirInfluence_) > 0.f) {
         character_->Dash(dirInfluence_);
     }

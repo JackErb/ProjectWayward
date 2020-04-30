@@ -24,6 +24,7 @@ public:
     void SwitchState(Character::CState state) override;
     
 public:
+    int frame = 0;
     const float DEAD_ZONE = 6.f;
     bool fastfall;
 };

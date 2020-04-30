@@ -11,6 +11,11 @@
 #include "PhysicsEngine.hpp"
 #include "AirborneNeutralState.hpp"
 
+Character::~Character() {
+    if (actionState_ != nullptr) delete actionState_;
+    if (cleanupState_ != nullptr) delete cleanupState_;
+}
+
 Character::Character(int id, sf::Vector2f vec) : Entity(id, vec), input_(nullptr) {
     SetActionState(new AirborneNeutralState(this));
 }
@@ -21,8 +26,8 @@ void Character::ProcessInput(const PlayerInput &input) {
 }
 
 void Character::Tick() {
-    if (Position().y > 1000) {
-        SetPosition({Position().x, -800});
+    if (Position().y > 1500) {
+        SetPosition({Position().x, -1000});
     }
     
     if (cleanupState_ != nullptr) {
@@ -36,7 +41,7 @@ void Character::Tick() {
         if (ftCount_ == 0) fallthrough_ = nullptr;
     }
 
-    if (actionState_->GetState() == GROUNDED && !engine->CheckBoundingBoxCollisionWithStage(this)) {
+    if (actionState_->GetState() == GROUNDED && !engine->CheckBoundingBoxCollision(this, groundedData.stage)) {
         actionState_->SwitchState(AIRBORNE);
         initAirborneData();
     }
@@ -51,10 +56,22 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     actionState_->HandleCollision(entity, pv);
 }
 
+int Character::Direction() const {
+    if (actionState_->GetState() == AIRBORNE) {
+        return airborneData.direction;
+    } else {
+        return groundedData.direction;
+    }
+}
+
 void Character::Jump(JumpType type, bool fullhop) {
     if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
         return;
+    }
+    
+    if (airborneData.fastfall) {
+        airborneData.fastfall = false;
     }
     
     float xv;
@@ -83,7 +100,6 @@ void Character::Jump(JumpType type, bool fullhop) {
             }
             break;
     }
-    // TODO: JumpState
     SetActionState(new AirborneNeutralState(this));
     velocity_.y = yv;
     velocity_.x = xv;
@@ -95,10 +111,12 @@ void Character::Dash(float m) {
         return;
     }
     
-    if (abs(m) > 1.01f) {
+    if (abs(m) > 1.f) {
         std::cerr << "INVALID DASH MODIFIER" << std::endl;
         return;
     }
+    
+    groundedData.direction = m < 0 ? -1 : 1;
         
     velocity_.x = m * attr.MaxGroundSpeed;
 }
@@ -106,6 +124,11 @@ void Character::Dash(float m) {
 void Character::Vector(float m) {
     if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
+        return;
+    }
+    
+    if (abs(m) > 1.f) {
+        std::cerr << "INVALID VECTOR MODIFIER" << std::endl;
         return;
     }
     
@@ -118,7 +141,6 @@ void Character::ApplyFriction() {
 }
 
 void Character::SetActionState(CharacterState *s) {
-    std::cerr << s->GetState() << std::endl;
     cleanupState_ = actionState_;
     actionState_ = s;
 }

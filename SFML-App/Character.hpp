@@ -16,6 +16,9 @@
 #include "Entity.hpp"
 #include "PlayerInput.hpp"
 #include "StageEntity.hpp"
+#include "SpriteLoader.hpp"
+
+using std::string;
 
 class CharacterState;
 
@@ -29,7 +32,7 @@ public:
     typedef struct CharacterAttributes {
         float GroundAccel = 2.5f;
         float MaxGroundSpeed = 25.f;
-        float GroundFriction = 0.88f;
+        float GroundFriction = 0.85f;
            
         float AirAccel = 3.0f;
         float MaxAirSpeed = 30.5f;
@@ -37,7 +40,7 @@ public:
            
         float Gravity = 3.4f;
         float MaxFallSpeed = 40.f;
-        float FastFallSpeed = 60.f;
+        float FastFallSpeed = 70.f;
         
         float DoubleJump = -65.f;
         float WallJump = -60.f;
@@ -52,11 +55,13 @@ public:
     } CState;
     
     typedef struct GroundedData {
+        int direction;
         const StageEntity *stage;
     } GroundedData;
     
     typedef struct AirborneData {
         int jumps;
+        int direction;
         bool airdodge;
         bool walljump;
         bool fastfall;
@@ -64,6 +69,7 @@ public:
     
 public:
     Character(int id, sf::Vector2f position);
+    ~Character();
     
     void ProcessInput(const PlayerInput &input);
     void Tick();
@@ -72,6 +78,7 @@ public:
     void SetActionState(CharacterState *s);
     EntityType Type() const { return CHARACTER; }
     sf::Vector2f Velocity() const { return velocity_; }
+    int Direction() const override;
     
     /* Methods involving action, and should only be called by the current actionState_ */
     void Jump(JumpType type, bool fullhop);
@@ -89,9 +96,21 @@ public:
     void FallthroughPlatform();
     void WallJump(int dir);
     void Airdodge();
+    void UpB() { velocity_.y = -80.f; }
+    
+    /* Animatiomns */
+    void SetAnimMap(AnimMap anims) {
+        anims_ = anims;
+    }
+    
+    sf::Sprite* GetSprite(string state, int frame) {
+        return anims_[state][frame];
+    }
     
 private:
     void initAirborneData() {
+        int dir = groundedData.direction;
+        airborneData.direction = dir;
         airborneData.jumps = 1;
         airborneData.walljump = true;
         airborneData.airdodge = true;
@@ -118,6 +137,8 @@ private:
     sf::Vector2f velocity_ = {0.f, 0.f};
     
     Attributes attr;
+    
+    AnimMap anims_;
 };
 
 #endif /* Character_hpp */

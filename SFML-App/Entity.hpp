@@ -30,7 +30,7 @@ class PhysicsEngine;
 class Entity {
 public:
     Entity(int id_, sf::Vector2f position) : id(id_), position_(position), engine(nullptr) {}
-    
+    virtual ~Entity() {}
     
     /* Game Processing Functions */
     virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) = 0;
@@ -89,6 +89,8 @@ public:
         }
         return res;
     }
+    
+    virtual int Direction() const { return 1; }
         
 public:
     int id;

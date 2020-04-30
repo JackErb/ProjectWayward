@@ -22,7 +22,7 @@ public:
         cameraOffset_ = {0.f, 0.f};
     }
     
-    void Render(sf::RenderWindow *window) {
+    void Tick() {
         for (Entity *e : *entities_) {
             // Calculate the sprite's absolute position in the window
             sf::Vector2f pos = e->Position();
@@ -30,24 +30,68 @@ public:
             pos *= scale;
             pos += windowOffset_;
             
+            if (e->Type() == EntityType::CHARACTER) {
+                e->Sprite()->setScale(0.1515 * scale, 0.1515 * scale);
+            } else {
+                e->Sprite()->setScale(scale, scale);
+            }
+            
             e->Sprite()->setPosition(pos);
-            e->Sprite()->setScale(scale, scale);
+            
+            int dir = e->Direction();
+            if (dir == -1) {
+                float w = e->Sprite()->getTextureRect().width * 0.1515;
+                e->Sprite()->scale(-1, 1);
+                e->Sprite()->move(w, 0);
+            }
+            
+            if (e->Type() == CHARACTER) {
+                if (e->Position().x > windowOffset_.x * 0.85f) {
+                    TransformCamera(-500, 0);
+                } else if (e->Position().x < windowOffset_.x * -0.85f) {
+                    TransformCamera(500, 0);
+                } else {
+                    TransformCamera(0, 0);
+                }
+            }
+        }
+        
+        if (cameraOffsetFinal_ != cameraOffset_) {
+            float a = atan2(- cameraOffset_.y + cameraOffsetFinal_.y,
+                            cameraOffsetFinal_.x - cameraOffset_.x);
+            cameraOffset_ += {cos(a) * cameraOffsetSpeed, sin(a) * cameraOffsetSpeed};
+            
+            if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {
+                cameraOffset_.x = cameraOffsetFinal_.x;
+                cameraOffset_.y = cameraOffsetFinal_.y;
+            }
+        }
+    }
+    
+
+    void Render(sf::RenderWindow *window) {
+        for (Entity *e : *entities_) {
             window->draw(*e->Sprite());
             
             // TODO: Don't draw if the sprite is off the screen
         }
     }
     
-    void TransformCamera(float x, float y) { cameraOffset_ += {x, y}; }
+    void TransformCamera(float x, float y) {
+        cameraOffsetFinal_ = {x, y};
+        
+    }
     void SetCameraOffset(float x, float y) { cameraOffset_ = {x, y}; }
     void SetScale(float s) { scale = s; }
     
 public:
-    float scale = 0.9f;
+    float scale = 0.65f;
     
 private:
     sf::Vector2f windowOffset_;
     sf::Vector2f cameraOffset_;
+    sf::Vector2f cameraOffsetFinal_;
+    const float cameraOffsetSpeed = 40;
     vector<Entity*> *entities_;
 };
 

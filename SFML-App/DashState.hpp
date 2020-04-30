@@ -26,6 +26,7 @@ public:
 private:
     float dirInfluence_;
     void setDirInfluence(float angle, float x);
+    int frame_ = 0;
 };
 
 #endif /* DashState_hpp */

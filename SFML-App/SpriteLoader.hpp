@@ -11,18 +11,24 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <unordered_map>
 #include <SFML/Graphics.hpp>
 
 using std::string;
 using std::vector;
+using std::unordered_map;
+
+typedef unordered_map<string, vector<sf::Sprite*>> AnimMap;
 
 class SpriteLoader {
 public:
-    static vector<sf::Sprite*> LoadAnimation(string name, int frames) {
-        vector<sf::Sprite*> res;
-        
-        return res;
-    }
+    typedef struct AnimationResult {
+        vector<sf::Texture*> textures_;
+        AnimMap anims;
+    } AnimationResult;
+    
+    static AnimationResult LoadAnimations(vector<string> names);
 };
 
 #endif /* SpriteLoader_hpp */
