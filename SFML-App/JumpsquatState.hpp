@@ -23,6 +23,8 @@ public:
     void Tick() override;
     void SwitchState(Character::CState state) override {}
     
+    CharacterStateType GetStateType() const override { return Jumpsquat; }
+    
 private:
     Character::JumpType type;
     bool jumpHeld = true;

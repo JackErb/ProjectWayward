@@ -21,7 +21,7 @@ public:
     virtual void ProcessInput(const PlayerInput &input) override = 0;
     virtual void Tick() override = 0;
     virtual void SwitchState(Character::CState state) override = 0;
-    Character::CState GetState() override final {
+    Character::CState GetState() const override final {
         return Character::GROUNDED;
     }
 };

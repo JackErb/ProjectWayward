@@ -71,7 +71,6 @@ GameController::GameController(float w, float h) : player_(0, {-50.f, -500.f}), 
 
 void GameController::Tick() {
     engine_.Update();
-    camera_.Tick();
 }
 
 void GameController::ProcessInput(const PlayerInput &input) {
@@ -79,5 +78,13 @@ void GameController::ProcessInput(const PlayerInput &input) {
 }
 
 void GameController::Render(sf::RenderWindow *window) {
+    camera_.Tick();
     camera_.Render(window);
+}
+
+void GameController::Rollback() {
+    // TODO: Rollback GameController's internal state
+    
+    
+    engine_.Rollback();
 }

@@ -63,6 +63,8 @@ public:
         return Intersects(*e1, *e2);
     }
     
+    void Rollback();
+    
 private:
     pair<bool, sf::Vector2f> checkCollision(const Entity &e1, const Entity &e2) {
         for (const Polygon &p1 : e1.Polygons()) {

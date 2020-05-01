@@ -20,6 +20,6 @@ void AirborneMoveState::HandleCollision(const Entity &e, sf::Vector2f pv) {
     
 }
 
-void AirborneMoveState::SwitchStates(Character::CState state) {
+void AirborneMoveState::SwitchState(Character::CState state) {
     
 }

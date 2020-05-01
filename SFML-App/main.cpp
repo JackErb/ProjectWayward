@@ -43,6 +43,8 @@ int main(int, char const**)
     const float WIDTH = 2200;
     const float HEIGHT = 1600;
     
+    bool pause = false;
+    
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Game");
     window.setFramerateLimit(60);
@@ -81,8 +83,21 @@ int main(int, char const**)
         playerInput.Tick();
         UpdateControllerState(&playerInput, 0);
         
-        controller.ProcessInput(playerInput);
-        controller.Tick();
+        if (playerInput.IsPressed(2)) {
+            pause = !pause;
+        }
+        
+        if (!pause) {
+            controller.ProcessInput(playerInput);
+            controller.Tick();
+        } else {
+            // Paused
+            
+            if (playerInput.IsPressed(3)) {
+                controller.Rollback();
+            }
+        }
+        
         controller.Render(&window);
         
         // Update the window

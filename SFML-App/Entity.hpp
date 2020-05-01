@@ -13,6 +13,7 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <limits>
+#include <list>
 
 typedef std::vector<sf::Vector2f> Polygon;
 
@@ -29,18 +30,38 @@ class PhysicsEngine;
 
 class Entity {
 public:
-    Entity(int id_, sf::Vector2f position) : id(id_), position_(position), engine(nullptr) {}
+    Entity(int id_, sf::Vector2f position) : id(id_), engine(nullptr) {
+        data.position_ = position;
+    }
     virtual ~Entity() {}
     
     /* Game Processing Functions */
     virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) = 0;
     virtual void Tick() = 0;
     
+    virtual void RollbackTick() {
+        GameData *copy = new GameData();
+        *copy = data;
+        rollback_.push_front(copy);
+        if (rollback_.size() > rbFrames) {
+            delete rollback_.back();
+            rollback_.pop_back();
+        }
+    }
+    
+    virtual void Rollback() {
+        data = *rollback_.front();
+        rollback_.pop_front();
+    }
+    
     /* Getters, Setters, & Mutators */
     virtual EntityType Type() const = 0;
     
     Rectangle BoundingBox() const {
-        if (polygons_.size() == 0) return {position_.x, position_.y, 0, 0};
+        float px = data.position_.x;
+        float py = data.position_.y;
+        
+        if (polygons_.size() == 0) return {px, py, 0, 0};
         
         float min_x = std::numeric_limits<float>::max(),
               max_x = std::numeric_limits<float>::min(),
@@ -55,26 +76,26 @@ public:
             }
         }
         
-        return {position_.x + min_x - 1, position_.y + min_y - 1, max_x - min_x + 2, max_y - min_y + 2};
+        return {px + min_x - 1, py + min_y - 1, max_x - min_x + 2, max_y - min_y + 2};
     }
     
     void Transform(sf::Vector2f v) {
-        SetPosition(position_ + v);
+        SetPosition(data.position_ + v);
     }
     
     // ROLLBACK
     void SetPosition(sf::Vector2f pos) {
-        position_ = pos;
+        data.position_ = pos;
     }
     
-    sf::Vector2f Position() const { return position_; }
+    sf::Vector2f Position() const { return data.position_; }
     
     // ROLLBACK
     void SetSprite(sf::Sprite *s) {
-        sprite_ = s;
+        data.sprite_ = s;
     }
     
-    sf::Sprite* Sprite() const { return sprite_; }
+    sf::Sprite* Sprite() const { return data.sprite_; }
     
     // ROLLBACK
     void SetPolygons(std::vector<Polygon> polygons) { polygons_ = polygons; }
@@ -84,8 +105,8 @@ public:
         for (int i = 0; i < polygons_.size(); i++) {
             Polygon polygon;
             for (int j = 0; j < polygons_[i].size(); j++) {
-                sf::Vector2f vec(polygons_[i][j].x + position_.x,
-                                 polygons_[i][j].y + position_.y);
+                sf::Vector2f vec(polygons_[i][j].x + data.position_.x,
+                                 polygons_[i][j].y + data.position_.y);
                 polygon.push_back(vec);
             }
             res.push_back(polygon);
@@ -105,12 +126,19 @@ public:
     PhysicsEngine *engine;
     
 private:
+    struct GameData {
+        // The top left corner of this player's bounding box
+        sf::Vector2f position_;
+        sf::Sprite *sprite_;
+    };
+    
+    GameData data;
+    std::list<GameData*> rollback_;
+    int rbFrames = 30;
+    
     // Each polygon is a vector of (x,y) pairs describing the vertices in the
     // counterclockwise direction of this shape, where (0,0) is the entity's center
     std::vector<Polygon> polygons_;
-    // The top left corner of this player's bounding box
-    sf::Vector2f position_;
-    sf::Sprite *sprite_;
 };
 
 #endif /* Entity_hpp */

@@ -15,10 +15,12 @@ class AirborneMoveState : public AirborneState {
 public:
     AirborneMoveState(Character *ch) : AirborneState(ch) {}
     
-    void ProcessInput(const PlayerInput &input);
-    void Tick();
-    void HandleCollision(const Entity &e, sf::Vector2f pv);
-    void SwitchStates(Character::CState state);
+    void ProcessInput(const PlayerInput &input) override;
+    void Tick() override;
+    void HandleCollision(const Entity &e, sf::Vector2f pv) override;
+    void SwitchState(Character::CState state) override;
+    
+    CharacterStateType GetStateType() const override { return AirborneMove; }
 };
 
 #endif /* AirborneMoveState_hpp */

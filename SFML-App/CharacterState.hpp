@@ -11,6 +11,9 @@
 
 #include "Character.hpp"
 #include "MathHelper.hpp"
+#include <list>
+
+using std::list;
 
 class Character;
 
@@ -23,11 +26,32 @@ public:
     virtual void ProcessInput(const PlayerInput &input) = 0;
     virtual void Tick() = 0;
     virtual void SwitchState(Character::CState state) = 0;
-    virtual Character::CState GetState() = 0;
+    virtual Character::CState GetState() const = 0;
+    virtual CharacterStateType GetStateType() const = 0;
+    
+    virtual void RollbackTick() {
+        rollback_.push_front(frame_);
+        if (rollback_.size() > rbFrames) {
+            rollback_.pop_back();
+        }
+    }
+    
+    virtual void Rollback() {
+        frame_ = rollback_.front();
+        rollback_.pop_front();
+    }
+    
+    void SetFrame(int f) { frame_ = f; }
+    int Frame() const { return frame_; }
     
 protected:
+    list<int> rollback_;
+    int rbFrames = 30;
+    
     Character *character_;
-    int frame_;
+    int frame_ = 0;
+    
+    friend class Character;
 };
 
 #endif /* CharacterState_hpp */

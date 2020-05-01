@@ -23,6 +23,8 @@ public:
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void SwitchState(Character::CState state) override;
+    
+    CharacterStateType GetStateType() const override { return Dash; }
 
 private:
     float dirInfluence_;

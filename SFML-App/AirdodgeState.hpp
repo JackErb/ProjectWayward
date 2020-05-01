@@ -24,8 +24,10 @@ public:
     void HandleCollision(const Entity &e, sf::Vector2f pv) override;
     void SwitchState(Character::CState state) override;
     
+    CharacterStateType GetStateType() const override { return Airdodge; }
+    
 private:
-    int angle_;
+    const int angle_;
 };
 
 #endif /* AirdodgeState_hpp */

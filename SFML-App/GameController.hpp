@@ -43,6 +43,8 @@ public:
     void ProcessInput(const PlayerInput &input);
     void Render(sf::RenderWindow *window);
     
+    void Rollback();
+    
     void AddCharacter(Character *ch) {
         engine_.AddCharacter(ch);
         entities_.push_back(ch);

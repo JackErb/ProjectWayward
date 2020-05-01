@@ -22,6 +22,8 @@ public:
     void Tick() override;
     void HandleCollision(const Entity& e1, sf::Vector2f) override;
     void SwitchState(Character::CState s) override;
+    
+    CharacterStateType GetStateType() const override { return LandingLag; }
 };
 
 #endif /* LandingLagState_hpp */

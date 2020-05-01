@@ -19,10 +19,12 @@ public:
         frame_ = 7;
     }
     
-    void ProcessInput(const PlayerInput &input);
-    void Tick();
-    void HandleCollision(const Entity &e, sf::Vector2f pv);
-    void SwitchState(Character::CState state);
+    void ProcessInput(const PlayerInput &input) override;
+    void Tick() override;
+    void HandleCollision(const Entity &e, sf::Vector2f pv) override;
+    void SwitchState(Character::CState state) override;
+    
+    CharacterStateType GetStateType() const override { return Turnaround; }
 };
 
 #endif /* TurnaroundState_hpp */

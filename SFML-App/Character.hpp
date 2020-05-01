@@ -12,6 +12,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include <list>
 
 #include "Entity.hpp"
 #include "PlayerInput.hpp"
@@ -19,9 +20,15 @@
 #include "SpriteLoader.hpp"
 
 using std::string;
-using std::vector;
+using std::list;
 
 class CharacterState;
+
+typedef enum CharacterStateType {
+    LandingLag, Neutral, Dash, Jumpsquat, Turnaround,
+    AirborneNeutral, Airdodge, AirborneMove
+} CharacterStateType;
+
 
 class Character : public Entity {
 public:
@@ -78,19 +85,21 @@ public:
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    sf::Vector2f Velocity() const { return data->velocity_; }
-    int Direction() const override { return data->direction_; }
+    sf::Vector2f Velocity() const { return data.velocity_; }
+    int Direction() const override { return data.direction_; }
     sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
-    const StageEntity *Stage() const { return data->groundedData.stage; }
-    int Jumps() const { return data->airborneData.jumps; }
-    bool IsFastFalling() const  { return data->airborneData.fastfall; }
-    bool HasAirdodge() const { return data->airborneData.airdodge; }
+    const StageEntity *Stage() const { return data.groundedData.stage; }
+    int Jumps() const { return data.airborneData.jumps; }
+    bool IsFastFalling() const  { return data.airborneData.fastfall; }
+    bool HasAirdodge() const { return data.airborneData.airdodge; }
     
     
     /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void RollbackTick() override;
+    void Rollback() override;
     
 
     
@@ -99,31 +108,31 @@ public:
      * ALL OF THESE METHODS NEED TO BE ABLE TO ROLL BACK */
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
-    void FastFall() { data->velocity_.y = attr.FastFallSpeed; data->airborneData.fastfall = true; }
-    void NullVelocityY() { data->velocity_.y = 0; }
-    void NullVelocityX() { data->velocity_.x = 0; }
+    void FastFall() { data.velocity_.y = attr.FastFallSpeed; data.airborneData.fastfall = true; }
+    void NullVelocityY() { data.velocity_.y = 0; }
+    void NullVelocityX() { data.velocity_.x = 0; }
     void Dash(float m);
     void Vector(float angle);
     void ApplyGravity(float m = 1.f) {
-        data->velocity_.y += m * attr.Gravity;
-        data->velocity_.y = fmin(attr.MaxFallSpeed, data->velocity_.y);
+        data.velocity_.y += m * attr.Gravity;
+        data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
     }
-    void ApplyVelocity() { Transform(data->velocity_); }
+    void ApplyVelocity() { Transform(data.velocity_); }
     void ApplyFriction();
     void FallthroughPlatform();
     void WallJump(int dir);
     void Airdodge();
-    void UpB() { data->velocity_.y = -80.f; }
-    void Turnaround() { data->direction_ *= -1; }
-    void SetDirection(int dir) { data->direction_ = dir; }
-    void SetStage(const StageEntity *s) { data->groundedData.stage = s; }
+    void UpB() { data.velocity_.y = -80.f; }
+    void Turnaround() { data.direction_ *= -1; }
+    void SetDirection(int dir) { data.direction_ = dir; }
+    void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     
 private:
     void initAirborneData() {
-        data->airborneData.jumps = 1;
-        data->airborneData.walljump = true;
-        data->airborneData.airdodge = true;
-        data->airborneData.fastfall = false;
+        data.airborneData.jumps = 1;
+        data.airborneData.walljump = true;
+        data.airborneData.airdodge = true;
+        data.airborneData.fastfall = false;
     }
     
 public:
@@ -133,10 +142,11 @@ public:
 private:
     struct GameData {
         CharacterState *actionState_ = nullptr;
-        const Entity *fallthrough_ = nullptr;
-        int ftCount_ = 0;
+        
         sf::Vector2f velocity_ = {0.f, 0.f};
         int direction_ = 1;
+        const Entity *fallthrough_ = nullptr;
+        int ftCount_ = 0;
         
         union {
             GroundedData groundedData;
@@ -145,10 +155,10 @@ private:
     };
     
     // Pointer to the current game data state.
-    GameData *data;
+    GameData data;
     
-    vector<GameData> rollback_;
-    int rbFrames_ = 10;
+    list<GameData*> rollback_;
+    int rbFrames_ = 30;
     
     const Attributes attr;
     AnimMap anims_;
