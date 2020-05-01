@@ -27,7 +27,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     float hyp = input.stick.hyp();
     if (hyp >= PlayerInput::DEAD_ZONE) {
         if (input.stick.inDirection(DOWN_T) &&
-            character_->groundedData.stage->Type() == EntityType::PLATFORM) {
+            character_->Stage()->Type() == EntityType::PLATFORM) {
             // Fall through platform
             character_->FallthroughPlatform();
             character_->SetActionState(new AirborneNeutralState(character_));

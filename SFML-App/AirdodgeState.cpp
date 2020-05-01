@@ -38,7 +38,7 @@ void AirdodgeState::HandleCollision(const Entity &e, sf::Vector2f pv) {
         if (pv.x == 0 && pv.y < 0 && character_->Velocity().y > 0) {
             // Land on the stage
             character_->NullVelocityY();
-            character_->groundedData.stage = dynamic_cast<const StageEntity*>(&e);
+            character_->SetStage(dynamic_cast<const StageEntity*>(&e));
             character_->SetActionState(new LandingLagState(character_, 5));
             return;
         } else if (abs(pv.x) > 0 && pv.y == 0) {
@@ -61,7 +61,7 @@ void AirdodgeState::HandleCollision(const Entity &e, sf::Vector2f pv) {
                 // Apply the push vector to prevent overlap
                 character_->Transform(pv);
                 
-                character_->groundedData.stage = dynamic_cast<const StageEntity*>(&e);
+                character_->SetStage(dynamic_cast<const StageEntity*>(&e));
                 character_->SetActionState(new LandingLagState(character_, 5));
                 return;
             }

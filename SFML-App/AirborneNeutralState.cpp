@@ -12,11 +12,11 @@
 #include "AirdodgeState.hpp"
 
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3) && character_->airborneData.jumps > 0) {
+    if (input.IsPressed(3) && character_->Jumps() > 0) {
         character_->Jump(Character::DJUMP, true);
     }
     
-    if (input.IsPressed(7) && character_->airborneData.airdodge) {
+    if (input.IsPressed(7) && character_->HasAirdodge()) {
         character_->SetActionState(new AirdodgeState(character_, input.stick.angle()));
         return;
     }
@@ -42,7 +42,7 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
 }
 
 void AirborneNeutralState::Tick() {
-    if (!character_->airborneData.fastfall) {
+    if (!character_->IsFastFalling()) {
         character_->ApplyGravity();
     } else {
         character_->FastFall();

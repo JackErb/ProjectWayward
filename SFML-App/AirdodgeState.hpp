@@ -15,7 +15,7 @@ class AirdodgeState : public AirborneState {
 public:
     AirdodgeState(Character *ch, float angle) : AirborneState(ch), angle_(angle) {
         character_->Airdodge();
-        character_->airborneData.fastfall = false;
+        // character_->airborneData.fastfall = false;
         frame_ = 0;
     }
     

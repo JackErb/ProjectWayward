@@ -19,6 +19,7 @@
 #include "SpriteLoader.hpp"
 
 using std::string;
+using std::vector;
 
 class CharacterState;
 
@@ -77,9 +78,13 @@ public:
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    sf::Vector2f Velocity() const { return velocity_; }
-    int Direction() const override { return direction_; }
+    sf::Vector2f Velocity() const { return data->velocity_; }
+    int Direction() const override { return data->direction_; }
     sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
+    const StageEntity *Stage() const { return data->groundedData.stage; }
+    int Jumps() const { return data->airborneData.jumps; }
+    bool IsFastFalling() const  { return data->airborneData.fastfall; }
+    bool HasAirdodge() const { return data->airborneData.airdodge; }
     
     
     /* Game Processing */
@@ -94,56 +99,59 @@ public:
      * ALL OF THESE METHODS NEED TO BE ABLE TO ROLL BACK */
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
-    void FastFall() { velocity_.y = attr.FastFallSpeed; airborneData.fastfall = true; }
-    void NullVelocityY() { velocity_.y = 0; }
-    void NullVelocityX() { velocity_.x = 0; }
+    void FastFall() { data->velocity_.y = attr.FastFallSpeed; data->airborneData.fastfall = true; }
+    void NullVelocityY() { data->velocity_.y = 0; }
+    void NullVelocityX() { data->velocity_.x = 0; }
     void Dash(float m);
     void Vector(float angle);
     void ApplyGravity(float m = 1.f) {
-        velocity_.y += m * attr.Gravity;
-        velocity_.y = fmin(attr.MaxFallSpeed, velocity_.y);
+        data->velocity_.y += m * attr.Gravity;
+        data->velocity_.y = fmin(attr.MaxFallSpeed, data->velocity_.y);
     }
-    void ApplyVelocity() { Transform(velocity_); }
+    void ApplyVelocity() { Transform(data->velocity_); }
     void ApplyFriction();
     void FallthroughPlatform();
     void WallJump(int dir);
     void Airdodge();
-    void UpB() { velocity_.y = -80.f; }
-    void Turnaround() { direction_ *= -1; }
-    void SetDirection(int dir) { direction_ = dir; }
+    void UpB() { data->velocity_.y = -80.f; }
+    void Turnaround() { data->direction_ *= -1; }
+    void SetDirection(int dir) { data->direction_ = dir; }
+    void SetStage(const StageEntity *s) { data->groundedData.stage = s; }
     
 private:
     void initAirborneData() {
-        airborneData.jumps = 1;
-        airborneData.walljump = true;
-        airborneData.airdodge = true;
-        airborneData.fastfall = false;
+        data->airborneData.jumps = 1;
+        data->airborneData.walljump = true;
+        data->airborneData.airdodge = true;
+        data->airborneData.fastfall = false;
     }
     
 public:
     // The input for this frame
     const PlayerInput* input_;
     
-    union {
-        GroundedData groundedData;
-        AirborneData airborneData;
+private:
+    struct GameData {
+        CharacterState *actionState_ = nullptr;
+        const Entity *fallthrough_ = nullptr;
+        int ftCount_ = 0;
+        sf::Vector2f velocity_ = {0.f, 0.f};
+        int direction_ = 1;
+        
+        union {
+            GroundedData groundedData;
+            AirborneData airborneData;
+        };
     };
     
-private:
-    CharacterState *actionState_ = nullptr;
-    CharacterState *cleanupState_ = nullptr;
-    unsigned int jumps_;
+    // Pointer to the current game data state.
+    GameData *data;
     
-    const Entity *fallthrough_ = nullptr;
-    int ftCount_;
-    
-    sf::Vector2f velocity_ = {0.f, 0.f};
+    vector<GameData> rollback_;
+    int rbFrames_ = 10;
     
     const Attributes attr;
-    
     AnimMap anims_;
-    
-    int direction_;
 };
 
 #endif /* Character_hpp */
