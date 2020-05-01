@@ -123,7 +123,7 @@ vector<sf::Vector2f> get_orthogonals(const Polygon &p1, const Polygon &p2) {
         // The closest point in p2 to p1
         sf::Vector2f closest;
         float dist = std::numeric_limits<float>::max();
-        if (p2.size() == 2) { closest = p1[0]; }
+        if (p2.size() == 2) { closest = p2[0]; }
         else {
             for (const sf::Vector2f &v : p2) {
                 float d = pow(v.x - p1[0].x, 2) + pow(v.y - p1[0].y, 2);
@@ -149,7 +149,7 @@ vector<sf::Vector2f> get_orthogonals(const Polygon &p1, const Polygon &p2) {
         // The closest point in p1 to p2
         sf::Vector2f closest;
         float dist = std::numeric_limits<float>::max();
-        if (p1.size() == 2) { closest = p2[0]; }
+        if (p1.size() == 2) { closest = p1[0]; }
         else {
             for (const sf::Vector2f &v : p1) {
                 float d = pow(v.x - p2[0].x, 2) + pow(v.y - p2[0].y, 2);

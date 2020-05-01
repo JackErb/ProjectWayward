@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
 		264338C8245B8AC10047C2BE /* TurnaroundState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 264338C6245B8AC10047C2BE /* TurnaroundState.cpp */; };
+		264338D1245CE01C0047C2BE /* NetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 264338CF245CE01C0047C2BE /* NetworkController.cpp */; };
 		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
 		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
 		2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6892457B27E0096E3E9 /* LandingLagState.cpp */; };
@@ -45,6 +46,8 @@
 		264338C6245B8AC10047C2BE /* TurnaroundState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TurnaroundState.cpp; sourceTree = "<group>"; };
 		264338C7245B8AC10047C2BE /* TurnaroundState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TurnaroundState.hpp; sourceTree = "<group>"; };
 		264338CB245CA68E0047C2BE /* BlankEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlankEntity.hpp; sourceTree = "<group>"; };
+		264338CF245CE01C0047C2BE /* NetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkController.cpp; sourceTree = "<group>"; };
+		264338D0245CE01C0047C2BE /* NetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NetworkController.hpp; sourceTree = "<group>"; };
 		2682B67A245752D40096E3E9 /* DashState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DashState.cpp; sourceTree = "<group>"; };
 		2682B67B245752D40096E3E9 /* DashState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DashState.hpp; sourceTree = "<group>"; };
 		2682B6812457674E0096E3E9 /* GroundedState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GroundedState.hpp; sourceTree = "<group>"; };
@@ -138,6 +141,15 @@
 				26B08BA42456025500E86352 /* Entities */,
 			);
 			name = Game;
+			sourceTree = "<group>";
+		};
+		264338CE245CE0040047C2BE /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				264338D0245CE01C0047C2BE /* NetworkController.hpp */,
+				264338CF245CE01C0047C2BE /* NetworkController.cpp */,
+			);
+			name = Network;
 			sourceTree = "<group>";
 		};
 		2682B68C2457B77D0096E3E9 /* Airborne */ = {
@@ -254,6 +266,7 @@
 		26DE8452245368AD003D05FE /* SFML-App */ = {
 			isa = PBXGroup;
 			children = (
+				264338CE245CE0040047C2BE /* Network */,
 				26B08BA32456024700E86352 /* Setup */,
 				264338C9245BBA460047C2BE /* Game */,
 				26DE845A245368AD003D05FE /* Resources */,
@@ -390,6 +403,7 @@
 				26D1489B245949EC0098DD6A /* MathHelper.cpp in Sources */,
 				26DE846A24537D4A003D05FE /* GameController.cpp in Sources */,
 				26D148952458F3050098DD6A /* AirdodgeState.cpp in Sources */,
+				264338D1245CE01C0047C2BE /* NetworkController.cpp in Sources */,
 				26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */,
 				2682B6942458B5650096E3E9 /* SpriteLoader.cpp in Sources */,
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,

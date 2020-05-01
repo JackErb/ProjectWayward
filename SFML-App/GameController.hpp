@@ -19,6 +19,7 @@
 #include "Character.hpp"
 #include "PlatformEntity.hpp"
 #include "CameraController.hpp"
+#include "NetworkController.hpp"
 
 class GameController {
 public:
@@ -63,6 +64,7 @@ private:
     std::vector<sf::Sprite*> sprites_;
     std::vector<Entity*> entities_;
     
+    NetworkController network_;
 };
 
 #endif /* GameController_hpp */

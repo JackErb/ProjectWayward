@@ -64,12 +64,9 @@ void Character::RollbackTick() {
     if (rollback_.size() > rbFrames_) {
         // Clean up old states
         GameData *old = rollback_.back();
-        if (data.actionState_ != old->actionState_ && old->actionState_ != nullptr) {
-            auto it = rollback_.end();
-            it--;
-            for ( ; (*it)->actionState_ == old->actionState_; it--) {
-                (*it)->actionState_ = nullptr;
-            }
+        auto it = rollback_.end();
+        it--;
+        if (data.actionState_ != old->actionState_ && (*it)->actionState_ != old->actionState_) {
             delete old->actionState_;
         }
         delete old;
