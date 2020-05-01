@@ -52,17 +52,7 @@ void AirborneNeutralState::Tick() {
 
 void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     if (entity.Type() == STAGE) {
-        // Apply the push vector to prevent overlap
-        character_->Transform(pv);
-        
-        if (pv.x == 0 && pv.y < 0 && character_->Velocity().y > 0) {
-            // Land on the stage
-            character_->NullVelocityX();
-            character_->NullVelocityY();
-            character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
-            character_->SetActionState(new LandingLagState(character_, 2));
-            return;
-        } else if (abs(pv.x) > 0 && pv.y == 0) {
+        if (abs(pv.x) > 0 && pv.y == 0) {
             if (pv.x < 0 && character_->input_->stick.inDirection(Direction::LEFT_T)) {
                 character_->WallJump(-1);
                 character_->SetDirection(-1);
@@ -71,24 +61,16 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
                 character_->SetDirection(1);
             }
         }
-    } else if (entity.Type() == PLATFORM) {
-        if (pv.x == 0 && pv.y < 0) {
-            // The character collided with the platform. Check if the character
-            // is above the platform and falling down
-            float vy = character_->Velocity().y;
-            Rectangle b = character_->BoundingBox();
-            float py = b.y + b.h;
-            if (vy > 0 && py - vy - 2.f < entity.Position().y) {
-                // Land on the platform
-                character_->NullVelocityX();
-                character_->NullVelocityY();
-                // Apply the push vector to prevent overlap
-                character_->Transform(pv);
-                
-                character_->groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
-                character_->SetActionState(new LandingLagState(character_, 2));
-                return;
-            }
-        }
+    }
+}
+
+void AirborneNeutralState::SwitchState(Character::CState s) {
+    if (s == Character::AIRBORNE) {
+        std::cerr << "ATTEMPT TO SWITCH TO AIRBORNE WHILE AIRBORNENEUTRAL" << std::endl;
+    } else if (s == Character::GROUNDED) {
+        // Land on stage/platform
+        character_->NullVelocityX();
+        character_->SetActionState(new LandingLagState(character_, 2));
+        return;
     }
 }

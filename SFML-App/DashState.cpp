@@ -11,13 +11,25 @@
 #include "NeutralState.hpp"
 #include "AirborneNeutralState.hpp"
 #include "JumpsquatState.hpp"
+#include "TurnaroundState.hpp"
 
-void DashState::setDirInfluence(float a, float x) {
+int sign(float f) {
+    return f < 0.f ? -1 : 1;
+}
+
+bool DashState::setDirInfluence(float a, float x) {
     if (fabs(x) > PlayerInput::DEAD_ZONE) {
+        float old = dirInfluence_;
         dirInfluence_ = clamp(x / 55.f, -1.f, 1.f);
+        
+        if (sign(old) != sign(dirInfluence_)) {
+            return false;
+        }
     } else {
         dirInfluence_ = 0.f;
     }
+            
+    return true;
 }
 
 void DashState::ProcessInput(const PlayerInput &input) {
@@ -31,7 +43,12 @@ void DashState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    setDirInfluence(input.stick.angle(), input.stick.xAxis);
+    bool res = setDirInfluence(input.stick.angle(), input.stick.xAxis);
+    if (!res) {
+        // The player inputted the opposite direction. Only turnaround
+        // If the hyp is not super small
+        character_->SetActionState(new TurnaroundState(character_));
+    }
 }
 
 void DashState::Tick() {

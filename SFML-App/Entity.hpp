@@ -22,7 +22,7 @@ struct Rectangle {
 };
 
 typedef enum EntityType {
-    CHARACTER, STAGE, PLATFORM
+    CHARACTER, STAGE, PLATFORM, DECORATION
 } EntityType;
 
 class PhysicsEngine;
@@ -62,18 +62,21 @@ public:
         SetPosition(position_ + v);
     }
     
+    // ROLLBACK
     void SetPosition(sf::Vector2f pos) {
         position_ = pos;
     }
     
     sf::Vector2f Position() const { return position_; }
     
+    // ROLLBACK
     void SetSprite(sf::Sprite *s) {
         sprite_ = s;
     }
     
-    sf::Sprite* Sprite() { return sprite_; }
-        
+    sf::Sprite* Sprite() const { return sprite_; }
+    
+    // ROLLBACK
     void SetPolygons(std::vector<Polygon> polygons) { polygons_ = polygons; }
     
     std::vector<Polygon> Polygons() const {

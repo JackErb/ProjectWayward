@@ -12,7 +12,12 @@
 #include "GroundedState.hpp"
 
 class TurnaroundState : public GroundedState {
-    TurnaroundState(Character *ch) : GroundedState(ch) {}
+public:
+    TurnaroundState(Character *ch) : GroundedState(ch) {
+        character_->NullVelocityX();
+        character_->Turnaround();
+        frame_ = 7;
+    }
     
     void ProcessInput(const PlayerInput &input);
     void Tick();

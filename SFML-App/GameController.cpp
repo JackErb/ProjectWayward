@@ -18,6 +18,7 @@
 #include "Entity.hpp"
 #include "ResourcePath.hpp"
 #include "SpriteLoader.hpp"
+#include "BlankEntity.hpp"
 
 using std::list;
 using std::cout;
@@ -58,6 +59,9 @@ GameController::GameController(float w, float h) : player_(0, {-50.f, -500.f}), 
     sf::Sprite *s2 = new sf::Sprite(*pltexture);
     sprites_.push_back(s2);
     platform->SetSprite(s2);
+    
+    /*BlankEntity *b = new BlankEntity(4, {-200.f, 0.f});
+    b->SetPolygons({{{0.f,0.f}, {40.f, 0.f}}});*/
                   
     engine_ = PhysicsEngine();
     AddCharacter(&player_);

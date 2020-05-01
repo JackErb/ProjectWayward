@@ -10,6 +10,9 @@
 #include "NeutralState.hpp"
 #include "PhysicsEngine.hpp"
 #include "AirborneNeutralState.hpp"
+#include "LandingLagState.hpp"
+#include "StageEntity.hpp"
+#include "PlatformEntity.hpp"
 
 Character::~Character() {
     if (actionState_ != nullptr) delete actionState_;
@@ -26,24 +29,32 @@ void Character::ProcessInput(const PlayerInput &input) {
 }
 
 void Character::Tick() {
+    // Teleport back above stage
     if (Position().y > 1500) {
         SetPosition({Position().x, -1000});
     }
     
+    // Cleanup old state
     if (cleanupState_ != nullptr) {
         delete cleanupState_;
         cleanupState_ = nullptr;
     }
-    
-    if (actionState_->GetState() == AIRBORNE &&
-        fallthrough_ != nullptr)  {
-        ftCount_--;
-        if (ftCount_ == 0) fallthrough_ = nullptr;
-    }
 
-    if (actionState_->GetState() == GROUNDED && !engine->CheckBoundingBoxCollision(this, groundedData.stage)) {
-        actionState_->SwitchState(AIRBORNE);
-        initAirborneData();
+    // Do state dependent actions
+    switch (actionState_->GetState()) {
+        case AIRBORNE:
+            if (fallthrough_ != nullptr)  {
+                ftCount_--;
+                if (ftCount_ == 0) fallthrough_ = nullptr;
+            }
+            
+            break;
+        case GROUNDED:
+            if (!engine->CheckBoundingBoxCollision(this, groundedData.stage)) {
+                actionState_->SwitchState(AIRBORNE);
+                initAirborneData();
+            }
+            break;
     }
     
     actionState_->Tick();
@@ -53,6 +64,39 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     if (fallthrough_ != nullptr && &entity == fallthrough_) {
         return;
     }
+    
+    if (actionState_->GetState() == AIRBORNE) {
+        if (entity.Type() == STAGE) {
+            // Apply the push vector to prevent overlap
+            Transform(pv);
+            
+            if (pv.x == 0 && pv.y < 0 && velocity_.y > 0) {
+                // Land on the stage
+                NullVelocityY();
+                actionState_->SwitchState(GROUNDED);
+                groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
+                return;
+            }
+        } else if (entity.Type() == PLATFORM) {
+            if (pv.x == 0 && pv.y < 0) {
+                // The character collided with the platform. Check if the character
+                // is above the platform and falling down
+                Rectangle b = BoundingBox();
+                float py = b.y + b.h;
+                if (velocity_.y > 0 && py - velocity_.y - 2.f < entity.Position().y) {
+                    // Land on the platform
+                    NullVelocityY();
+                    // Apply the push vector to prevent overlap
+                    Transform(pv);
+                    
+                    actionState_->SwitchState(GROUNDED);
+                    groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
+                    return;
+                }
+            }
+        }
+    }
+    
     actionState_->HandleCollision(entity, pv);
 }
 

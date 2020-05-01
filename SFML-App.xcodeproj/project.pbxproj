@@ -44,6 +44,7 @@
 		26384FF22456372400C966A1 /* PlatformEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlatformEntity.hpp; sourceTree = "<group>"; };
 		264338C6245B8AC10047C2BE /* TurnaroundState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TurnaroundState.cpp; sourceTree = "<group>"; };
 		264338C7245B8AC10047C2BE /* TurnaroundState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TurnaroundState.hpp; sourceTree = "<group>"; };
+		264338CB245CA68E0047C2BE /* BlankEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlankEntity.hpp; sourceTree = "<group>"; };
 		2682B67A245752D40096E3E9 /* DashState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DashState.cpp; sourceTree = "<group>"; };
 		2682B67B245752D40096E3E9 /* DashState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DashState.hpp; sourceTree = "<group>"; };
 		2682B6812457674E0096E3E9 /* GroundedState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GroundedState.hpp; sourceTree = "<group>"; };
@@ -125,6 +126,20 @@
 			name = Input;
 			sourceTree = "<group>";
 		};
+		264338C9245BBA460047C2BE /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				26DE846924537D4A003D05FE /* GameController.hpp */,
+				26DE846824537D4A003D05FE /* GameController.cpp */,
+				2682B6932458B5650096E3E9 /* SpriteLoader.hpp */,
+				2682B6922458B5650096E3E9 /* SpriteLoader.cpp */,
+				2682B68F245895BB0096E3E9 /* CameraController.hpp */,
+				26384FED2456348F00C966A1 /* Physics */,
+				26B08BA42456025500E86352 /* Entities */,
+			);
+			name = Game;
+			sourceTree = "<group>";
+		};
 		2682B68C2457B77D0096E3E9 /* Airborne */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,14 +203,10 @@
 		26B08BA32456024700E86352 /* Setup */ = {
 			isa = PBXGroup;
 			children = (
+				26384FEE2456349B00C966A1 /* Input */,
 				26DE8457245368AD003D05FE /* ResourcePath.hpp */,
 				26DE8455245368AD003D05FE /* ResourcePath.mm */,
 				26DE8458245368AD003D05FE /* main.cpp */,
-				26DE846924537D4A003D05FE /* GameController.hpp */,
-				26DE846824537D4A003D05FE /* GameController.cpp */,
-				2682B68F245895BB0096E3E9 /* CameraController.hpp */,
-				2682B6932458B5650096E3E9 /* SpriteLoader.hpp */,
-				2682B6922458B5650096E3E9 /* SpriteLoader.cpp */,
 				26D1489C24594B070098DD6A /* MathHelper.hpp */,
 				26D14899245949EC0098DD6A /* MathHelper.cpp */,
 			);
@@ -206,6 +217,7 @@
 			isa = PBXGroup;
 			children = (
 				26D74C8B2454D15E00B8BB5A /* Entity.hpp */,
+				264338CB245CA68E0047C2BE /* BlankEntity.hpp */,
 				26B08BA62456064900E86352 /* StageEntity.hpp */,
 				26384FF22456372400C966A1 /* PlatformEntity.hpp */,
 				2682B691245897EB0096E3E9 /* Character */,
@@ -243,9 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				26B08BA32456024700E86352 /* Setup */,
-				26384FEE2456349B00C966A1 /* Input */,
-				26384FED2456348F00C966A1 /* Physics */,
-				26B08BA42456025500E86352 /* Entities */,
+				264338C9245BBA460047C2BE /* Game */,
 				26DE845A245368AD003D05FE /* Resources */,
 				26DE8453245368AD003D05FE /* Supporting Files */,
 			);

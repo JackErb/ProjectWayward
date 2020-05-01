@@ -26,7 +26,8 @@ public:
 
 private:
     float dirInfluence_;
-    void setDirInfluence(float angle, float x);
+    // Returns false if the angle switched from positive to negative or vice versa
+    bool setDirInfluence(float angle, float x);
 };
 
 #endif /* DashState_hpp */

@@ -39,7 +39,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     }
 }
 
-void NeutralState::Tick() {
+void NeutralState::Tick() {    
     character_->ApplyFriction();
     character_->ApplyVelocity();
     character_->SetSprite(character_->GetSprite("dash", frame_ % 11));

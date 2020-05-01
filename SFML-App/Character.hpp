@@ -44,8 +44,8 @@ public:
         
         float DoubleJump = -65.f;
         float WallJump = -60.f;
-        float FullhopJump = -55.f;
-        float ShorthopJump = -40.f;
+        float FullhopJump = -63.f;
+        float ShorthopJump = -50.f;
         
         float AirdodgeVelocity = 60.f;
     } Attributes;
@@ -69,17 +69,30 @@ public:
     Character(int id, sf::Vector2f position);
     ~Character();
     
+    /* Setup */
+    void SetAnimMap(AnimMap anims) {
+        anims_ = anims;
+    }
+    
+    
+    /* Get Methods */
+    EntityType Type() const override { return CHARACTER; }
+    sf::Vector2f Velocity() const { return velocity_; }
+    int Direction() const override { return direction_; }
+    sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
+    
+    
+    /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     
-    void SetActionState(CharacterState *s);
-    EntityType Type() const override { return CHARACTER; }
-    sf::Vector2f Velocity() const { return velocity_; }
-    int Direction() const override { return direction_; }
-    void SetDirection(int dir) { direction_ = dir; }
+
     
-    /* Methods involving action, and should only be called by the current actionState_ */
+    
+    /* Methods involving action, and should only be called by the current actionState_
+     * ALL OF THESE METHODS NEED TO BE ABLE TO ROLL BACK */
+    void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
     void FastFall() { velocity_.y = attr.FastFallSpeed; airborneData.fastfall = true; }
     void NullVelocityY() { velocity_.y = 0; }
@@ -96,15 +109,8 @@ public:
     void WallJump(int dir);
     void Airdodge();
     void UpB() { velocity_.y = -80.f; }
-    
-    /* Animations */
-    void SetAnimMap(AnimMap anims) {
-        anims_ = anims;
-    }
-    
-    sf::Sprite* GetSprite(string state, int frame) {
-        return anims_[state][frame];
-    }
+    void Turnaround() { direction_ *= -1; }
+    void SetDirection(int dir) { direction_ = dir; }
     
 private:
     void initAirborneData() {
@@ -133,7 +139,7 @@ private:
     
     sf::Vector2f velocity_ = {0.f, 0.f};
     
-    Attributes attr;
+    const Attributes attr;
     
     AnimMap anims_;
     

@@ -70,5 +70,11 @@ void AirdodgeState::HandleCollision(const Entity &e, sf::Vector2f pv) {
 }
 
 void AirdodgeState::SwitchState(Character::CState state) {
-    
+    if (state == Character::AIRBORNE) {
+        std::cerr << "ATTEMPT TO SWITCH TO AIRBORNE WHILE AIRDODGESTATE" << std::endl;
+    } else if (state == Character::GROUNDED) {
+        // Land on stage/platform
+        character_->SetActionState(new LandingLagState(character_, 5));
+        return;
+    }
 }
