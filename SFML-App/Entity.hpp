@@ -14,6 +14,7 @@
 #include <math.h>
 #include <limits>
 #include <list>
+#include "NetworkController.hpp"
 
 typedef std::vector<sf::Vector2f> Polygon;
 
@@ -43,13 +44,16 @@ public:
         GameData *copy = new GameData();
         *copy = data;
         rollback_.push_front(copy);
-        if (rollback_.size() > rbFrames) {
+        if (rollback_.size() > NetworkController::RollbackFrames) {
             delete rollback_.back();
             rollback_.pop_back();
         }
     }
     
-    virtual void Rollback() {
+    virtual void Rollback(int frames) {
+        for (int i = 1; i < frames-1; i++) {
+            rollback_.pop_front();
+        }
         data = *rollback_.front();
         rollback_.pop_front();
     }
@@ -76,7 +80,7 @@ public:
             }
         }
         
-        return {px + min_x - 1, py + min_y - 1, max_x - min_x + 2, max_y - min_y + 2};
+        return {px + min_x - 1, py + min_y - 1, max_x - min_x + 1, max_y - min_y + 1};
     }
     
     void Transform(sf::Vector2f v) {
@@ -134,7 +138,6 @@ private:
     
     GameData data;
     std::list<GameData*> rollback_;
-    int rbFrames = 30;
     
     // Each polygon is a vector of (x,y) pairs describing the vertices in the
     // counterclockwise direction of this shape, where (0,0) is the entity's center

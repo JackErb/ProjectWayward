@@ -19,14 +19,14 @@ int sign(float f) {
 
 bool DashState::setDirInfluence(float a, float x) {
     if (fabs(x) > PlayerInput::DEAD_ZONE) {
-        float old = dirInfluence_;
-        dirInfluence_ = clamp(x / 55.f, -1.f, 1.f);
+        float old = data.dirInfluence_;
+        data.dirInfluence_ = clamp(x / 55.f, -1.f, 1.f);
         
-        if (sign(old) != sign(dirInfluence_)) {
+        if (sign(old) != sign(data.dirInfluence_)) {
             return false;
         }
     } else {
-        dirInfluence_ = 0.f;
+        data.dirInfluence_ = 0.f;
     }
             
     return true;
@@ -55,8 +55,8 @@ void DashState::Tick() {
     character_->SetSprite(character_->GetSprite("dash", (frame_ / 4) % 11));
     frame_++;
                           
-    if (abs(dirInfluence_) > 0.f) {
-        character_->Dash(dirInfluence_);
+    if (abs(data.dirInfluence_) > 0.f) {
+        character_->Dash(data.dirInfluence_);
     }
     character_->ApplyVelocity();
 }

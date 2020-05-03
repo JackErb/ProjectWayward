@@ -63,7 +63,7 @@ public:
         return Intersects(*e1, *e2);
     }
     
-    void Rollback();
+    void Rollback(int frames);
     
 private:
     pair<bool, sf::Vector2f> checkCollision(const Entity &e1, const Entity &e2) {

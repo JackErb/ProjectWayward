@@ -31,12 +31,15 @@ public:
     
     virtual void RollbackTick() {
         rollback_.push_front(frame_);
-        if (rollback_.size() > rbFrames) {
+        if (rollback_.size() > NetworkController::RollbackFrames) {
             rollback_.pop_back();
         }
     }
     
-    virtual void Rollback() {
+    virtual void Rollback(int frames) {
+        for (int i = 1; i < frames-1; i++) {
+            rollback_.pop_front();
+        }
         frame_ = rollback_.front();
         rollback_.pop_front();
     }
@@ -46,12 +49,9 @@ public:
     
 protected:
     list<int> rollback_;
-    int rbFrames = 30;
     
     Character *character_;
     int frame_ = 0;
-    
-    friend class Character;
 };
 
 #endif /* CharacterState_hpp */

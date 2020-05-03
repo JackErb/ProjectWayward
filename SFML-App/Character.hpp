@@ -99,9 +99,7 @@ public:
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     void RollbackTick() override;
-    void Rollback() override;
-    
-
+    void Rollback(int frames) override;
     
     
     /* Methods involving action, and should only be called by the current actionState_
@@ -145,7 +143,7 @@ private:
         
         sf::Vector2f velocity_ = {0.f, 0.f};
         int direction_ = 1;
-        const Entity *fallthrough_ = nullptr;
+        int fallthrough_ = -1;
         int ftCount_ = 0;
         
         union {
@@ -158,7 +156,6 @@ private:
     GameData data;
     
     list<GameData*> rollback_;
-    int rbFrames_ = 30;
     
     const Attributes attr;
     AnimMap anims_;

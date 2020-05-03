@@ -34,17 +34,17 @@ public:
         }
         
         for (Entity *e : entities_) {
-            if (e != &player_) {
+            if (e != &player_ && e != &remotePlayer_) {
                 delete e;
             }
         }
     }
     
     void Tick();
-    void ProcessInput(const PlayerInput &input);
+    void ProcessInput(const PlayerInput &input, bool rb = false, int f = 0);
     void Render(sf::RenderWindow *window);
     
-    void Rollback();
+    void Rollback(int frames);
     
     void AddCharacter(Character *ch) {
         engine_.AddCharacter(ch);
@@ -58,6 +58,7 @@ public:
         
 private:
     Character player_;
+    Character remotePlayer_;
     PhysicsEngine engine_;
     CameraController camera_;
     std::vector<sf::Texture*> textures_;
@@ -65,6 +66,9 @@ private:
     std::vector<Entity*> entities_;
     
     NetworkController network_;
+    
+    int inputsIndex_ = 0;
+    PlayerInput playerInputs_[NetworkController::RollbackFrames];
 };
 
 #endif /* GameController_hpp */

@@ -20,7 +20,6 @@ public:
     void Tick() override {}
     void HandleCollision(const Entity &e1, sf::Vector2f pv) override {}
     void RollbackTick() override { Entity::RollbackTick(); }
-    void Rollback() override { Entity::Rollback(); }
     
     EntityType Type() const override { return DECORATION; }
 };

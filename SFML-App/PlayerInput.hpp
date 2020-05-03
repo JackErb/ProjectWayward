@@ -82,7 +82,10 @@ public:
     constexpr static float DEAD_ZONE = 10.f;
     
 public:
-    PlayerInput() : buttons() {}
+    PlayerInput() : buttons() {
+        stick = {0.f, 0.f};
+        cStick = {0.f, 0.f};
+    }
     
     void Tick() {
         // Update all the button's state

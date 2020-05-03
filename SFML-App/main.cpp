@@ -44,6 +44,7 @@ int main(int, char const**)
     const float HEIGHT = 1600;
     
     bool pause = false;
+    bool focus = true;
     
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Game");
@@ -74,13 +75,17 @@ int main(int, char const**)
             if (event.type == sf::Event::Closed) {
                 window.close();
                 return EXIT_SUCCESS;
+            } else if (event.type == sf::Event::GainedFocus) {
+                focus = true;
+            } else if (event.type == sf::Event::LostFocus) {
+                focus = false;
             }
         }
         
-        sf::Joystick::update();
         
         // Update the player input
         playerInput.Tick();
+        sf::Joystick::update();
         UpdateControllerState(&playerInput, 0);
         
         if (playerInput.IsPressed(2)) {
@@ -88,13 +93,19 @@ int main(int, char const**)
         }
         
         if (!pause) {
-            controller.ProcessInput(playerInput);
+            if (focus) {
+                controller.ProcessInput(playerInput);
+            } else {
+                controller.ProcessInput(PlayerInput());
+            }
             controller.Tick();
         } else {
             // Paused
             
-            if (playerInput.IsPressed(3)) {
-                controller.Rollback();
+            if (focus) {
+                if (playerInput.IsPressed(3)) {
+                    controller.Rollback(1);
+                }
             }
         }
         
@@ -118,7 +129,7 @@ private void UpdateControllerState(PlayerInput *input, unsigned int c) {
             if (sf::Joystick::isButtonPressed(0, i) && !contains) {
                 // This button was just pressed
                 input->buttons[i] = PlayerInput::Pressed;
-                cout << "Button: " << i << std::endl;
+                // cout << "Button: " << i << std::endl;
             } else if (!sf::Joystick::isButtonPressed(0, i) && contains) {
                 input->buttons[i] = PlayerInput::Released;
             }
@@ -128,6 +139,6 @@ private void UpdateControllerState(PlayerInput *input, unsigned int c) {
         input->stick = {sf::Joystick::getAxisPosition(0, sf::Joystick::X),
                        sf::Joystick::getAxisPosition(0, sf::Joystick::Y)};
     } else {
-        cerr << "Controller not connected" << endl;
+        //cerr << "Controller not connected" << endl;
     }
 }

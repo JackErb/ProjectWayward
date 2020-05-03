@@ -55,6 +55,9 @@ void PhysicsEngine::Update() {
     // due to physical impulses (traction, gravity, etc.)
     for (Entity *e : entities_) {
         e->RollbackTick();
+    }
+    
+    for (Entity *e : entities_) {
         e->Tick();
     }
     
@@ -69,12 +72,12 @@ void PhysicsEngine::Update() {
     }
 }
 
-void PhysicsEngine::Rollback() {
+void PhysicsEngine::Rollback(int frames) {
     // TODO: Rollback internal state of PhysicsEngine
     
     
     for (Entity *e : entities_) {
-        e->Rollback();
+        e->Rollback(frames);
     }
 }
 

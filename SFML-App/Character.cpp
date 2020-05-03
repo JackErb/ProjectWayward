@@ -34,15 +34,14 @@ void Character::Tick() {
     if (Position().y > 1500) {
         SetPosition({Position().x, -1000});
     }
+    
+    if (data.ftCount_ > 0)  {
+        if (--data.ftCount_ == 0) data.fallthrough_ = -1;
+    }
 
     // Do state dependent actions
     switch (data.actionState_->GetState()) {
         case AIRBORNE:
-            if (data.fallthrough_ != nullptr)  {
-                data.ftCount_--;
-                if (data.ftCount_ == 0) data.fallthrough_ = nullptr;
-            }
-            
             break;
         case GROUNDED:
             if (!engine->CheckBoundingBoxCollision(this, data.groundedData.stage)) {
@@ -61,7 +60,7 @@ void Character::RollbackTick() {
     GameData *copy = new GameData();
     *copy = data;
     rollback_.push_front(copy);
-    if (rollback_.size() > rbFrames_) {
+    if (rollback_.size() > NetworkController::RollbackFrames) {
         // Clean up old states
         GameData *old = rollback_.back();
         auto it = rollback_.end();
@@ -76,19 +75,20 @@ void Character::RollbackTick() {
     data.actionState_->RollbackTick();
 }
 
-void Character::Rollback() {
-    Entity::Rollback();
+void Character::Rollback(int frames) {
+    Entity::Rollback(frames);
     
-    
-    GameData *rollback = rollback_.front();
+    for (int i = 1; i < frames-1; i++) {
+        rollback_.pop_front();
+    }
+    data = *rollback_.front();
     rollback_.pop_front();
     
-    data = *rollback_.front();
-    data.actionState_->Rollback();
+    data.actionState_->Rollback(frames);
 }
 
 void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
-    if (data.fallthrough_ != nullptr && &entity == data.fallthrough_) {
+    if (entity.id == data.fallthrough_) {
         return;
     }
     
@@ -109,9 +109,7 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
                 Rectangle b = BoundingBox();
-                float py = b.y + b.h;
-                float vy = data.velocity_.y;
-                if (vy > 0 && py - vy - 2.f < entity.Position().y) {
+                if (data.velocity_.y > 0 && b.y + b.h > entity.BoundingBox().y) {
                     // Land on the platform
                     NullVelocityY();
                     // Apply the push vector to prevent overlap
@@ -218,7 +216,7 @@ void Character::FallthroughPlatform() {
         return;
     }
     
-    data.fallthrough_ = data.groundedData.stage;
+    data.fallthrough_ = data.groundedData.stage->id;
     data.ftCount_ = 4;
 }
 
