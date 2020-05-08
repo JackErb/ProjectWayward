@@ -9,16 +9,17 @@
 #include "LandingLagState.hpp"
 #include "NeutralState.hpp"
 #include "AirborneNeutralState.hpp"
+#include "Character.hpp"
 
 void LandingLagState::ProcessInput(const PlayerInput &input) {
     
 }
 
 void LandingLagState::Tick() {
-    frame_--;
+    data.frame_--;
     character_->ApplyFriction();
     character_->ApplyVelocity();
-    if (frame_ == 0) {
+    if (data.frame_ == 0) {
         character_->SetActionState(new NeutralState(character_));
         return;
     }
@@ -28,8 +29,8 @@ void LandingLagState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
     
 }
 
-void LandingLagState::SwitchState(Character::CState state) {
-    if (state == Character::AIRBORNE) {
+void LandingLagState::SwitchState(CharState state) {
+    if (state == AIRBORNE) {
         character_->SetActionState(new AirborneNeutralState(character_));
         return;
     } else {

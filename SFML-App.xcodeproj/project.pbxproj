@@ -8,8 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		26384FF02456358D00C966A1 /* Character.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26384FEF2456358D00C966A1 /* Character.cpp */; };
+		263B4714246343C8006CAA16 /* OfflineNetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */; };
+		263B471724634446006CAA16 /* OfflineGameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263B471524634446006CAA16 /* OfflineGameController.cpp */; };
+		263ED2CB246071BE006748DA /* NetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263ED2C9246071BE006748DA /* NetworkController.cpp */; };
 		264338C8245B8AC10047C2BE /* TurnaroundState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 264338C6245B8AC10047C2BE /* TurnaroundState.cpp */; };
-		264338D3245E1B7D0047C2BE /* NetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 264338D2245E1B7D0047C2BE /* NetworkController.cpp */; };
 		2682B67C245752D40096E3E9 /* DashState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B67A245752D40096E3E9 /* DashState.cpp */; };
 		2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B683245767960096E3E9 /* AirborneNeutralState.cpp */; };
 		2682B68B2457B27E0096E3E9 /* LandingLagState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2682B6892457B27E0096E3E9 /* LandingLagState.cpp */; };
@@ -30,7 +32,6 @@
 		26C589F22455276500D854F5 /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F02455276500D854F5 /* player.png */; };
 		26C589F32455276500D854F5 /* stage.png in Resources */ = {isa = PBXBuildFile; fileRef = 26C589F12455276500D854F5 /* stage.png */; };
 		26D148952458F3050098DD6A /* AirdodgeState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D148932458F3050098DD6A /* AirdodgeState.cpp */; };
-		26D14898245945F50098DD6A /* AirborneMoveState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D14896245945F50098DD6A /* AirborneMoveState.cpp */; };
 		26D1489B245949EC0098DD6A /* MathHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D14899245949EC0098DD6A /* MathHelper.cpp */; };
 		26D81F2D245549AB00CEAB55 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26DE8461245368AD003D05FE /* icon.png */; };
 		26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8455245368AD003D05FE /* ResourcePath.mm */; };
@@ -43,11 +44,16 @@
 /* Begin PBXFileReference section */
 		26384FEF2456358D00C966A1 /* Character.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character.cpp; sourceTree = "<group>"; };
 		26384FF22456372400C966A1 /* PlatformEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PlatformEntity.hpp; sourceTree = "<group>"; };
+		263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineNetworkController.cpp; sourceTree = "<group>"; };
+		263B4713246343C8006CAA16 /* OfflineNetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OfflineNetworkController.hpp; sourceTree = "<group>"; };
+		263B471524634446006CAA16 /* OfflineGameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineGameController.cpp; sourceTree = "<group>"; };
+		263B471624634446006CAA16 /* OfflineGameController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OfflineGameController.hpp; sourceTree = "<group>"; };
+		263ED2C9246071BE006748DA /* NetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkController.cpp; sourceTree = "<group>"; };
+		263ED2CA246071BE006748DA /* NetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NetworkController.hpp; sourceTree = "<group>"; };
 		264338C6245B8AC10047C2BE /* TurnaroundState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TurnaroundState.cpp; sourceTree = "<group>"; };
 		264338C7245B8AC10047C2BE /* TurnaroundState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TurnaroundState.hpp; sourceTree = "<group>"; };
 		264338CB245CA68E0047C2BE /* BlankEntity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BlankEntity.hpp; sourceTree = "<group>"; };
-		264338D0245CE01C0047C2BE /* NetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NetworkController.hpp; sourceTree = "<group>"; };
-		264338D2245E1B7D0047C2BE /* NetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkController.cpp; sourceTree = "<group>"; };
+		2644D03F2463714000B74DB6 /* CharacterProperties.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CharacterProperties.hpp; sourceTree = "<group>"; };
 		2682B67A245752D40096E3E9 /* DashState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DashState.cpp; sourceTree = "<group>"; };
 		2682B67B245752D40096E3E9 /* DashState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DashState.hpp; sourceTree = "<group>"; };
 		2682B6812457674E0096E3E9 /* GroundedState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GroundedState.hpp; sourceTree = "<group>"; };
@@ -83,8 +89,6 @@
 		26C589F724552DEA00D854F5 /* Character.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Character.hpp; sourceTree = "<group>"; };
 		26D148932458F3050098DD6A /* AirdodgeState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirdodgeState.cpp; sourceTree = "<group>"; };
 		26D148942458F3050098DD6A /* AirdodgeState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirdodgeState.hpp; sourceTree = "<group>"; };
-		26D14896245945F50098DD6A /* AirborneMoveState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirborneMoveState.cpp; sourceTree = "<group>"; };
-		26D14897245945F50098DD6A /* AirborneMoveState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneMoveState.hpp; sourceTree = "<group>"; };
 		26D14899245949EC0098DD6A /* MathHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MathHelper.cpp; sourceTree = "<group>"; };
 		26D1489C24594B070098DD6A /* MathHelper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MathHelper.hpp; sourceTree = "<group>"; };
 		26D74C8B2454D15E00B8BB5A /* Entity.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Entity.hpp; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 			children = (
 				26DE846924537D4A003D05FE /* GameController.hpp */,
 				26DE846824537D4A003D05FE /* GameController.cpp */,
+				263B471624634446006CAA16 /* OfflineGameController.hpp */,
+				263B471524634446006CAA16 /* OfflineGameController.cpp */,
 				2682B6932458B5650096E3E9 /* SpriteLoader.hpp */,
 				2682B6922458B5650096E3E9 /* SpriteLoader.cpp */,
 				2682B68F245895BB0096E3E9 /* CameraController.hpp */,
@@ -147,8 +153,10 @@
 		264338CE245CE0040047C2BE /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				264338D0245CE01C0047C2BE /* NetworkController.hpp */,
-				264338D2245E1B7D0047C2BE /* NetworkController.cpp */,
+				263ED2CA246071BE006748DA /* NetworkController.hpp */,
+				263ED2C9246071BE006748DA /* NetworkController.cpp */,
+				263B4713246343C8006CAA16 /* OfflineNetworkController.hpp */,
+				263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -161,8 +169,6 @@
 				2682B683245767960096E3E9 /* AirborneNeutralState.cpp */,
 				26D148942458F3050098DD6A /* AirdodgeState.hpp */,
 				26D148932458F3050098DD6A /* AirdodgeState.cpp */,
-				26D14897245945F50098DD6A /* AirborneMoveState.hpp */,
-				26D14896245945F50098DD6A /* AirborneMoveState.cpp */,
 			);
 			name = Airborne;
 			sourceTree = "<group>";
@@ -190,6 +196,7 @@
 			children = (
 				26C589F724552DEA00D854F5 /* Character.hpp */,
 				26384FEF2456358D00C966A1 /* Character.cpp */,
+				2644D03F2463714000B74DB6 /* CharacterProperties.hpp */,
 				26B08BA924560A9D00E86352 /* CharacterState */,
 			);
 			name = Character;
@@ -403,10 +410,10 @@
 				26D1489B245949EC0098DD6A /* MathHelper.cpp in Sources */,
 				26DE846A24537D4A003D05FE /* GameController.cpp in Sources */,
 				26D148952458F3050098DD6A /* AirdodgeState.cpp in Sources */,
-				264338D3245E1B7D0047C2BE /* NetworkController.cpp in Sources */,
 				26FE2E362456484100051897 /* JumpsquatState.cpp in Sources */,
 				2682B6942458B5650096E3E9 /* SpriteLoader.cpp in Sources */,
 				26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */,
+				263ED2CB246071BE006748DA /* NetworkController.cpp in Sources */,
 				264338C8245B8AC10047C2BE /* TurnaroundState.cpp in Sources */,
 				26384FF02456358D00C966A1 /* Character.cpp in Sources */,
 				26AE5F742454A90800862C68 /* PhysicsEngine.cpp in Sources */,
@@ -414,7 +421,8 @@
 				2682B685245767960096E3E9 /* AirborneNeutralState.cpp in Sources */,
 				26B08BAC24560AB700E86352 /* NeutralState.cpp in Sources */,
 				2682B67C245752D40096E3E9 /* DashState.cpp in Sources */,
-				26D14898245945F50098DD6A /* AirborneMoveState.cpp in Sources */,
+				263B471724634446006CAA16 /* OfflineGameController.cpp in Sources */,
+				263B4714246343C8006CAA16 /* OfflineNetworkController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,6 +440,7 @@
 					/Library/Frameworks/,
 					"$(inherited)",
 				);
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/,
@@ -478,6 +487,7 @@
 					/Library/Frameworks/,
 					"$(inherited)",
 				);
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/,

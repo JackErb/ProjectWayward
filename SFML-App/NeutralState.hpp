@@ -14,17 +14,20 @@
 class NeutralState : public GroundedState {
 public:
     NeutralState(Character *ch) : GroundedState(ch) {
-        ch->NullVelocityY();
-        frame_ = 0;
+        data.frame_ = 0;
     }
     ~NeutralState() {}
     
-    void HandleCollision(const Entity &entity, sf::Vector2f pv) override ;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(Character::CState state) override;
     
-    CharacterStateType GetStateType() const override { return Neutral; }
+    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    
+    void SwitchState(CharState state) override;
+    CharStateType GetStateType() const override { return Neutral; }
+    
+private:
+    void NullVelocity();
 };
 
 #endif /* NeutralState_hpp */

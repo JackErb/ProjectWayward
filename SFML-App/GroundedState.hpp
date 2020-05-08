@@ -11,18 +11,12 @@
 
 #include "CharacterState.hpp"
 
-class StageEntity;
-
 class GroundedState : public CharacterState {
 public:
     GroundedState(Character *ch) : CharacterState(ch) {}
-    
-    virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) override = 0;
-    virtual void ProcessInput(const PlayerInput &input) override = 0;
-    virtual void Tick() override = 0;
-    virtual void SwitchState(Character::CState state) override = 0;
-    Character::CState GetState() const override final {
-        return Character::GROUNDED;
+
+    CharState GetState() const override final {
+        return GROUNDED;
     }
 };
 

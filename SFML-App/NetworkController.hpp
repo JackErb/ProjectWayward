@@ -1,8 +1,8 @@
 //
-//  NetworkController.hpp
+//  NetworkController2.hpp
 //  SFML-App
 //
-//  Created by Jack Erb on 5/1/20.
+//  Created by Jack Erb on 5/4/20.
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
@@ -17,85 +17,140 @@
 #include <chrono>
 #include <list>
 
-using std::cout;
-using std::cerr;
-using std::endl;
-using namespace std::chrono;
-
 class NetworkController {
 public:
-    static const int RollbackFrames = 20;
+    static const int RollbackFrames = 10;
     
     typedef enum NetworkControllerState {
-        WAITING, POLLING, CONNECTED
-    } NetworkState;
+        OFF, WAITING, POLLING, CONNECTED, INVALID
+    } NetworkControllerState;
+    
+    typedef struct InputData {
+        int frame = -1;
+        bool isPlayerValid = false;
+        PlayerInput player = PlayerInput();
+        bool isRemoteValid = false;
+        PlayerInput remote = PlayerInput();
+    } InputData;
     
 public:
     NetworkController() {
-        cout << sf::IpAddress::getLocalAddress() << endl;
+        state_ = OFF;
+        
         if (config == 1) {
-            bindPort = 59778;
-            sendPort = 61342;
-            recipient = "10.0.0.222";
-            local = recipient;
-            state = WAITING;
+            state_ = WAITING;
+            bindIp_ = "10.0.0.222";
+            bindPort_ = 59975;
         } else if (config == 2) {
-            bindPort = 61342;
-            sendPort = 59778;
-            recipient = "10.0.0.222";
-            local = recipient;
-            state = POLLING;
+            state_ = POLLING;
+            bindIp_ = "10.0.0.222";
+            bindPort_ = 63755;
+            sendIp_ = bindIp_;
+            sendPort_ = 59975;
+        } else if (config == 3) {
+            state_ = OFF;
         }
         
-        if (socket_.bind(bindPort, local) != sf::Socket::Done) {
-            cerr << socket_.bind(bindPort, local) << endl;
-            cerr << "ERROR BINDING TO SOCKET PORT" << endl;
+        if (socket_.bind(bindPort_, bindIp_) != sf::Socket::Done) {
+            std::cerr << "ERROR BINDING TO SOCKET PORT" << std::endl;
         } else {
-            cout << "BOUND TO PORT " << socket_.getLocalPort() << endl;
+            std::cout << "Bound to port " << socket_.getLocalPort() << std::endl;
         }
         socket_.setBlocking(false);
         
-        for (int i = 0; i < RollbackFrames; i++) {
-            remoteInputs_[i] = std::make_pair(-1, PlayerInput());
+        for (int i = 0; i < RollbackFrames * 2; i++) {
+            inputData_[i].frame = -1;
         }
     }
     
-    ~NetworkController() {
-        socket_.unbind();
+    bool IsConnected() { return state_ == CONNECTED; }
+    
+    void SetState(NetworkControllerState state) {
+        if (state == CONNECTED) {
+            std::cerr << "Cannot set network controller state to " << state << std::endl;
+            return;
+        }
+        state_ = state;
     }
     
-    void SendInput(const PlayerInput &input);
-    int CheckForRemoteInput();
-    PlayerInput GetInput(int frame);
-                    
-    void Connect();
+    // Returns a positive integer if a frame is received
+    bool PreTick();
+        
+    // Checks for remote input in the socket
+    bool CheckForRemoteInput();
+    
+    // Sends the player input, if connected to another host. Also records the input
+    void SendPlayerInput(const PlayerInput &input);
+    
+    // Gets the player input for the given frame. Each frame must call SendPlayerInput
+    // to have it recorded.
+    // should have valid frames for [0, RollbackFrames-1]
+    std::list<InputData>* GetInputData() {
+        std::list<InputData> *res = new std::list<InputData>();
+        for (int i = 0; i < RollbackFrames; i++) {
+            int index = localFrameIndex_ - 1 - i;
+            if (index < 0) {
+                index += RollbackFrames * 2;
+            } else if (index >= RollbackFrames * 2) {
+                index -= RollbackFrames * 2;
+            }
+            InputData d = inputData_[index];
+            if (d.frame == -1) break;
+            
+            if (frame_ > RollbackFrames && IsConnected() && i == RollbackFrames - 1 && !d.isRemoteValid) {
+                std::cerr << "DESYNCED " << frame_ << std::endl;
+                assert(false);
+            }
+            
+            assert(d.isPlayerValid);
+            
+            if (!d.isRemoteValid) {
+                nextRemoteIndex_ = d.frame;
+            }
+            
+            res->push_front(d);
+        }
+        return res;
+    }
     
 public:
-    NetworkState state = POLLING;
+    bool RemoteValid;
     
 private:
-    void InsertRemoteInput(int frame, PlayerInput input);
+    void Connect();
     
-    void CalculatePing();
-    void SendPing();
+    // Returns false if an error occurs while calculating
+    bool CalculatePing();
+    bool SendPing();
+    
+    typedef struct InputDataPacket {
+        int frame;
+        int nframe;
+        float xaxis;
+        float yaxis;
+        int buttonlen;
+    } InputPacket;
     
 private:
-    int frame_ = 0;
+    int config = 2;
     sf::UdpSocket socket_;
     
-    int inputsIndex_;
-    std::pair<int, PlayerInput> remoteInputs_[RollbackFrames];
+    sf::IpAddress bindIp_ = sf::IpAddress::Any;
+    unsigned short bindPort_ = sf::Socket::AnyPort;
+    sf::IpAddress sendIp_;
+    unsigned short sendPort_;
     
-    unsigned short bindPort;
-    unsigned short sendPort;
-    sf::IpAddress recipient;
-    sf::IpAddress local;
+    InputData inputData_[RollbackFrames * 2];
+    int localFrameIndex_ = -1;
+    int nextRemoteIndex_ = 0;
     
-    int config = 2;
+    NetworkControllerState nextState_ = INVALID;
+    NetworkControllerState state_;
     
-    high_resolution_clock::time_point pingTime_;
-    
+    int frame_ = -1;
+ 
     friend class GameController;
+    friend int main(int, char const**);
 };
 
 #endif /* NetworkController_hpp */

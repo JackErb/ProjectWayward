@@ -10,8 +10,14 @@
 #include "AirborneNeutralState.hpp"
 #include "DashState.hpp"
 #include "JumpsquatState.hpp"
+#include "Character.hpp"
+#include "Entity.hpp"
 
 #define PI 3.14159
+
+void NeutralState::NullVelocity() {
+    character_->NullVelocityY();
+}
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
@@ -20,8 +26,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     }
     
     if (input.IsPressed(2)) {
-        frame_++;
-        std::cout << frame_ % 11 << std::endl;
+        data.frame_++;
     }
     
     float hyp = input.stick.hyp();
@@ -42,14 +47,14 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
 void NeutralState::Tick() {    
     character_->ApplyFriction();
     character_->ApplyVelocity();
-    character_->SetSprite(character_->GetSprite("dash", frame_ % 11));
+    character_->SetSprite(character_->GetSprite("dash", data.frame_ % 11));
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
 }
 
-void NeutralState::SwitchState(Character::CState state) {
-    if (state == Character::AIRBORNE) {
+void NeutralState::SwitchState(CharState state) {
+    if (state == AIRBORNE) {
         character_->SetActionState(new AirborneNeutralState(character_));
         return;
     } else {

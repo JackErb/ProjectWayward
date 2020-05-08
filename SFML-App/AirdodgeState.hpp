@@ -13,21 +13,25 @@
 
 class AirdodgeState : public AirborneState {
 public:
-    AirdodgeState(Character *ch, float angle) : AirborneState(ch), angle_(angle) {
-        character_->Airdodge();
+    AirdodgeState(Character *ch, float angle) : AirborneState(ch) {
         // character_->airborneData.fastfall = false;
-        frame_ = 0;
+        Airdodge();
+        data.frame_ = 0;
+        data.dirInfluence_ = angle;
     }
+    
+    AirdodgeState(Character *ch, bool rb) : AirborneState(ch) {}
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void HandleCollision(const Entity &e, sf::Vector2f pv) override;
-    void SwitchState(Character::CState state) override;
     
-    CharacterStateType GetStateType() const override { return Airdodge; }
+    void HandleCollision(const Entity &e, sf::Vector2f pv) override;
+    void SwitchState(CharState state) override;
+    
+    CharStateType GetStateType() const override { return CharStateType::Airdodge; }
     
 private:
-    const int angle_;
+    void Airdodge();
 };
 
 #endif /* AirdodgeState_hpp */

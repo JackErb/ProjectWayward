@@ -22,6 +22,7 @@
 #include <iostream>
 #include <chrono>
 
+#include "OfflineGameController.hpp"
 #include "GameController.hpp"
 #include "Event.hpp"
 #include "PlayerInput.hpp"
@@ -69,6 +70,9 @@ int main(int, char const**)
         // Clear screen
         window.clear();
         
+        /* ************************** */
+        /* INPUT AND EVENT PROCESSING */
+        /* ************************** */
         // Poll window for events
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -82,7 +86,6 @@ int main(int, char const**)
             }
         }
         
-        
         // Update the player input
         playerInput.Tick();
         sf::Joystick::update();
@@ -92,11 +95,18 @@ int main(int, char const**)
             pause = !pause;
         }
         
+        
+        
+        /* ************************** */
+        /* GAME CONTROLLER PROCESSING */
+        /* ************************** */
         if (!pause) {
+            controller.PreTick();
+            int idx = controller.network_.localFrameIndex_;
             if (focus) {
-                controller.ProcessInput(playerInput);
+                controller.ProcessInput(playerInput, controller.network_.inputData_[idx].remote);
             } else {
-                controller.ProcessInput(PlayerInput());
+                controller.ProcessInput(PlayerInput(), controller.network_.inputData_[idx].remote);
             }
             controller.Tick();
         } else {
@@ -104,18 +114,20 @@ int main(int, char const**)
             
             if (focus) {
                 if (playerInput.IsPressed(3)) {
-                    controller.Rollback(1);
+                    controller.RollbackTick();
+                } else if (playerInput.IsPressed(0)) {
+                    controller.RollbackAndReplay();
                 }
             }
         }
         
         controller.Render(&window);
         
-        // Update the window
-        window.display();
-        
         auto end = high_resolution_clock::now();
         //cout << duration_cast<microseconds>(end - start).count() << endl;
+        
+        // Update the window
+        window.display();
     }
 
     return EXIT_SUCCESS;

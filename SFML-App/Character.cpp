@@ -13,6 +13,11 @@
 #include "LandingLagState.hpp"
 #include "StageEntity.hpp"
 #include "PlatformEntity.hpp"
+#include "CharacterState.hpp"
+#include "DashState.hpp"
+#include "TurnaroundState.hpp"
+#include "JumpsquatState.hpp"
+#include "AirdodgeState.hpp"
 
 using std::list;
 
@@ -25,8 +30,8 @@ Character::~Character() {
 }
 
 void Character::ProcessInput(const PlayerInput &input) {
-    input_ = const_cast<PlayerInput* const>(&input);
-    data.actionState_->ProcessInput(input);
+    input_ = const_cast<PlayerInput* >(&input);
+    actionState_->ProcessInput(input);
 }
 
 void Character::Tick() {
@@ -40,51 +45,59 @@ void Character::Tick() {
     }
 
     // Do state dependent actions
-    switch (data.actionState_->GetState()) {
+    switch (actionState_->GetState()) {
         case AIRBORNE:
             break;
         case GROUNDED:
             if (!engine->CheckBoundingBoxCollision(this, data.groundedData.stage)) {
-                data.actionState_->SwitchState(AIRBORNE);
+                actionState_->SwitchState(AIRBORNE);
                 initAirborneData();
             }
             break;
     }
     
-    data.actionState_->Tick();
+    actionState_->Tick();
 }
 
 void Character::RollbackTick() {
     Entity::RollbackTick();
     
-    GameData *copy = new GameData();
-    *copy = data;
-    rollback_.push_front(copy);
-    if (rollback_.size() > NetworkController::RollbackFrames) {
-        // Clean up old states
-        GameData *old = rollback_.back();
-        auto it = rollback_.end();
-        it--;
-        if (data.actionState_ != old->actionState_ && (*it)->actionState_ != old->actionState_) {
-            delete old->actionState_;
-        }
-        delete old;
-        rollback_.pop_back();
-    }
+    data.actionStateT_ = actionState_->GetStateType();
+    data.actionStateData_ = actionState_->data;
     
-    data.actionState_->RollbackTick();
+    rollback_ = data;
 }
 
-void Character::Rollback(int frames) {
-    Entity::Rollback(frames);
+void Character::Rollback() {
+    Entity::Rollback();
     
-    for (int i = 1; i < frames-1; i++) {
-        rollback_.pop_front();
+    delete actionState_;
+    
+    data = rollback_;
+    switch (data.actionStateT_) {
+        case LandingLag:
+            actionState_ = new LandingLagState(this, true);
+            break;
+        case Neutral:
+            actionState_ = new NeutralState(this);
+            break;
+        case CharStateType::Dash:
+            actionState_ = new DashState(this, true);
+            break;
+        case Jumpsquat:
+            actionState_ = new JumpsquatState(this);
+            break;
+        case CharStateType::Turnaround:
+            actionState_ = new TurnaroundState(this, true);
+            break;
+        case AirborneNeutral:
+            actionState_ = new AirborneNeutralState(this);
+            break;
+        case CharStateType::Airdodge:
+            actionState_ = new AirdodgeState(this, true);
+            break;
     }
-    data = *rollback_.front();
-    rollback_.pop_front();
-    
-    data.actionState_->Rollback(frames);
+    actionState_->setData(data.actionStateData_);
 }
 
 void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
@@ -92,7 +105,7 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
         return;
     }
     
-    if (data.actionState_->GetState() == AIRBORNE) {
+    if (actionState_->GetState() == AIRBORNE) {
         if (entity.Type() == STAGE) {
             // Apply the push vector to prevent overlap
             Transform(pv);
@@ -100,7 +113,7 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
             if (pv.x == 0 && pv.y < 0 && data.velocity_.y > 0) {
                 // Land on the stage
                 NullVelocityY();
-                data.actionState_->SwitchState(GROUNDED);
+                actionState_->SwitchState(GROUNDED);
                 data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                 return;
             }
@@ -109,13 +122,14 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
                 Rectangle b = BoundingBox();
-                if (data.velocity_.y > 0 && b.y + b.h > entity.BoundingBox().y) {
+                Rectangle s = entity.BoundingBox();
+                if (data.velocity_.y > 0 && (b.y + b.h) - data.velocity_.y < s.y) {
                     // Land on the platform
                     NullVelocityY();
                     // Apply the push vector to prevent overlap
                     Transform(pv);
                     
-                    data.actionState_->SwitchState(GROUNDED);
+                    actionState_->SwitchState(GROUNDED);
                     data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                     return;
                 }
@@ -123,11 +137,11 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
         }
     }
     
-    data.actionState_->HandleCollision(entity, pv);
+    actionState_->HandleCollision(entity, pv);
 }
 
 void Character::Jump(JumpType type, bool fullhop) {
-    if (data.actionState_->GetState() != AIRBORNE) {
+    if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
         return;
     }
@@ -138,17 +152,17 @@ void Character::Jump(JumpType type, bool fullhop) {
     
     float xv;
     float yv = fullhop ? attr.FullhopJump : attr.ShorthopJump;
-    if (type == LEFT || type == UP || type == RIGHT) {
+    if (type == JLEFT || type == JUP || type == JRIGHT) {
         initAirborneData();
     }
     switch (type) {
-        case LEFT:
+        case JLEFT:
             xv = - attr.MaxGroundSpeed;
             break;
-        case UP:
+        case JUP:
             xv = 0.f;
             break;
-        case RIGHT:
+        case JRIGHT:
             xv = attr.MaxGroundSpeed;
             break;
         case DJUMP:
@@ -168,7 +182,7 @@ void Character::Jump(JumpType type, bool fullhop) {
 }
 
 void Character::Dash(float m) {
-    if (data.actionState_->GetState() != GROUNDED) {
+    if (actionState_->GetState() != GROUNDED) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
@@ -184,7 +198,7 @@ void Character::Dash(float m) {
 }
 
 void Character::Vector(float m) {
-    if (data.actionState_->GetState() != AIRBORNE) {
+    if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
         return;
     }
@@ -200,19 +214,20 @@ void Character::Vector(float m) {
 }
 
 void Character::ApplyFriction() {
-    data.velocity_.x *= (data.actionState_->GetState() == GROUNDED) ?
+    data.velocity_.x *= (actionState_->GetState() == GROUNDED) ?
             attr.GroundFriction : attr.AirFriction;
 }
 
 void Character::SetActionState(CharacterState *s) {
-    data.actionState_ = s;
+    data.actionStateT_ = s->GetStateType();
+    actionState_ = s;
 }
 
 void Character::FallthroughPlatform() {
-    if (data.actionState_->GetState() == AIRBORNE ||
+    if (actionState_->GetState() == AIRBORNE ||
         data.groundedData.stage->Type() != EntityType::PLATFORM) {
         std::cerr << "ERROR Attempt to fall through " << data.groundedData.stage->Type();
-        std::cerr << ", WITH STATE " << data.actionState_->GetState() << std::endl;
+        std::cerr << ", WITH STATE " << actionState_->GetState() << std::endl;
         return;
     }
     
@@ -221,8 +236,8 @@ void Character::FallthroughPlatform() {
 }
 
 void Character::WallJump(int dir) {
-    if (data.actionState_->GetState() != AIRBORNE) {
-        std::cerr << "ERROR Attempt to walljump, state: " << data.actionState_->GetState() << std::endl;
+    if (actionState_->GetState() != AIRBORNE) {
+        std::cerr << "ERROR Attempt to walljump, state: " << actionState_->GetState() << std::endl;
         return;
     }
     
@@ -234,9 +249,9 @@ void Character::WallJump(int dir) {
 }
 
 void Character::Airdodge() {
-    if (data.actionState_->GetState() != AIRBORNE
+    if (actionState_->GetState() != AIRBORNE
         || !data.airborneData.airdodge) {
-        std::cerr << "ERROR Attempt to airdodge, state: " << data.actionState_->GetState();
+        std::cerr << "ERROR Attempt to airdodge, state: " << actionState_->GetState();
         std::cerr << ", airdodge: " << data.airborneData.airdodge << std::endl;
         return;
     }

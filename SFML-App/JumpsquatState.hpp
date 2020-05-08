@@ -13,20 +13,21 @@
 
 class JumpsquatState : public GroundedState {
 public:
-    JumpsquatState(Character *ch) : GroundedState(ch), type(Character::UP) {
-        frame_ = 0;
+    JumpsquatState(Character *ch) : GroundedState(ch) {
+        data.type_ = 0;
+        data.frame_ = 0;
+        data.b1 = true;
     }
     ~JumpsquatState() {}
     
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(Character::CState state) override {}
+    void SwitchState(CharState state) override {}
     
-    CharacterStateType GetStateType() const override { return Jumpsquat; }
+    CharStateType GetStateType() const override { return Jumpsquat; }
     
 private:
-    Character::JumpType type;
     bool jumpHeld = true;
 };
 

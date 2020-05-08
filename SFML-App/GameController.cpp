@@ -64,9 +64,6 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), rem
     sf::Sprite *s2 = new sf::Sprite(*pltexture);
     sprites_.push_back(s2);
     platform->SetSprite(s2);
-    
-    /*BlankEntity *b = new BlankEntity(4, {-200.f, 0.f});
-    b->SetPolygons({{{0.f,0.f}, {40.f, 0.f}}});*/
                   
     engine_ = PhysicsEngine();
     AddCharacter(&player_);
@@ -75,31 +72,30 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), rem
     AddStage(platform);
 }
 
+void GameController::PreTick(bool rb) {
+    if (!rb) {
+        network_.PreTick();
+        if (network_.frame_ == 0) {
+            player_.SetPosition({-90.f, 0});
+            remotePlayer_.SetPosition({-90.f,0});
+            RollbackTick();
+        } else {
+            RollbackAndReplay();
+        }
+    }
+}
+
 void GameController::Tick() {
     engine_.Update();
 }
 
-void GameController::ProcessInput(const PlayerInput &input, bool rb, int f) {
+void GameController::ProcessInput(const PlayerInput &pin, const PlayerInput &rin, bool rb) {
+    player_.ProcessInput(pin);
+    remotePlayer_.ProcessInput(rin);
+    
     if (!rb) {
-        int f = network_.CheckForRemoteInput();
-        cout << "F: " << f << " " << network_.frame_ << endl;
-        if (f != -1 && f < network_.frame_) {
-            // A new frame was received; rollback to that point and replay
-            int backtrack = network_.frame_ - f;
-            Rollback(backtrack);
-        }
-        
-        
-        network_.SendInput(input);
+        network_.SendPlayerInput(pin);
     }
-
-    if (!rb) {
-        remotePlayer_.ProcessInput(network_.GetInput(network_.frame_));
-        playerInputs_[++inputsIndex_ % NetworkController::RollbackFrames] = input;
-    } else {
-        remotePlayer_.ProcessInput(network_.GetInput(f));
-    }
-    player_.ProcessInput(input);
 }
 
 void GameController::Render(sf::RenderWindow *window) {
@@ -107,26 +103,49 @@ void GameController::Render(sf::RenderWindow *window) {
     camera_.Render(window);
 }
 
-void GameController::Rollback(int frames) {
-    // TODO: Rollback GameController's internal state
+void GameController::RollbackTick() {
+    engine_.RollbackTick();
+}
+
+void GameController::Rollback() {
+    engine_.Rollback();
+}
+
+void GameController::RollbackAndReplay() {
+    sf::Vector2f pos1 = player_.Position();
     
-    // Roll back
-    cout << "Rolling back " << frames << " frames from frame " << network_.frame_ << endl;
-    engine_.Rollback(frames);
+    Rollback();
     
-    // Replay forward
-    cout << "Replaying " << frames << " frames" << endl;
-    int playerInputIndex = inputsIndex_ - frames;
-    for (int i = 0; i < frames-1; i++) {
-        if (playerInputIndex < 0) {
-            playerInputIndex += NetworkController::RollbackFrames;
-        } else if (playerInputIndex >= NetworkController::RollbackFrames) {
-            playerInputIndex -= NetworkController::RollbackFrames;
+    // TODO: Replay
+    std::list<NetworkController::InputData> *ls = network_.GetInputData();
+    int i = 0;
+    
+    // This is guaranteed to be valid
+    PlayerInput lastRemoteInput = ls->back().remote;
+    for (auto inputData : *ls) {
+        if (i == 1 && network_.frame_ >= NetworkController::RollbackFrames) {
+            RollbackTick();
         }
-        ProcessInput(playerInputs_[playerInputIndex], true, network_.frame_ - frames + i);
+        PreTick(true);
+        PlayerInput remote;
+        if (inputData.isRemoteValid) {
+            lastRemoteInput = inputData.remote;
+        } else {
+            inputData.remote = lastRemoteInput;
+        }
+        ProcessInput(inputData.player, inputData.remote, true);
         Tick();
-        playerInputIndex++;
+        i++;
     }
+    
+    if (!network_.inputData_[network_.localFrameIndex_].isRemoteValid) {
+        network_.inputData_[network_.localFrameIndex_].remote = lastRemoteInput;
+    }
+        
+    delete ls;
+    
+    sf::Vector2f pos2 = player_.Position();
+    assert(fabs(pos1.x - pos2.x) < 0.01 && fabs(pos1.y - pos2.y) < 0.01);
 }
 
 

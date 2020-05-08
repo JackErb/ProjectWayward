@@ -54,10 +54,6 @@ void PhysicsEngine::Update() {
     // Apply velocity to entity position, and update velocity
     // due to physical impulses (traction, gravity, etc.)
     for (Entity *e : entities_) {
-        e->RollbackTick();
-    }
-    
-    for (Entity *e : entities_) {
         e->Tick();
     }
     
@@ -72,12 +68,18 @@ void PhysicsEngine::Update() {
     }
 }
 
-void PhysicsEngine::Rollback(int frames) {
+void PhysicsEngine::RollbackTick() {
+    for (Entity *e : entities_) {
+        e->RollbackTick();
+    }
+}
+
+void PhysicsEngine::Rollback() {
     // TODO: Rollback internal state of PhysicsEngine
     
     
     for (Entity *e : entities_) {
-        e->Rollback(frames);
+        e->Rollback();
     }
 }
 

@@ -14,13 +14,8 @@
 class AirborneState : public CharacterState {
 public:
     AirborneState(Character *ch) : CharacterState(ch) {}
-    
-    virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) override = 0;
-    virtual void ProcessInput(const PlayerInput &input) override = 0;
-    virtual void Tick() override = 0;
-    virtual void SwitchState(Character::CState state) override = 0;
-    Character::CState GetState() const override final {
-        return Character::AIRBORNE;
+    CharState GetState() const override final {
+        return AIRBORNE;
     }
 };
 

@@ -18,33 +18,23 @@
 #include "PlayerInput.hpp"
 #include "StageEntity.hpp"
 #include "SpriteLoader.hpp"
+#include "CharacterState.hpp"
+#include "CharacterProperties.hpp"
 
 using std::string;
 using std::list;
 
-class CharacterState;
-
-typedef enum CharacterStateType {
-    LandingLag, Neutral, Dash, Jumpsquat, Turnaround,
-    AirborneNeutral, Airdodge, AirborneMove
-} CharacterStateType;
-
-
 class Character : public Entity {
 public:
-    typedef enum JumpType {
-        LEFT, UP, RIGHT,
-        DJUMP
-    } JumpType;
     
     typedef struct CharacterAttributes {
         float GroundAccel = 2.5f;
-        float MaxGroundSpeed = 25.f;
-        float GroundFriction = 0.85f;
+        float MaxGroundSpeed = 30.f;
+        float GroundFriction = 0.87f;
            
-        float AirAccel = 3.0f;
-        float MaxAirSpeed = 30.5f;
-        float AirFriction = 0.9f;
+        float AirAccel = 3.5f;
+        float MaxAirSpeed = 38.f;
+        float AirFriction = 0.91f;
            
         float Gravity = 3.4f;
         float MaxFallSpeed = 40.f;
@@ -57,10 +47,6 @@ public:
         
         float AirdodgeVelocity = 60.f;
     } Attributes;
-    
-    typedef enum CState {
-        GROUNDED, AIRBORNE
-    } CState;
     
     typedef struct GroundedData {
         const StageEntity *stage;
@@ -98,8 +84,9 @@ public:
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    
     void RollbackTick() override;
-    void Rollback(int frames) override;
+    void Rollback() override;
     
     
     /* Methods involving action, and should only be called by the current actionState_
@@ -138,8 +125,9 @@ public:
     const PlayerInput* input_;
     
 private:
-    struct GameData {
-        CharacterState *actionState_ = nullptr;
+    typedef struct CharacterData {
+        CharStateType actionStateT_;
+        CharacterState::GameData actionStateData_;
         
         sf::Vector2f velocity_ = {0.f, 0.f};
         int direction_ = 1;
@@ -150,12 +138,13 @@ private:
             GroundedData groundedData;
             AirborneData airborneData;
         };
-    };
+    } GameData;
     
     // Pointer to the current game data state.
     GameData data;
+    GameData rollback_;
     
-    list<GameData*> rollback_;
+    CharacterState *actionState_;
     
     const Attributes attr;
     AnimMap anims_;

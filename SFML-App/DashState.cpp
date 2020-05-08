@@ -12,6 +12,7 @@
 #include "AirborneNeutralState.hpp"
 #include "JumpsquatState.hpp"
 #include "TurnaroundState.hpp"
+#include "Character.hpp"
 
 int sign(float f) {
     return f < 0.f ? -1 : 1;
@@ -52,8 +53,8 @@ void DashState::ProcessInput(const PlayerInput &input) {
 }
 
 void DashState::Tick() {
-    character_->SetSprite(character_->GetSprite("dash", (frame_ / 4) % 11));
-    frame_++;
+    character_->SetSprite(character_->GetSprite("dash", (data.frame_ / 4) % 11));
+    data.frame_++;
                           
     if (abs(data.dirInfluence_) > 0.f) {
         character_->Dash(data.dirInfluence_);
@@ -65,12 +66,12 @@ void DashState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
     
 }
 
-void DashState::SwitchState(Character::CState state) {
+void DashState::SwitchState(CharState state) {
     switch (state) {
-        case Character::GROUNDED:
+        case GROUNDED:
             std::cerr << "Switch to grounded state while actionState=Dash" << std::endl;
             return;
-        case Character::AIRBORNE:
+        case AIRBORNE:
             character_->SetActionState(new AirborneNeutralState(character_));
             return;
     }

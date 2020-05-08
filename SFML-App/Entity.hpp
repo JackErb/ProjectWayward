@@ -41,21 +41,11 @@ public:
     virtual void Tick() = 0;
     
     virtual void RollbackTick() {
-        GameData *copy = new GameData();
-        *copy = data;
-        rollback_.push_front(copy);
-        if (rollback_.size() > NetworkController::RollbackFrames) {
-            delete rollback_.back();
-            rollback_.pop_back();
-        }
+        rollback_ = data;
     }
     
-    virtual void Rollback(int frames) {
-        for (int i = 1; i < frames-1; i++) {
-            rollback_.pop_front();
-        }
-        data = *rollback_.front();
-        rollback_.pop_front();
+    virtual void Rollback() {
+        data = rollback_;
     }
     
     /* Getters, Setters, & Mutators */
@@ -87,21 +77,18 @@ public:
         SetPosition(data.position_ + v);
     }
     
-    // ROLLBACK
     void SetPosition(sf::Vector2f pos) {
         data.position_ = pos;
     }
     
     sf::Vector2f Position() const { return data.position_; }
     
-    // ROLLBACK
     void SetSprite(sf::Sprite *s) {
         data.sprite_ = s;
     }
     
     sf::Sprite* Sprite() const { return data.sprite_; }
     
-    // ROLLBACK
     void SetPolygons(std::vector<Polygon> polygons) { polygons_ = polygons; }
     
     std::vector<Polygon> Polygons() const {
@@ -137,7 +124,7 @@ private:
     };
     
     GameData data;
-    std::list<GameData*> rollback_;
+    GameData rollback_;
     
     // Each polygon is a vector of (x,y) pairs describing the vertices in the
     // counterclockwise direction of this shape, where (0,0) is the entity's center

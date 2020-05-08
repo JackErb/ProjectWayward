@@ -9,22 +9,27 @@
 #include "AirdodgeState.hpp"
 #include "AirborneNeutralState.hpp"
 #include "LandingLagState.hpp"
+#include "Character.hpp"
+
+void AirdodgeState::Airdodge() {
+    character_->Airdodge();
+}
 
 void AirdodgeState::ProcessInput(const PlayerInput &input) {
     
 }
 
 void AirdodgeState::Tick() {
-    frame_++;
+    data.frame_++;
     character_->ApplyVelocity();
     character_->ApplyFriction();
-    if (PlayerInput::InDir(angle_, UP)) {
+    if (PlayerInput::InDir(data.dirInfluence_, UP)) {
         character_->ApplyGravity(0.85f);
-    } else if (!PlayerInput::InDir(angle_, DOWN)){
+    } else if (!PlayerInput::InDir(data.dirInfluence_, DOWN)){
         character_->ApplyGravity(0.2f);
     }
     
-    if (frame_ == 25) {
+    if (data.frame_ == 25) {
         character_->SetActionState(new AirborneNeutralState(character_));
         return;
     }
@@ -69,10 +74,10 @@ void AirdodgeState::HandleCollision(const Entity &e, sf::Vector2f pv) {
     }
 }
 
-void AirdodgeState::SwitchState(Character::CState state) {
-    if (state == Character::AIRBORNE) {
+void AirdodgeState::SwitchState(CharState state) {
+    if (state == AIRBORNE) {
         std::cerr << "ATTEMPT TO SWITCH TO AIRBORNE WHILE AIRDODGESTATE" << std::endl;
-    } else if (state == Character::GROUNDED) {
+    } else if (state == GROUNDED) {
         // Land on stage/platform
         character_->SetActionState(new LandingLagState(character_, 5));
         return;

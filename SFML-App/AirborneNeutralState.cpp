@@ -10,10 +10,11 @@
 #include "NeutralState.hpp"
 #include "LandingLagState.hpp"
 #include "AirdodgeState.hpp"
+#include "Character.hpp"
 
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3) && character_->Jumps() > 0) {
-        character_->Jump(Character::DJUMP, true);
+        character_->Jump(DJUMP, true);
     }
     
     if (input.IsPressed(7) && character_->HasAirdodge()) {
@@ -64,10 +65,10 @@ void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv
     }
 }
 
-void AirborneNeutralState::SwitchState(Character::CState s) {
-    if (s == Character::AIRBORNE) {
+void AirborneNeutralState::SwitchState(CharState s) {
+    if (s == AIRBORNE) {
         std::cerr << "ATTEMPT TO SWITCH TO AIRBORNE WHILE AIRBORNENEUTRAL" << std::endl;
-    } else if (s == Character::GROUNDED) {
+    } else if (s == GROUNDED) {
         // Land on stage/platform
         character_->NullVelocityX();
         character_->SetActionState(new LandingLagState(character_, 2));

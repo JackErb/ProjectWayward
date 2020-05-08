@@ -1,13 +1,13 @@
 //
-//  GameController.hpp
+//  OfflineGameController.hpp
 //  SFML-App
 //
-//  Created by Jack Erb on 4/24/20.
+//  Created by Jack Erb on 5/6/20.
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#ifndef GameController_hpp
-#define GameController_hpp
+#ifndef OfflineGameController_hpp
+#define OfflineGameController_hpp
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -19,12 +19,12 @@
 #include "Character.hpp"
 #include "PlatformEntity.hpp"
 #include "CameraController.hpp"
-#include "NetworkController.hpp"
+#include "OfflineNetworkController.hpp"
 
-class GameController {
+class OfflineGameController {
 public:
-    GameController(float w, float h);
-    ~GameController() {
+    OfflineGameController(float w, float h);
+    ~OfflineGameController() {
         for (sf::Texture *t : textures_) {
             delete t;
         }
@@ -34,19 +34,20 @@ public:
         }
         
         for (Entity *e : entities_) {
-            if (e != &player_ && e != &remotePlayer_) {
+            if (e != &player_) {
                 delete e;
             }
         }
     }
-    
-    void PreTick(bool rb = false);
-    
+        
+    void PreTick();
+    void ProcessInput(const PlayerInput &input, bool rb = false);
     void Tick();
-    void ProcessInput(const PlayerInput &pin, const PlayerInput &rin, bool rb = false);
     void Render(sf::RenderWindow *window);
     
-    void RollbackTick();
+    void RollbackTick() {
+        engine_.RollbackTick();
+    }
     void Rollback();
     void RollbackAndReplay();
     
@@ -59,20 +60,23 @@ public:
         engine_.AddStage(s);
         entities_.push_back(s);
     }
+    
+    PlayerInput inputs[240];
+    int iindex = 0;
         
 private:
     Character player_;
-    Character remotePlayer_;
+    
     PhysicsEngine engine_;
     CameraController camera_;
+    
     std::vector<sf::Texture*> textures_;
     std::vector<sf::Sprite*> sprites_;
     std::vector<Entity*> entities_;
     
-    NetworkController network_;
+    OfflineNetworkController network_;
 
     friend class NetworkController;
-    friend int main(int, char const**);
 };
 
-#endif /* GameController_hpp */
+#endif /* OfflineGameController_hpp */

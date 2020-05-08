@@ -10,6 +10,12 @@
 #include "DashState.hpp"
 #include "JumpsquatState.hpp"
 #include "AirborneNeutralState.hpp"
+#include "Character.hpp"
+
+void TurnaroundState::Turnaround() {
+    character_->NullVelocityX();
+    character_->Turnaround();
+}
 
 void TurnaroundState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
@@ -19,8 +25,8 @@ void TurnaroundState::ProcessInput(const PlayerInput &input) {
 }
 
 void TurnaroundState::Tick() {
-    frame_--;
-    if (frame_ == 0) {
+    data.frame_--;
+    if (data.frame_ == 0) {
         PlayerInput::StickState stick = character_->input_->stick;
         character_->SetActionState(new DashState(character_, stick.angle(), stick.xAxis));
         return;
@@ -31,12 +37,12 @@ void TurnaroundState::HandleCollision(const Entity &e, sf::Vector2f pv) {
     
 }
 
-void TurnaroundState::SwitchState(Character::CState state) {
+void TurnaroundState::SwitchState(CharState state) {
     switch (state) {
-        case Character::AIRBORNE:
+        case AIRBORNE:
             character_->SetActionState(new AirborneNeutralState(character_));
             return;
-        case Character::GROUNDED:
+        case GROUNDED:
             std::cerr << "ERROR SWITCH STATE TURNAROUNDSTATE" << std::endl;
             return;
     }

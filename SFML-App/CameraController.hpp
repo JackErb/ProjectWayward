@@ -23,6 +23,20 @@ public:
     }
     
     void Tick() {
+        if (cameraOffsetFinal_.x != cameraOffset_.x) {
+            float a = atan2(- cameraOffset_.y + cameraOffsetFinal_.y,
+                            cameraOffsetFinal_.x - cameraOffset_.x);
+            std::cout << " ANgle " << a << std::endl;
+            cameraOffset_ += {cos(a) * cameraOffsetSpeed, sin(a) * cameraOffsetSpeed};
+            
+            if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {
+                cameraOffset_.x = cameraOffsetFinal_.x;
+                cameraOffset_.y = cameraOffsetFinal_.y;
+            }
+        }
+        
+        TransformCamera(0,0);
+        
         for (Entity *e : *entities_) {
             // Calculate the sprite's absolute position in the window
             sf::Vector2f pos = e->Position();
@@ -46,24 +60,11 @@ public:
             }
             
             if (e->Type() == CHARACTER) {
-                if (e->Position().x > windowOffset_.x * 0.85f) {
+                if (e->Position().x > windowOffset_.x * 0.75f) {
                     TransformCamera(-500, 0);
-                } else if (e->Position().x < windowOffset_.x * -0.85f) {
+                } else if (e->Position().x < windowOffset_.x * -0.75f) {
                     TransformCamera(500, 0);
-                } else {
-                    TransformCamera(0, 0);
                 }
-            }
-        }
-        
-        if (cameraOffsetFinal_ != cameraOffset_) {
-            float a = atan2(- cameraOffset_.y + cameraOffsetFinal_.y,
-                            cameraOffsetFinal_.x - cameraOffset_.x);
-            cameraOffset_ += {cos(a) * cameraOffsetSpeed, sin(a) * cameraOffsetSpeed};
-            
-            if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {
-                cameraOffset_.x = cameraOffsetFinal_.x;
-                cameraOffset_.y = cameraOffsetFinal_.y;
             }
         }
     }

@@ -14,17 +14,21 @@
 class TurnaroundState : public GroundedState {
 public:
     TurnaroundState(Character *ch) : GroundedState(ch) {
-        character_->NullVelocityX();
-        character_->Turnaround();
-        frame_ = 7;
+        data.frame_ = 7;
+        Turnaround();
     }
+    
+    TurnaroundState(Character *ch, bool rb) : GroundedState(ch) {}
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void HandleCollision(const Entity &e, sf::Vector2f pv) override;
-    void SwitchState(Character::CState state) override;
+    void SwitchState(CharState state) override;
     
-    CharacterStateType GetStateType() const override { return Turnaround; }
+    CharStateType GetStateType() const override { return CharStateType::Turnaround; }
+    
+private:
+    void Turnaround();
 };
 
 #endif /* TurnaroundState_hpp */
