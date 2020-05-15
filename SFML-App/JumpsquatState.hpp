@@ -23,12 +23,9 @@ public:
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void SwitchState(CharState state) override {}
+    void SwitchState(CharState state) override;
     
     CharStateType GetStateType() const override { return Jumpsquat; }
-    
-private:
-    bool jumpHeld = true;
 };
 
 #endif /* JumpsquatState_hpp */

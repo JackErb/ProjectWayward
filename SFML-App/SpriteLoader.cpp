@@ -26,6 +26,7 @@ SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names)
             text = new sf::Texture();
             i++;
         }
+        
         delete text;
     }
     

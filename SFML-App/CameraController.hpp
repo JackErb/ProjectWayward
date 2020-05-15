@@ -26,7 +26,6 @@ public:
         if (cameraOffsetFinal_.x != cameraOffset_.x) {
             float a = atan2(- cameraOffset_.y + cameraOffsetFinal_.y,
                             cameraOffsetFinal_.x - cameraOffset_.x);
-            std::cout << " ANgle " << a << std::endl;
             cameraOffset_ += {cos(a) * cameraOffsetSpeed, sin(a) * cameraOffsetSpeed};
             
             if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {

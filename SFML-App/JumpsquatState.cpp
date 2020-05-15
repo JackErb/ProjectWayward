@@ -38,3 +38,14 @@ void JumpsquatState::Tick() {
 void JumpsquatState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
     // TODO: _
 }
+
+void JumpsquatState::SwitchState(CharState state) {
+    switch (state) {
+        case AIRBORNE:
+            character_->SetActionState(new AirborneNeutralState(character_));
+            return;
+        case GROUNDED:
+            std::cerr << "ERROR SWITCH STATE JUMPSQUAT" << std::endl;
+            return;
+    }
+}

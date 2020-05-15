@@ -34,34 +34,7 @@ public:
     } InputData;
     
 public:
-    NetworkController() {
-        state_ = OFF;
-        
-        if (config == 1) {
-            state_ = WAITING;
-            bindIp_ = "10.0.0.222";
-            bindPort_ = 59975;
-        } else if (config == 2) {
-            state_ = POLLING;
-            bindIp_ = "10.0.0.222";
-            bindPort_ = 63755;
-            sendIp_ = bindIp_;
-            sendPort_ = 59975;
-        } else if (config == 3) {
-            state_ = OFF;
-        }
-        
-        if (socket_.bind(bindPort_, bindIp_) != sf::Socket::Done) {
-            std::cerr << "ERROR BINDING TO SOCKET PORT" << std::endl;
-        } else {
-            std::cout << "Bound to port " << socket_.getLocalPort() << std::endl;
-        }
-        socket_.setBlocking(false);
-        
-        for (int i = 0; i < RollbackFrames * 2; i++) {
-            inputData_[i].frame = -1;
-        }
-    }
+    NetworkController();
     
     bool IsConnected() { return state_ == CONNECTED; }
     
@@ -74,10 +47,10 @@ public:
     }
     
     // Returns a positive integer if a frame is received
-    bool PreTick();
+    void PreTick();
         
     // Checks for remote input in the socket
-    bool CheckForRemoteInput();
+    void CheckForRemoteInput();
     
     // Sends the player input, if connected to another host. Also records the input
     void SendPlayerInput(const PlayerInput &input);
@@ -97,9 +70,12 @@ public:
             InputData d = inputData_[index];
             if (d.frame == -1) break;
             
-            if (frame_ > RollbackFrames && IsConnected() && i == RollbackFrames - 1 && !d.isRemoteValid) {
-                std::cerr << "DESYNCED " << frame_ << std::endl;
-                assert(false);
+            if (frame_ > RollbackFrames && IsConnected() && i == RollbackFrames - 1) {
+                PauseAndWait = d.isRemoteValid;
+                HoldFrame = d.frame;
+                if (PauseAndWait) {
+                    std::cerr << "DESYNCED " << HoldFrame << std::endl;
+                }
             }
             
             assert(d.isPlayerValid);
@@ -114,8 +90,11 @@ public:
     }
     
 public:
-    bool RemoteValid;
-    
+    // If this is true, then the game controller should pause execution and
+    // wait for more remote input
+    bool PauseAndWait = false;
+    int HoldFrame = -1;
+
 private:
     void Connect();
     
@@ -132,8 +111,11 @@ private:
     } InputPacket;
     
 private:
-    int config = 2;
     sf::UdpSocket socket_;
+    
+    // TCP socket/listener used only to talk to the server
+    sf::TcpSocket serverS_;
+    sf::TcpListener serverL_;
     
     sf::IpAddress bindIp_ = sf::IpAddress::Any;
     unsigned short bindPort_ = sf::Socket::AnyPort;
@@ -151,6 +133,9 @@ private:
  
     friend class GameController;
     friend int main(int, char const**);
+    
+    // The time the last remote input was received
+    long lastRemoteInput;
 };
 
 #endif /* NetworkController_hpp */

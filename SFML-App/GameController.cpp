@@ -121,7 +121,7 @@ void GameController::RollbackAndReplay() {
     int i = 0;
     
     // This is guaranteed to be valid
-    PlayerInput lastRemoteInput = ls->back().remote;
+    PlayerInput lastRemoteInput = ls->front().remote;
     for (auto inputData : *ls) {
         if (i == 1 && network_.frame_ >= NetworkController::RollbackFrames) {
             RollbackTick();

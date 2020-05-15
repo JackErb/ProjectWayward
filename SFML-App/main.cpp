@@ -101,14 +101,19 @@ int main(int, char const**)
         /* GAME CONTROLLER PROCESSING */
         /* ************************** */
         if (!pause) {
-            controller.PreTick();
-            int idx = controller.network_.localFrameIndex_;
-            if (focus) {
-                controller.ProcessInput(playerInput, controller.network_.inputData_[idx].remote);
+            if (!controller.network_.PauseAndWait) {
+                controller.PreTick();
+                int idx = controller.network_.localFrameIndex_;
+                if (focus) {
+                    controller.ProcessInput(playerInput, controller.network_.inputData_[idx].remote);
+                } else {
+                    controller.ProcessInput(PlayerInput(), controller.network_.inputData_[idx].remote);
+                }
+                controller.Tick();
             } else {
-                controller.ProcessInput(PlayerInput(), controller.network_.inputData_[idx].remote);
+                controller.network_.CheckForRemoteInput();
+                cout << "Waiting for remote input..." << endl;
             }
-            controller.Tick();
         } else {
             // Paused
             

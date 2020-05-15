@@ -60,7 +60,7 @@ public:
         float min_x = std::numeric_limits<float>::max(),
               max_x = std::numeric_limits<float>::min(),
               min_y = min_x,
-              max_y = max_y;
+              max_y = max_x;
         for (Polygon p : polygons_) {
             for (sf::Vector2f v : p) {
                 min_x = fmin(min_x, v.x);
