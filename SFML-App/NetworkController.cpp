@@ -8,6 +8,9 @@
 
 #include "NetworkController.hpp"
 
+#include <chrono>
+#include <thread>
+
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -21,7 +24,7 @@ NetworkController::NetworkController() {
         cerr << "ERROR CONNECTING TO SERVER " << status << endl;
     }
     
-    if (socket_.bind(sf::Socket::AnyPort) != sf::Socket::Done) {
+    if (socket_.bind(24240, "10.0.0.222") != sf::Socket::Done) {
         cerr << "ERROR BINDING TO SOCKET PORT" << endl;
     }
     
@@ -82,6 +85,7 @@ void NetworkController::PreTick() {
                 long t = lastRemoteInput -
                         std::chrono::system_clock::now().time_since_epoch().count();
                 if (t > 1000) {
+                    cout << "Here" << endl;
                     // Haven't received input for more than a second
                     PauseAndWait = true;
                     HoldFrame = -1;
@@ -108,6 +112,7 @@ void NetworkController::CheckForRemoteInput() {
         std::string header;
         packet >> header;
         if (header != "Packet" || sendIp_ != addr || sendPort_ != port) {
+            packet = sf::Packet();
             rstatus = socket_.receive(packet, addr, port);
             continue;
         }
@@ -116,11 +121,31 @@ void NetworkController::CheckForRemoteInput() {
         InputPacket data;
         packet >> data.frame >> data.nframe;
         // This is an old frame; discoard it.
-        if (frame_ > RollbackFrames &&
-            data.frame < inputData_[localFrameIndex_].frame - RollbackFrames) {
+        if (data.frame < inputData_[localFrameIndex_].frame - RollbackFrames) {
+            packet = sf::Packet();
             rstatus = socket_.receive(packet, addr, port);
             continue;
         }
+        
+        int index = localFrameIndex_ + (data.frame - inputData_[localFrameIndex_].frame);
+        if (index < 0) {
+            index += RollbackFrames * 2;
+        } else if (index >= RollbackFrames * 2) {
+            index -= RollbackFrames * 2;
+        }
+        
+        if (inputData_[index].frame == data.frame && inputData_[index].isRemoteValid) {
+            // Duplicate packet; ignore
+            packet = sf::Packet();
+            rstatus = socket_.receive(packet, addr, port);
+            continue;
+        }
+        inputData_[index].frame = data.frame;
+        
+        if (data.frame + 1 > nextRemoteFrame_)
+            nextRemoteFrame_ = data.frame + 1;
+        
+        cout << "Received frame " << data.frame << endl;
         
         packet >> data.xaxis >> data.yaxis >> data.buttonlen;
         
@@ -134,20 +159,13 @@ void NetworkController::CheckForRemoteInput() {
         }
         
         // Insert the input into the inputData_ array
-        int index = localFrameIndex_ + (data.frame - inputData_[localFrameIndex_].frame);
-        if (index < 0) {
-            index += RollbackFrames * 2;
-        } else if (index >= RollbackFrames * 2) {
-            index -= RollbackFrames * 2;
-        }
-        inputData_[index].frame = data.frame;
         inputData_[index].isRemoteValid = true;
         inputData_[index].remote = input;
         
         
-        if (HoldFrame == data.frame || HoldFrame == -1) {
+        if (PauseAndWait && (HoldFrame == data.frame || HoldFrame == -1)) {
             PauseAndWait = false;
-            cout << "Received remote input for hold frame. Resuming play." << endl;
+            cout << "Received remote input for hold frame " << HoldFrame << " Resuming play." << endl;
         }
         
         lastRemoteInput = std::chrono::system_clock::now().time_since_epoch().count();
@@ -189,7 +207,7 @@ void NetworkController::SendPlayerInput(const PlayerInput &input) {
         assert (inputData_[j].isPlayerValid);
         
         // Build and send the input data
-        InputPacket idata = {data.frame, 0, data.player.stick.xAxis, data.player.stick.yAxis, static_cast<int>(data.player.buttons.size())};
+        InputPacket idata = {data.frame, nextRemoteFrame_, data.player.stick.xAxis, data.player.stick.yAxis, static_cast<int>(data.player.buttons.size())};
         
         sf::Packet packet;
         packet << "Packet" << idata.frame << idata.nframe << idata.xaxis << idata.yaxis << idata.buttonlen;
@@ -215,6 +233,7 @@ void NetworkController::Connect() {
             while (true) {
                 auto rstatus = socket_.receive(packet, sendIp_, sendPort_);
                 if (rstatus == sf::Socket::Done) {
+                    cout << "Received" << endl;
                     std::string ping;
                     packet >> ping;
                     if (ping != "PingStart") {

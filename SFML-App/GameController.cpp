@@ -127,7 +127,6 @@ void GameController::RollbackAndReplay() {
             RollbackTick();
         }
         PreTick(true);
-        PlayerInput remote;
         if (inputData.isRemoteValid) {
             lastRemoteInput = inputData.remote;
         } else {

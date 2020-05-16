@@ -71,18 +71,14 @@ public:
             if (d.frame == -1) break;
             
             if (frame_ > RollbackFrames && IsConnected() && i == RollbackFrames - 1) {
-                PauseAndWait = d.isRemoteValid;
-                HoldFrame = d.frame;
+                PauseAndWait = !d.isRemoteValid;
                 if (PauseAndWait) {
-                    std::cerr << "DESYNCED " << HoldFrame << std::endl;
+                    HoldFrame = d.frame;
+                    std::cerr << "DESYNCED " << HoldFrame << " " << frame_ << std::endl;
                 }
             }
             
             assert(d.isPlayerValid);
-            
-            if (!d.isRemoteValid) {
-                nextRemoteIndex_ = d.frame;
-            }
             
             res->push_front(d);
         }
@@ -116,15 +112,13 @@ private:
     // TCP socket/listener used only to talk to the server
     sf::TcpSocket serverS_;
     sf::TcpListener serverL_;
-    
-    sf::IpAddress bindIp_ = sf::IpAddress::Any;
-    unsigned short bindPort_ = sf::Socket::AnyPort;
+
     sf::IpAddress sendIp_;
     unsigned short sendPort_;
     
     InputData inputData_[RollbackFrames * 2];
     int localFrameIndex_ = -1;
-    int nextRemoteIndex_ = 0;
+    int nextRemoteFrame_ = 0;
     
     NetworkControllerState nextState_ = INVALID;
     NetworkControllerState state_;

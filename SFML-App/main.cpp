@@ -47,6 +47,8 @@ int main(int, char const**)
     bool pause = false;
     bool focus = true;
     
+    int i = 0;
+    
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Game");
     window.setFramerateLimit(60);
@@ -101,6 +103,7 @@ int main(int, char const**)
         /* GAME CONTROLLER PROCESSING */
         /* ************************** */
         if (!pause) {
+            controller.network_.CheckForRemoteInput();
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
                 int idx = controller.network_.localFrameIndex_;
@@ -111,8 +114,7 @@ int main(int, char const**)
                 }
                 controller.Tick();
             } else {
-                controller.network_.CheckForRemoteInput();
-                cout << "Waiting for remote input..." << endl;
+                std::cout << "Waiting..." << std::endl;
             }
         } else {
             // Paused
@@ -133,6 +135,8 @@ int main(int, char const**)
         
         // Update the window
         window.display();
+        
+        i++;
     }
 
     return EXIT_SUCCESS;
