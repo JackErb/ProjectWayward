@@ -35,7 +35,7 @@ public:
     
 public:
     NetworkController();
-    
+
     bool IsConnected() { return state_ == CONNECTED; }
     
     void SetState(NetworkControllerState state) {
@@ -119,6 +119,14 @@ private:
     InputData inputData_[RollbackFrames * 2];
     int localFrameIndex_ = -1;
     int nextRemoteFrame_ = 0;
+    
+    int rlSum_ = 0;
+	int rlCount_ = 0;
+	int lSum_ = 0;
+	int lCount_ = 0;
+	
+	int dropFrames_ = 0;
+	int dropFramesPeriod_ = 30;
     
     NetworkControllerState nextState_ = INVALID;
     NetworkControllerState state_;
