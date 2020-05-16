@@ -72,6 +72,15 @@ int main(int, char const**)
         // Clear screen
         window.clear();
         
+        NetworkController *n = &controller.network_;
+		if (n->IsConnected() && n->frame_ != 0 && n->frame_ % n->dropFramesPeriod_ == 0) {
+			float drop = ((float)n->rlSum_ / n->rlCount_) - ((float)n->lSum_ / n->lCount_);
+			cout << "Lag " << drop << endl;
+			if (drop > 0) {
+				n->dropFrames_ = (int)drop;
+			}
+		}
+        
         /* ************************** */
         /* INPUT AND EVENT PROCESSING */
         /* ************************** */
@@ -102,8 +111,7 @@ int main(int, char const**)
         /* ************************** */
         /* GAME CONTROLLER PROCESSING */
         /* ************************** */
-        if (!pause) {
-            controller.network_.CheckForRemoteInput();
+        if (!pause && n->dropFrames_ == 0) {
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
                 int idx = controller.network_.localFrameIndex_;
@@ -114,9 +122,10 @@ int main(int, char const**)
                 }
                 controller.Tick();
             } else {
-                std::cout << "Waiting..." << std::endl;
+                controller.network_.CheckForRemoteInput();
+                cout << "Waiting for remote input..." << endl;
             }
-        } else {
+        } else if (pause) {
             // Paused
             
             if (focus) {
@@ -126,6 +135,8 @@ int main(int, char const**)
                     controller.RollbackAndReplay();
                 }
             }
+        } else {
+            n->dropFrames_--;
         }
         
         controller.Render(&window);
@@ -143,22 +154,22 @@ int main(int, char const**)
 }
 
 private void UpdateControllerState(PlayerInput *input, unsigned int c) {
-    if (sf::Joystick::isConnected(0)) {
+    if (sf::Joystick::isConnected(c)) {
         // Check the controller's buttons
-        for (int i = 0; i < sf::Joystick::getButtonCount(0); i++) {
+        for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {
             bool contains = input->buttons.find(i) != input->buttons.end();
-            if (sf::Joystick::isButtonPressed(0, i) && !contains) {
+            if (sf::Joystick::isButtonPressed(c, i) && !contains) {
                 // This button was just pressed
                 input->buttons[i] = PlayerInput::Pressed;
                 // cout << "Button: " << i << std::endl;
-            } else if (!sf::Joystick::isButtonPressed(0, i) && contains) {
+            } else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
                 input->buttons[i] = PlayerInput::Released;
             }
         }
         
         // Check the controller's sticks
-        input->stick = {sf::Joystick::getAxisPosition(0, sf::Joystick::X),
-                       sf::Joystick::getAxisPosition(0, sf::Joystick::Y)};
+        input->stick = {sf::Joystick::getAxisPosition(c, sf::Joystick::X),
+                       sf::Joystick::getAxisPosition(c, sf::Joystick::Y)};
     } else {
         //cerr << "Controller not connected" << endl;
     }
