@@ -45,6 +45,7 @@ void NetworkController::PreTick() {
         if (state_ == CONNECTED) {
             frame_ = -1;
             localFrameIndex_ = -1;
+            nextRemoteFrame_ = 0;
             socket_.setBlocking(false);
             
             for (int i = 0; i < RollbackFrames * 2; i++) {
@@ -85,11 +86,14 @@ void NetworkController::PreTick() {
                 long t = lastRemoteInput -
                         std::chrono::system_clock::now().time_since_epoch().count();
                 if (t > 1000) {
-                    cout << "Here" << endl;
                     // Haven't received input for more than a second
                     PauseAndWait = true;
                     HoldFrame = -1;
                 }
+            }
+            
+            if (rlCount_ == 30) {
+                rlCount_ = lCount_ = rlSum_ = lSum_ = 0;
             }
             
             
@@ -142,8 +146,14 @@ void NetworkController::CheckForRemoteInput() {
         }
         inputData_[index].frame = data.frame;
         
-        if (data.frame + 1 > nextRemoteFrame_)
-            nextRemoteFrame_ = data.frame + 1;
+        if (data.frame + 1 > nextRemoteFrame_) {
+			nextRemoteFrame_ = data.frame + 1;
+
+			rlSum_ += nextRemoteFrame_ - data.nframe;
+			rlCount_++;
+			lSum_ += frame_ - nextRemoteFrame_;
+			lCount_++;
+		}
         
         cout << "Received frame " << data.frame << endl;
         
@@ -233,7 +243,6 @@ void NetworkController::Connect() {
             while (true) {
                 auto rstatus = socket_.receive(packet, sendIp_, sendPort_);
                 if (rstatus == sf::Socket::Done) {
-                    cout << "Received" << endl;
                     std::string ping;
                     packet >> ping;
                     if (ping != "PingStart") {
@@ -335,7 +344,7 @@ bool NetworkController::CalculatePing() {
         i++;
     }
     
-    float ping = ((float) total) / ((float) MAX);
+    float ping = ((float)total) / ((float)MAX);
    
     socket_.setBlocking(false);
     cout << "Calculated Ping: " << total << endl;
