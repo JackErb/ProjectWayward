@@ -23,4 +23,8 @@ typedef enum CharState {
     GROUNDED, AIRBORNE
 } CharState;
 
+typedef enum MoveType {
+    NAIR
+} MoveType;
+
 #endif /* CharacterProperties_hpp */

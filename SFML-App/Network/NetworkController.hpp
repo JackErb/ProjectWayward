@@ -106,6 +106,10 @@ private:
         int buttonlen;
     } InputPacket;
     
+    void ResetLagCounters() {
+        rlCount_ = lCount_ = rlSum_ = lSum_ = 0;
+    }
+    
 private:
     sf::UdpSocket socket_;
     
@@ -126,7 +130,7 @@ private:
 	int lCount_ = 0;
 	
 	int dropFrames_ = 0;
-	int dropFramesPeriod_ = 30;
+	int dropFramesPeriod_ = 100;
     
     NetworkControllerState nextState_ = INVALID;
     NetworkControllerState state_;

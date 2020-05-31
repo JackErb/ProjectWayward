@@ -17,14 +17,26 @@ using std::endl;
 using namespace std::chrono;
 
 NetworkController::NetworkController() {
-    state_ = WAITING;
+    int config = 2;
+    unsigned short bindPort = 24240;
     
-    auto status = serverS_.connect("76.28.252.227", 24240);
-    if (status != sf::Socket::Done) {
-        cerr << "ERROR CONNECTING TO SERVER " << status << endl;
+    if (config == 1) {
+        state_ = POLLING;
+        sendIp_ = "10.0.0.222";
+        sendPort_ = 24240;
+        bindPort = 24241;
+    } else if (config == 2){
+        state_= OFF;
+    } else {
+        state_ = WAITING;
     }
     
-    if (socket_.bind(24240, "10.0.0.222") != sf::Socket::Done) {
+    /*auto status = serverS_.connect("76.28.252.227", 24240);
+    if (status != sf::Socket::Done) {
+        cerr << "ERROR CONNECTING TO SERVER " << status << endl;
+    }*/
+    
+    if (socket_.bind(bindPort, "10.0.0.222") != sf::Socket::Done) {
         cerr << "ERROR BINDING TO SOCKET PORT" << endl;
     }
     
@@ -92,11 +104,6 @@ void NetworkController::PreTick() {
                 }
             }
             
-            if (rlCount_ == 30) {
-                rlCount_ = lCount_ = rlSum_ = lSum_ = 0;
-            }
-            
-            
             CheckForRemoteInput();
             return;
         }
@@ -151,12 +158,10 @@ void NetworkController::CheckForRemoteInput() {
 
 			rlSum_ += nextRemoteFrame_ - data.nframe;
 			rlCount_++;
-			lSum_ += frame_ - nextRemoteFrame_;
-			lCount_++;
 		}
-        
-        cout << "Received frame " << data.frame << endl;
-        
+        lSum_ += frame_ - nextRemoteFrame_;
+        lCount_++;
+                
         packet >> data.xaxis >> data.yaxis >> data.buttonlen;
         
         PlayerInput input;
@@ -194,12 +199,12 @@ void NetworkController::CheckForRemoteInput() {
 
 
 void NetworkController::SendPlayerInput(const PlayerInput &input) {
+    if (state_ != CONNECTED) return;
+    
     // Insert player input into inputData_
     inputData_[localFrameIndex_].frame = frame_;
     inputData_[localFrameIndex_].isPlayerValid = true;
     inputData_[localFrameIndex_].player = input;
-    
-    if (state_ != CONNECTED) return;
 
     // Send this frame's input as well as some copies of old input within the rollback
     // limit in case of packet loss
@@ -347,7 +352,7 @@ bool NetworkController::CalculatePing() {
     float ping = ((float)total) / ((float)MAX);
    
     socket_.setBlocking(false);
-    cout << "Calculated Ping: " << total << endl;
+    cout << "Calculated Ping: " << ping << endl;
     
     nextState_ = CONNECTED;
     

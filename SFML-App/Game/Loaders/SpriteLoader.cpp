@@ -18,9 +18,8 @@ SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names)
         
         sf::Texture *text = new sf::Texture();
         int i = 0;
-        while (text->loadFromFile(resourcePath() + s + "_" +
+        while (i <= 10 && text->loadFromFile(resourcePath() + s + "_" +
                                   std::to_string(i) + ".png")) {
-            std::cout << s << "_" << i << ".png" << std::endl;
             anims[s].push_back(new sf::Sprite(*text));
             texts.push_back(text);
             text = new sf::Texture();

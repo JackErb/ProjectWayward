@@ -21,6 +21,7 @@
 #include <map>
 #include <iostream>
 #include <chrono>
+#include <thread>
 
 #include "OfflineGameController.hpp"
 #include "GameController.hpp"
@@ -37,21 +38,22 @@ using std::cerr;
 using std::endl;
 using namespace std::chrono;
 
-private void UpdateControllerState(PlayerInput *input, unsigned int c);
+static void UpdateControllerState(PlayerInput *input, unsigned int c);
 
 int main(int, char const**)
 {
-    const float WIDTH = 2200;
-    const float HEIGHT = 1600;
+    const float WIDTH = 2800;
+    const float HEIGHT = 1750;
     
     bool pause = false;
     bool focus = true;
     
     int i = 0;
+    long count = 0;
     
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML Game");
-    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
 
     // Set the Icon
     sf::Image icon;
@@ -63,7 +65,8 @@ int main(int, char const**)
     GameController controller(WIDTH, HEIGHT);
     
     // Contains the state of the controller
-    PlayerInput playerInput = PlayerInput();
+    PlayerInput p1;
+    PlayerInput p2;
 
     // Start the game loop
     while (window.isOpen()) {
@@ -73,12 +76,13 @@ int main(int, char const**)
         window.clear();
         
         NetworkController *n = &controller.network_;
-		if (n->IsConnected() && n->frame_ != 0 && n->frame_ % n->dropFramesPeriod_ == 0) {
-			float drop = ((float)n->rlSum_ / n->rlCount_) - ((float)n->lSum_ / n->lCount_);
+		if (n->IsConnected() && n->rlCount_ >= n->dropFramesPeriod_) {
+			float drop = ((float)n->lSum_ / (float)n->lCount_) - ((float)n->rlSum_ / (float)n->rlCount_);
 			cout << "Lag " << drop << endl;
-			if (drop > 0) {
-				n->dropFrames_ = (int)drop;
+            if (drop > 0.75f) {
+                n->dropFrames_ = (int)(drop);
 			}
+            n->ResetLagCounters();
 		}
         
         /* ************************** */
@@ -98,11 +102,13 @@ int main(int, char const**)
         }
         
         // Update the player input
-        playerInput.Tick();
+        p1.Tick();
+        p2.Tick();
         sf::Joystick::update();
-        UpdateControllerState(&playerInput, 0);
+        UpdateControllerState(&p1, 0);
+        UpdateControllerState(&p2, 1);
         
-        if (playerInput.IsPressed(2)) {
+        if (p1.IsPressed(2)) {
             pause = !pause;
         }
         
@@ -114,12 +120,13 @@ int main(int, char const**)
         if (!pause && n->dropFrames_ == 0) {
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
-                int idx = controller.network_.localFrameIndex_;
+                /*int idx = controller.network_.localFrameIndex_;
                 if (focus) {
                     controller.ProcessInput(playerInput, controller.network_.inputData_[idx].remote);
                 } else {
                     controller.ProcessInput(PlayerInput(), controller.network_.inputData_[idx].remote);
-                }
+                }*/
+                controller.ProcessInput(p1, p2);
                 controller.Tick();
             } else {
                 controller.network_.CheckForRemoteInput();
@@ -129,31 +136,45 @@ int main(int, char const**)
             // Paused
             
             if (focus) {
-                if (playerInput.IsPressed(3)) {
+                if (p1.IsPressed(3)) {
                     controller.RollbackTick();
-                } else if (playerInput.IsPressed(0)) {
+                } else if (p1.IsPressed(0)) {
                     controller.RollbackAndReplay();
                 }
             }
         } else {
+            n->CheckForRemoteInput();
             n->dropFrames_--;
         }
         
-        controller.Render(&window);
-        
-        auto end = high_resolution_clock::now();
-        //cout << duration_cast<microseconds>(end - start).count() << endl;
-        
         // Update the window
+        controller.Render(&window);
         window.display();
         
+        auto now = high_resolution_clock::now();
+        while (duration_cast<microseconds>(now - start).count() < 14500) {
+            std::this_thread::sleep_for(microseconds(100));
+            now = high_resolution_clock::now();
+        }
+        
+        while (duration_cast<microseconds>(now - start).count() < 16700) {
+            std::this_thread::sleep_for(microseconds(0));
+            now = high_resolution_clock::now();
+        }
+        
+        count += (long) duration_cast<microseconds>(now - start).count();
         i++;
+        
+        if (i == 100) {
+            cout << "Average frame time: " << count / i << endl;
+            count = i = 0;
+        }
     }
 
     return EXIT_SUCCESS;
 }
 
-private void UpdateControllerState(PlayerInput *input, unsigned int c) {
+void UpdateControllerState(PlayerInput *input, unsigned int c) {
     if (sf::Joystick::isConnected(c)) {
         // Check the controller's buttons
         for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {

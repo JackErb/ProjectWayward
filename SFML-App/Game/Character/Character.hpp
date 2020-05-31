@@ -24,9 +24,10 @@
 using std::string;
 using std::list;
 
+class MslInterpreter;
+
 class Character : public Entity {
 public:
-    
     typedef struct CharacterAttributes {
         float GroundAccel = 2.5f;
         float MaxGroundSpeed = 30.f;
@@ -111,6 +112,7 @@ public:
     void Turnaround() { data.direction_ *= -1; }
     void SetDirection(int dir) { data.direction_ = dir; }
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
+    void Airborne() { initAirborneData(); }
     
 private:
     void initAirborneData() {
@@ -145,6 +147,8 @@ private:
     GameData rollback_;
     
     CharacterState *actionState_;
+    
+    MslInterpreter *mslIntp;
     
     const Attributes attr;
     AnimMap anims_;

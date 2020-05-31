@@ -1,0 +1,4 @@
+func Tick() {
+    var x = 2 + 4;
+    var y = 3 * 4 + 3;
+}

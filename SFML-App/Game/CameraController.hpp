@@ -85,7 +85,7 @@ public:
     void SetScale(float s) { scale = s; }
     
 public:
-    float scale = 0.75f;
+    float scale = 0.85f;
     
 private:
     sf::Vector2f windowOffset_;

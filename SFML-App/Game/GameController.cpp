@@ -19,6 +19,7 @@
 #include "ResourcePath.hpp"
 #include "SpriteLoader.hpp"
 #include "BlankEntity.hpp"
+#include "MoveLoader.hpp"
 
 using std::list;
 using std::cout;
@@ -70,10 +71,12 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), rem
     AddCharacter(&remotePlayer_);
     AddStage(stage);
     AddStage(platform);
+    
+    MoveLoader::LoadMoves();
 }
 
 void GameController::PreTick(bool rb) {
-    if (!rb) {
+    if (!rb && network_.IsConnected()) {
         network_.PreTick();
         if (network_.frame_ == 0) {
             player_.SetPosition({-90.f, 0});

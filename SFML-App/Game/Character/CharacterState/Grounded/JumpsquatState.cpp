@@ -12,7 +12,6 @@
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
     if (input.stick.hyp() > 40.f) {
-        float a = input.stick.angle();
         if (input.stick.inDirection(LEFT) && data.type_ == JUP) {
             data.type_ = JLEFT;
         } else if (input.stick.inDirection(RIGHT) && data.type_ == JUP) {

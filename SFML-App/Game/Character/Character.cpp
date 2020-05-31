@@ -18,11 +18,16 @@
 #include "TurnaroundState.hpp"
 #include "JumpsquatState.hpp"
 #include "AirdodgeState.hpp"
+#include "MslInterpreter.hpp"
+#include "MslScanner.hpp"
+#include "MoveLoader.hpp"
 
 using std::list;
 
-Character::Character(int id, sf::Vector2f vec) : Entity(id, vec), input_(nullptr) {
+Character::Character(int id, sf::Vector2f vec) : Entity(id, vec), input_(nullptr),
+        mslIntp(this, MoveLoader::LoadMoves()) {
     SetActionState(new AirborneNeutralState(this));
+    MoveLoader
 }
 
 Character::~Character() {
@@ -117,7 +122,7 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
                 data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                 return;
             }
-        } else if (entity.Type() == PLATFORM) {
+        } else if (entity.Type() == PLATFORM && !input_->stick.inDirection(DOWN)) {
             if (pv.x == 0 && pv.y < 0) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
@@ -233,6 +238,7 @@ void Character::FallthroughPlatform() {
     
     data.fallthrough_ = data.groundedData.stage->id;
     data.ftCount_ = 4;
+    initAirborneData();
 }
 
 void Character::WallJump(int dir) {

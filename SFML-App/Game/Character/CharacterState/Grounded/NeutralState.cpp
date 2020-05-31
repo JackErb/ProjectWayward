@@ -56,7 +56,6 @@ void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
 void NeutralState::SwitchState(CharState state) {
     if (state == AIRBORNE) {
         character_->SetActionState(new AirborneNeutralState(character_));
-        return;
     } else {
         std::cerr << "ERROR SWITCHING STATES" << std::endl;
     }

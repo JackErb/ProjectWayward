@@ -12,6 +12,10 @@
 #include "AirdodgeState.hpp"
 #include "Character.hpp"
 
+AirborneNeutralState::AirborneNeutralState(Character* ch) : AirborneState(ch) {
+    
+}
+
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3) && character_->Jumps() > 0) {
         character_->Jump(DJUMP, true);
@@ -27,7 +31,6 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    float a = input.stick.angle();
     float hyp = input.stick.hyp();
     if (input.stick.inDirection(DOWN_T) && hyp > 50.f && character_->Velocity().y > 0.f) {
         character_->FastFall();
@@ -54,10 +57,12 @@ void AirborneNeutralState::Tick() {
 void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     if (entity.Type() == STAGE) {
         if (abs(pv.x) > 0 && pv.y == 0) {
-            if (pv.x < 0 && character_->input_->stick.inDirection(Direction::LEFT_T)) {
+            if (pv.x < 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)
+                && character_->input_->IsPressed(3)) {
                 character_->WallJump(-1);
                 character_->SetDirection(-1);
-            } else if (pv.x > 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)) {
+            } else if (pv.x > 0 && character_->input_->stick.inDirection(Direction::LEFT_T)
+                       && character_->input_->IsPressed(3)) {
                 character_->WallJump(1);
                 character_->SetDirection(1);
             }
