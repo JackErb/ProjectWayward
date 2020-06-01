@@ -17,6 +17,6 @@ struct Block: public Statement {
     std::vector<Statement*> ls;
     
     void accept(Visitor *v) { v->visit(this); }
-}
+};
 
 #endif /* Block_h */

@@ -32,7 +32,7 @@ void MslScanner::nextLine() {
     }
     
     // Prep the string
-    std::regex r("[+-*/(){}=;]");
+    std::regex r("[+-*/(){}=;:]");
     line_ = std::regex_replace(line_, r, " $0 ");
 }
 
@@ -54,32 +54,42 @@ Msl::Token MslScanner::NextToken() {
         if (p2 == string::npos) {
             Msl::Token token = getToken(line_.substr(p1));
             line_ = "";
-            cerr << Msl::toString(token) << " " << endl;
             return token;
         }
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
         line_ = line_.substr(p2);
-        cerr << Msl::toString(token) << " ";
         return token;
     } while (p1 == string::npos);
     return Msl::EOF_;
 }
 
 Msl::Token MslScanner::getToken(std::string s) {
-    if (s.compare("func") == 0) return Msl::FUNC;
-    if (s.compare("{") == 0) return Msl::LCURL;
-    if (s.compare("}") == 0) return Msl::RCURL;
-    if (s.compare("(") == 0) return Msl::LPAREN;
-    if (s.compare(")") == 0) return Msl::RPAREN;
-    if (s.compare("var") == 0) return Msl::VAR;
-    if (s.compare("=") == 0) return Msl::EQUALS;
-    if (s.compare("+") == 0) return Msl::PLUS;
-    if (s.compare("-") == 0) return Msl::MINUS;
-    if (s.compare("*") == 0) return Msl::TIMES;
-    if (s.compare("/") == 0) return Msl::DIV;
-    if (s.compare("switch") == 0) return Msl::SWITCH;
-    if (s.compare(";") == 0) return Msl::EOL;
+    if (s.size() == 1) {
+        if (s.compare("{") == 0) return Msl::LCURL;
+        if (s.compare("}") == 0) return Msl::RCURL;
+        if (s.compare("(") == 0) return Msl::LPAREN;
+        if (s.compare(")") == 0) return Msl::RPAREN;
+        if (s.compare("=") == 0) return Msl::EQUALS;
+        if (s.compare("+") == 0) return Msl::PLUS;
+        if (s.compare("-") == 0) return Msl::MINUS;
+        if (s.compare("*") == 0) return Msl::TIMES;
+        if (s.compare("/") == 0) return Msl::DIV;
+        if (s.compare("=") == 0) return Msl::EQUALS;
+        if (s.compare("+") == 0) return Msl::PLUS;
+        if (s.compare("-") == 0) return Msl::MINUS;
+        if (s.compare("*") == 0) return Msl::TIMES;
+        if (s.compare("/") == 0) return Msl::DIV;
+        if (s.compare(";") == 0) return Msl::EOL;
+        if (s.compare(":") == 0) return Msl::COLON;
+    } else {
+        if (s.compare("func") == 0) return Msl::FUNC;
+        if (s.compare("var") == 0) return Msl::VAR;
+        if (s.compare("switch") == 0) return Msl::SWITCH;
+        if (s.compare("case") == 0) return Msl::CASE;
+        if (s.compare("default") == 0) return Msl::DEFAULT;
+    }
     
+    // Check if int literal
     int n;
     std::istringstream(s) >> n;
     if (n != 0 || s.compare("0") == 0) {

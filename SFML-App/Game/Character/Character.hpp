@@ -20,6 +20,7 @@
 #include "SpriteLoader.hpp"
 #include "CharacterState.hpp"
 #include "CharacterProperties.hpp"
+#include "MoveLoader.hpp"
 
 using std::string;
 using std::list;
@@ -148,7 +149,7 @@ private:
     
     CharacterState *actionState_;
     
-    MslInterpreter *mslIntp;
+    MslInterpreter *mslIntp_;
     
     const Attributes attr;
     AnimMap anims_;

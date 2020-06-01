@@ -7,6 +7,7 @@
 //
 
 #include "Character.hpp"
+
 #include "NeutralState.hpp"
 #include "PhysicsEngine.hpp"
 #include "AirborneNeutralState.hpp"
@@ -18,16 +19,18 @@
 #include "TurnaroundState.hpp"
 #include "JumpsquatState.hpp"
 #include "AirdodgeState.hpp"
+#include "MoveLoader.hpp"
+
 #include "MslInterpreter.hpp"
 #include "MslScanner.hpp"
-#include "MoveLoader.hpp"
 
 using std::list;
 
-Character::Character(int id, sf::Vector2f vec) : Entity(id, vec), input_(nullptr),
-        mslIntp(this, MoveLoader::LoadMoves()) {
+Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
+    input_ = nullptr;
+    mslIntp_ = new MslInterpreter(this);
+    mslIntp_->CallFunction("Tick");
     SetActionState(new AirborneNeutralState(this));
-    MoveLoader
 }
 
 Character::~Character() {

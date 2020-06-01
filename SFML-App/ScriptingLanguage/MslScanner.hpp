@@ -9,12 +9,12 @@
 #ifndef MslScanner_hpp
 #define MslScanner_hpp
 
+#include "Msl.hpp"
+
 #include <string>
 #include <unordered_map>
 #include <fstream>
 #include <istream>
-
-#include "Msl.hpp"
 
 class MslScanner {
 public:

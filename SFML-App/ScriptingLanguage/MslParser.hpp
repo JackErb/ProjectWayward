@@ -9,24 +9,23 @@
 #ifndef MslParser_hpp
 #define MslParser_hpp
 
+#include "Msl.hpp"
+#include "MoveLoader.hpp"
+
 #include <unordered_map>
 #include <string>
-
-#include "Msl.hpp"
 
 class MslScanner;
 class Func;
 class Expression;
 class Statement;
 
-typedef std::unordered_map<std::string, Func*> MoveLogic;
-
 class MslParser {
 public:
     MslParser() {}
     ~MslParser() {}
     
-    MoveLogic* parseProgram(MslScanner *s);
+    Msl::MoveScript* parseProgram(MslScanner *s);
     
 private:
     // Recursive descent parser functions
@@ -48,6 +47,7 @@ private:
     
     Msl::Token curr_;
     bool err_ = false;
+    bool statementExpr_ = false;
 };
 
 #endif /* MslParser_hpp */

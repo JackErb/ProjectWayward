@@ -1,4 +1,14 @@
 func Tick() {
-    var x = 2 + 4;
+    var x = (2 + 4) * 3 - 4;
     var y = 3 * 4 + 3;
+        
+    switch y - x - 1 {
+    case 0:
+        y = 3;
+        x = 1;
+    case 1:
+        y = 2 + "Jack";
+    default:
+        y = 3;
+    }
 }

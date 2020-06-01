@@ -12,14 +12,19 @@
 #include "Statement.h"
 #include <unordered_map>
 
+class Expression;
+
 // NOTE: Is only valid for integers
 // switch <EXPR>
 //    (cases...)
 struct SwitchStatement: public Statement {
-    Expr *expr;
+    SwitchStatement(Expression *e) : expr(e), cases() {}
+    Expression *expr;
     std::unordered_map<int, Statement*> cases;
+    bool defBranch = false;
+    Statement *def;
     
     void accept(Visitor *v) { v->visit(this); }
-}
+};
 
 #endif /* SwitchStatement_h */

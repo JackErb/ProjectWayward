@@ -10,18 +10,20 @@
 #define Msl_hpp
 
 #include <string>
+#include <unordered_map>
 
-struct Msl {
-public:
+class Func;
+
+namespace Msl {
     typedef enum Token {
         FUNC, VAR, EQUALS,
-        LPAREN, RPAREN, LCURL, RCURL,
-        PLUS, TIMES, MINUS, DIV, SWITCH,
+        LPAREN, RPAREN, LCURL, RCURL, COLON,
+        PLUS, TIMES, MINUS, DIV, SWITCH, CASE,
         IDENTIFIER, INT, STRING, EOF_, EOL,
-        INVALID
+        INVALID, DEFAULT
     } Token;
     
-    typedef enum Func {
+    typedef enum Funcs {
         INPUT, TICK, COLLISION
     } MainFuncs;
     
@@ -35,6 +37,8 @@ public:
                 return "=";
             case SWITCH:
                 return "switch";
+            case CASE:
+                return "case";
             case LPAREN:
                 return "(";
             case RPAREN:
@@ -43,6 +47,8 @@ public:
                 return "{";
             case RCURL:
                 return "}";
+            case COLON:
+                return ":";
             case PLUS:
                 return "+";
             case MINUS:
@@ -63,8 +69,16 @@ public:
                 return ";";
             case INVALID:
                 return "$$INVALID";
+            case DEFAULT:
+                return "DEFAULT";
         }
     }
+    
+    typedef enum MoveType {
+        NAIR
+    } MoveType;
+
+    typedef std::unordered_map<std::string, Func*> MoveScript;
 };
 
 #endif /* Msl_hpp */

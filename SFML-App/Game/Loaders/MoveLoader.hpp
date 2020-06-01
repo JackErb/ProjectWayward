@@ -9,19 +9,17 @@
 #ifndef MoveLoader_hpp
 #define MoveLoader_hpp
 
+#include "Msl.hpp"
+
 #include <unordered_map>
 #include <string>
-
-#include "CharacterProperties.hpp"
+#include <vector>
 
 class Func;
 
-typedef std::unordered_map<std::string, Func*> MoveLogic;
-typedef std::unordered_map<MoveType, MoveLogic*> MoveFuncs;
-
 class MoveLoader {
 public:
-    static MoveFuncs* LoadMoves();
+    static std::vector<Msl::MoveScript*> LoadMoves();
 };
 
 #endif /* MoveLoader_hpp */

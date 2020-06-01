@@ -9,27 +9,32 @@
 #ifndef MslInterpreter_hpp
 #define MslInterpreter_hpp
 
+#include "MoveLoader.hpp"
+#include "Msl.hpp"
+#include "ASTVisitor.h"
+
 #include <unordered_map>
 #include <vector>
 #include <string>
 #include <functional>
 
-#include "Msl.hpp"
-#include "MoveLoader.hpp"
-#include "ASTVisitor.h"
-
 class Character;
 
 class MslInterpreter: public Visitor {
 public:
-    MslInterpreter(Character *ch, MoveFuncs *ls);
+    MslInterpreter(Character *ch);
     ~MslInterpreter() {}
     
     void initializeGlobalFunctions();
     
 public:
     // AST Visitor functions
-    void Call(std::string name);
+    void InitScript(int move);
+    void ProcessInput();
+    void Tick();
+    void CallFunction(std::string name);
+    
+    void visit(Func *s);
     
     void visit(AssignStatement *s);
     void visit(SwitchStatement *s);
@@ -46,22 +51,40 @@ public:
     
 private:
     // Variables used while visiting AST
-    typedef enum ResType {
+    typedef enum Type {
         INT, STRING, ERR
-    } ResType;
+    } BaseType;
     
-    // Whenever an Expression node is visited, it saves
-    // its return type and associated value
-    ResType exprType;
-    std::string exprStr;
-    int exprInt;
+    typedef struct ExprRes {
+        ExprRes() {}
+        
+        ExprRes(BaseType t) {
+            type = t;
+            str = "";
+            n = 0;
+        }
+        
+        ExprRes(const ExprRes &r) {
+            type= r.type;
+            str = r.str;
+            n = r.n;
+        }
+        
+        BaseType type;
+        std::string str;
+        int n;
+    } ExprRes;
+        
+    ExprRes exprRes_;
     
+    static bool err(const ExprRes &e1);
+    static bool eq(const ExprRes &e1, const BaseType &t);
     
 private:
     Character *ch_;
     
-    std::unordered_map<std::string, int> vals_;
-    MoveFuncs *funcs_;
+    std::unordered_map<std::string, ExprRes> vals_;
+    std::vector<Msl::MoveScript*> scripts_;
     std::unordered_map<std::string, std::function<void(void)>> bindings_;
 };
 

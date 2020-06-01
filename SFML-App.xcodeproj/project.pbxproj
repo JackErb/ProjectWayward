@@ -47,6 +47,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		263390162484C9AF0042D227 /* ASTPrintVisitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTPrintVisitor.h; sourceTree = "<group>"; };
 		263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineNetworkController.cpp; sourceTree = "<group>"; };
 		263B4713246343C8006CAA16 /* OfflineNetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OfflineNetworkController.hpp; sourceTree = "<group>"; };
 		263B471524634446006CAA16 /* OfflineGameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineGameController.cpp; sourceTree = "<group>"; };
@@ -149,8 +150,8 @@
 		26384FED2456348F00C966A1 /* Physics */ = {
 			isa = PBXGroup;
 			children = (
-				26D4F7962482CD6F00B54F64 /* PhysicsEngine.cpp */,
 				26D4F7952482CD6F00B54F64 /* PhysicsEngine.hpp */,
+				26D4F7962482CD6F00B54F64 /* PhysicsEngine.cpp */,
 			);
 			name = Physics;
 			path = ..;
@@ -187,6 +188,7 @@
 		264612252482F941008C4494 /* AST */ = {
 			isa = PBXGroup;
 			children = (
+				263390162484C9AF0042D227 /* ASTPrintVisitor.h */,
 				26AC1A76248427820025B15D /* ASTVisitor.h */,
 				264612262482F990008C4494 /* Func.h */,
 				2646122B2482FBC4008C4494 /* Statements */,
@@ -314,7 +316,7 @@
 			path = CharacterState;
 			sourceTree = "<group>";
 		};
-		26D4F7902482CC0900B54F64 /* Scripting Language */ = {
+		26D4F7902482CC0900B54F64 /* ScriptingLanguage */ = {
 			isa = PBXGroup;
 			children = (
 				264612212482F714008C4494 /* Msl.hpp */,
@@ -326,7 +328,7 @@
 				26D4F7C92482D02500B54F64 /* MslScanner.cpp */,
 				264612252482F941008C4494 /* AST */,
 			);
-			path = "Scripting Language";
+			path = ScriptingLanguage;
 			sourceTree = "<group>";
 		};
 		26D4F7AA2482CE5E00B54F64 /* Airborne */ = {
@@ -379,7 +381,7 @@
 			isa = PBXGroup;
 			children = (
 				26D4F78D2482CBC100B54F64 /* Setup */,
-				26D4F7902482CC0900B54F64 /* Scripting Language */,
+				26D4F7902482CC0900B54F64 /* ScriptingLanguage */,
 				26D4F78C2482CBB100B54F64 /* Network */,
 				26D4F78E2482CBC700B54F64 /* Game */,
 				26DE845A245368AD003D05FE /* Resources */,

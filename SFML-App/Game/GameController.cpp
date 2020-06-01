@@ -71,8 +71,6 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), rem
     AddCharacter(&remotePlayer_);
     AddStage(stage);
     AddStage(platform);
-    
-    MoveLoader::LoadMoves();
 }
 
 void GameController::PreTick(bool rb) {

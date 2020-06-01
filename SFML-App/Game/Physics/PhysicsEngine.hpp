@@ -45,7 +45,6 @@ public:
     }
     
     void AddStage(Entity *e) {
-        assert(e->Type() == STAGE || e->Type() == PLATFORM);
         stage_.push_back(e);
         AddEntity(e);
     }

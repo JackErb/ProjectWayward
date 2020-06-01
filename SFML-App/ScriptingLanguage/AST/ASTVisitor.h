@@ -23,6 +23,8 @@ class Var;
 
 class Visitor {
 public:
+    virtual void visit(Func *s) = 0;
+    
     virtual void visit(AssignStatement *s) = 0;
     virtual void visit(SwitchStatement *s) = 0;
     virtual void visit(Block *s) = 0;
