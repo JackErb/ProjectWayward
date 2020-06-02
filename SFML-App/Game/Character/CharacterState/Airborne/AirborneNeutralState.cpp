@@ -11,6 +11,8 @@
 #include "LandingLagState.hpp"
 #include "AirdodgeState.hpp"
 #include "Character.hpp"
+#include "AirborneScriptState.hpp"
+#include "MslInterpreter.hpp"
 
 AirborneNeutralState::AirborneNeutralState(Character* ch) : AirborneState(ch) {
     
@@ -23,6 +25,11 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     
     if (input.IsPressed(7) && character_->HasAirdodge()) {
         character_->SetActionState(new AirdodgeState(character_, input.stick.angle()));
+        return;
+    }
+    
+    if (input.IsPressed(1)) {
+        character_->SetActionState(new AirborneScriptState(character_, 0));
         return;
     }
     

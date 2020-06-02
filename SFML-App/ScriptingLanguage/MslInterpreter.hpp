@@ -25,11 +25,13 @@ public:
     MslInterpreter(Character *ch);
     ~MslInterpreter() {}
     
-    void initializeGlobalFunctions();
+private:
+    void initializeBindings();
     
 public:
     // AST Visitor functions
     void InitScript(int move);
+    void PreTick(int frame);
     void ProcessInput();
     void Tick();
     void CallFunction(std::string name);
@@ -58,11 +60,9 @@ private:
     typedef struct ExprRes {
         ExprRes() {}
         
-        ExprRes(BaseType t) {
-            type = t;
-            str = "";
-            n = 0;
-        }
+        ExprRes(int n) : type(INT), n(n) {}
+        
+        ExprRes(BaseType t) : type(t), str(""), n(0) {}
         
         ExprRes(const ExprRes &r) {
             type= r.type;

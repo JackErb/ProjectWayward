@@ -37,13 +37,21 @@ using std::endl;
 
 MslInterpreter::MslInterpreter(Character* ch) : ch_(ch), exprRes_(ERR) {
     scripts_ = MoveLoader::LoadMoves();
-    initializeGlobalFunctions();
+    initializeBindings();
 }
 
-void MslInterpreter::initializeGlobalFunctions() {
+void MslInterpreter::initializeBindings() {
     bindings_["jump"] = [=]() {
         this->ch_->SetActionState(new AirborneNeutralState(ch_));
         this->ch_->Jump(JUP, true);
+    };
+    
+    bindings_["quit"] = [=]() {
+        this->ch_->SetActionState(new AirborneNeutralState(ch_));
+    };
+    
+    bindings_["rotate"] = [=]() {
+        this->ch_->IncRot(10);
     };
 }
 
@@ -52,9 +60,12 @@ void MslInterpreter::InitScript(int move) {
     // Reset state of interpreter entirely
 }
 
+void MslInterpreter::PreTick(int frame) {
+    // Update Msl vars
+    vals_["frame"] = ExprRes(frame);
+}
+
 void MslInterpreter::ProcessInput() {
-    // Update Msl vars (input, frame)
-    
     CallFunction("ProcessInput");
 }
 
@@ -63,7 +74,13 @@ void MslInterpreter::Tick() {
 }
 
 void MslInterpreter::CallFunction(string name) {
-    Func *f = scripts_[0]->find(name)->second;
+    auto it = scripts_[0]->find(name);
+    if (it == scripts_[0]->end()) {
+        cerr << "undefined script function " << name << "()" << endl;
+        return;
+    }
+    
+    Func *f = it->second;
     for (Statement *s : f->statements) {
         s->accept(this);
     }
@@ -113,7 +130,12 @@ void MslInterpreter::visit(Block *s) {
 }
 
 void MslInterpreter::visit(FunctionCall *s) {
-    
+    auto f = bindings_.find(s->name);
+    if (f != bindings_.end()) {
+        f->second();
+    } else {
+        cerr << "undefined function " << s->name << "()" << endl;
+    }
 }
 
 void MslInterpreter::visit(Plus *e) {
@@ -157,6 +179,7 @@ void MslInterpreter::visit(Var *e) {
     if (v != vals_.end()) {
         exprRes_ = v->second;
     } else {
+        cerr << "undefined var " << e->name << endl;
         exprRes_ = ExprRes(ERR);
     }
 }

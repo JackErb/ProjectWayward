@@ -115,6 +115,9 @@ public:
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
     
+    
+    void IncRot(float n) { Sprite()->rotate(n); }
+    
 private:
     void initAirborneData() {
         data.airborneData.jumps = 1;
@@ -126,6 +129,7 @@ private:
 public:
     // The input for this frame
     const PlayerInput* input_;
+    MslInterpreter *mslIntp;
     
 private:
     typedef struct CharacterData {
@@ -148,8 +152,6 @@ private:
     GameData rollback_;
     
     CharacterState *actionState_;
-    
-    MslInterpreter *mslIntp_;
     
     const Attributes attr;
     AnimMap anims_;

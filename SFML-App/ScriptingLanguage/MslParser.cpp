@@ -29,18 +29,22 @@
 #include <unordered_map>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 using std::string;
 using std::unordered_map;
 using std::vector;
 using std::cerr;
 using std::endl;
+using std::pair;
+using std::make_pair;
 
 void MslParser::error(std::string str) {
     cerr << str << endl;
     err_ = true;
 }
 
+// Asserts the two tokens are equal
 bool MslParser::assertToken(Msl::Token exp, Msl::Token act) {
     if (exp != act) {
         error("Expected " + Msl::toString(exp) + " but got " + Msl::toString(act));
@@ -49,6 +53,8 @@ bool MslParser::assertToken(Msl::Token exp, Msl::Token act) {
     return true;
 }
 
+// Set curr_ to next token and assert it's equal to exp
+// Return true if equal, else false
 bool MslParser::assertNext(Msl::Token exp) {
     curr_ = s_->NextToken();
     return assertToken(exp, curr_);
@@ -59,10 +65,12 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
     s_ = s;
     
     curr_ = s->NextToken();
+    // Keep parsing functions until reached EOF
+    // Will exit as soon as an error is encountered
     while (curr_ != Msl::EOF_) {
         switch (curr_) {
             case Msl::FUNC: {
-                // func <ID>() {}
+                // func <ID>() { ... }
                 assertNext(Msl::IDENTIFIER);
                 string name = s_->getId();
                 
@@ -119,42 +127,29 @@ Statement* MslParser::statement() {
             // case 1:
             //    ...
             // }
+            
+            // Get switch expression
             curr_ = s_->NextToken();
             statementExpr_ = true;
             SwitchStatement *res = new SwitchStatement(expr());
             statementExpr_ = false;
             if (err_ || !assertToken(curr_, Msl::LCURL)) return nullptr;
+            
+            // Get case branches
             curr_ = s_->NextToken();
             while (true) {
                 if (curr_ == Msl::RCURL) {
                     // End switch statement
                     break;
-                } else if (curr_ == Msl::CASE || curr_ == Msl::DEFAULT) {
-                    int n;
-                    Msl::Token c = curr_;
-                    if (c == Msl::CASE) {
-                        assertNext(Msl::INT);
-                        if (err_) return nullptr;
-                        n = s_->getIntLiteral();
-                    }
-                    
-                    assertNext(Msl::COLON);
+                } else if (curr_ == Msl::CASE) {
+                    pair<int, Statement*> r = switchCase();
                     if (err_) return nullptr;
-                    
-                    curr_ = s_->NextToken();
-                    Block *b = new Block();
-                    while (curr_ != Msl::DEFAULT && curr_ != Msl::CASE && curr_ != Msl::RCURL) {
-                        Statement *s = statement();
-                        if (err_) return nullptr;
-                        b->ls.push_back(s);
-                    }
-                                       
-                    if (c == Msl::CASE) {
-                        res->cases[n] = b;
-                    } else {
-                        res->defBranch = true;
-                        res->def = b;
-                    }
+                    res->cases[r.first] = r.second;
+                } else if (curr_ == Msl::DEFAULT) {
+                    pair<int, Statement*> r = switchCase();
+                    if (err_) return nullptr;
+                    res->defBranch = true;
+                    res->def = r.second;
                 } else {
                     error("unexpected token in switch statement: " + Msl::toString(curr_));
                     return nullptr;
@@ -205,6 +200,46 @@ Statement* MslParser::statement() {
             error("statement(): unexpected token " + Msl::toString(curr_));
             return nullptr;
         }
+    }
+}
+
+pair<int, Statement*> MslParser::switchCase() {
+    switch (curr_) {
+        case Msl::CASE: {
+            assertNext(Msl::INT);
+            if (err_) return {0, nullptr};
+            int n = s_->getIntLiteral();
+            
+            assertNext(Msl::COLON);
+            if (err_) return {0, nullptr};
+            
+            Block *b = new Block();
+            curr_ = s_->NextToken();
+            while (curr_ != Msl::DEFAULT && curr_ != Msl::CASE && curr_ != Msl::RCURL) {
+                Statement *s = statement();
+                if (err_) return {0, nullptr};
+                b->ls.push_back(s);
+            }
+            
+            return {n, b};
+        }
+        case Msl::DEFAULT: {
+            assertNext(Msl::COLON);
+            if (err_) return {0, nullptr};
+            
+            Block *b = new Block();
+            curr_ = s_->NextToken();
+            while (curr_ != Msl::DEFAULT && curr_ != Msl::CASE && curr_ != Msl::RCURL) {
+                Statement *s = statement();
+                if (err_) return {0, nullptr};
+                b->ls.push_back(s);
+            }
+            
+            return {0, b};
+        }
+        default:
+            error("unexpected token in switch case " + Msl::toString(curr_));
+            return {0, nullptr};
     }
 }
 

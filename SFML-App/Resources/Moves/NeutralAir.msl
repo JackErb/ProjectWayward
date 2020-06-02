@@ -1,14 +1,15 @@
-func Tick() {
-    var x = (2 + 4) * 3 - 4;
-    var y = 3 * 4 + 3;
-        
-    switch y - x - 1 {
-    case 0:
-        y = 3;
-        x = 1;
-    case 1:
-        y = 2 + "Jack";
-    default:
-        y = 3;
+func ProcessInput() {
+    switch frame {
+    case 36:
+        quit();
     }
+}
+
+func Tick() {
+    rotate();
+}
+
+func Land() {
+
+    var test = 10; # h
 }

@@ -28,8 +28,7 @@ using std::list;
 
 Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
     input_ = nullptr;
-    mslIntp_ = new MslInterpreter(this);
-    mslIntp_->CallFunction("Tick");
+    mslIntp = new MslInterpreter(this);
     SetActionState(new AirborneNeutralState(this));
 }
 

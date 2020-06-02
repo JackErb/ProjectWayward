@@ -32,7 +32,7 @@ void MslScanner::nextLine() {
     }
     
     // Prep the string
-    std::regex r("[+-*/(){}=;:]");
+    std::regex r("[+-*/(){}=;:#]");
     line_ = std::regex_replace(line_, r, " $0 ");
 }
 
@@ -43,27 +43,39 @@ Msl::Token MslScanner::NextToken() {
     static char whitespace[] = " \n\t";
     
     string::size_type p1, p2;
-    do {
+    while (true) {
         p1 = line_.find_first_not_of(whitespace);
         if (p1 == string::npos) {
+            // Empty line
+            nextLine();
+            if (eof_) return Msl::EOF_;
+            continue;
+        } else if (line_[p1] == '#') {
+            // Comment; ignore line
             nextLine();
             if (eof_) return Msl::EOF_;
             continue;
         }
+        
         p2 = line_.find_first_of(whitespace, p1);
         if (p2 == string::npos) {
             Msl::Token token = getToken(line_.substr(p1));
             line_ = "";
+            cerr << "TOKEN " << Msl::toString(token) << endl;
             return token;
         }
+        
+        // Next token is substr of p1 to p2
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
+        // Clip line
         line_ = line_.substr(p2);
         return token;
-    } while (p1 == string::npos);
+    }
     return Msl::EOF_;
 }
 
 Msl::Token MslScanner::getToken(std::string s) {
+    // Terrible token matcher...
     if (s.size() == 1) {
         if (s.compare("{") == 0) return Msl::LCURL;
         if (s.compare("}") == 0) return Msl::RCURL;
@@ -97,6 +109,8 @@ Msl::Token MslScanner::getToken(std::string s) {
         return Msl::INT;
     }
     
+    // Assume identifier
+    // TODO: TEST IF VALID CHARACTERS
     str_ = s;
     return Msl::IDENTIFIER;
 }

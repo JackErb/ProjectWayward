@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		26339019248607240042D227 /* AirborneScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26339017248607240042D227 /* AirborneScriptState.cpp */; };
 		263B4714246343C8006CAA16 /* OfflineNetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */; };
 		263B471724634446006CAA16 /* OfflineGameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263B471524634446006CAA16 /* OfflineGameController.cpp */; };
 		263ED2CB246071BE006748DA /* NetworkController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 263ED2C9246071BE006748DA /* NetworkController.cpp */; };
@@ -48,6 +49,8 @@
 
 /* Begin PBXFileReference section */
 		263390162484C9AF0042D227 /* ASTPrintVisitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ASTPrintVisitor.h; sourceTree = "<group>"; };
+		26339017248607240042D227 /* AirborneScriptState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AirborneScriptState.cpp; sourceTree = "<group>"; };
+		26339018248607240042D227 /* AirborneScriptState.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AirborneScriptState.hpp; sourceTree = "<group>"; };
 		263B4712246343C8006CAA16 /* OfflineNetworkController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineNetworkController.cpp; sourceTree = "<group>"; };
 		263B4713246343C8006CAA16 /* OfflineNetworkController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = OfflineNetworkController.hpp; sourceTree = "<group>"; };
 		263B471524634446006CAA16 /* OfflineGameController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineGameController.cpp; sourceTree = "<group>"; };
@@ -334,11 +337,13 @@
 		26D4F7AA2482CE5E00B54F64 /* Airborne */ = {
 			isa = PBXGroup;
 			children = (
-				26D4F7AD2482CE7700B54F64 /* AirborneNeutralState.cpp */,
-				26D4F7AE2482CE7700B54F64 /* AirborneNeutralState.hpp */,
 				26D4F7B02482CE7700B54F64 /* AirborneState.hpp */,
-				26D4F7AF2482CE7700B54F64 /* AirdodgeState.cpp */,
+				26D4F7AE2482CE7700B54F64 /* AirborneNeutralState.hpp */,
+				26D4F7AD2482CE7700B54F64 /* AirborneNeutralState.cpp */,
 				26D4F7B12482CE7700B54F64 /* AirdodgeState.hpp */,
+				26D4F7AF2482CE7700B54F64 /* AirdodgeState.cpp */,
+				26339018248607240042D227 /* AirborneScriptState.hpp */,
+				26339017248607240042D227 /* AirborneScriptState.cpp */,
 			);
 			path = Airborne;
 			sourceTree = "<group>";
@@ -527,6 +532,7 @@
 				264612242482F904008C4494 /* MslParser.cpp in Sources */,
 				26D4F7C22482CE8100B54F64 /* LandingLagState.cpp in Sources */,
 				26D4F7C12482CE8100B54F64 /* DashState.cpp in Sources */,
+				26339019248607240042D227 /* AirborneScriptState.cpp in Sources */,
 				26DE846A24537D4A003D05FE /* GameController.cpp in Sources */,
 				26D4F7C32482CE8100B54F64 /* TurnaroundState.cpp in Sources */,
 				26D4F7942482CD6100B54F64 /* Character.cpp in Sources */,

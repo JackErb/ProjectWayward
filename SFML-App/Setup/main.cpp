@@ -106,7 +106,7 @@ int main(int, char const**)
         p2.Tick();
         sf::Joystick::update();
         UpdateControllerState(&p1, 0);
-        UpdateControllerState(&p2, 1);
+        //UpdateControllerState(&p2, 1);
         
         if (p1.IsPressed(2)) {
             pause = !pause;
@@ -192,6 +192,6 @@ void UpdateControllerState(PlayerInput *input, unsigned int c) {
         input->stick = {sf::Joystick::getAxisPosition(c, sf::Joystick::X),
                        sf::Joystick::getAxisPosition(c, sf::Joystick::Y)};
     } else {
-        //cerr << "Controller not connected" << endl;
+        cerr << "Controller not connected" << endl;
     }
 }

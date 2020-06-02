@@ -14,6 +14,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <utility>
 
 class MslScanner;
 class Func;
@@ -30,6 +31,7 @@ public:
 private:
     // Recursive descent parser functions
     Statement* statement();
+    std::pair<int, Statement*> switchCase();
     Expression* expr();
     Expression* exprtail(Expression *e1);
     Expression* term();
