@@ -19,6 +19,7 @@ class Times;
 class Divide;
 class IntLiteral;
 class StringLiteral;
+class FloatLiteral;
 class Var;
 
 class Visitor {
@@ -35,6 +36,7 @@ public:
     virtual void visit(Var *e) = 0;
     virtual void visit(IntLiteral *e) = 0;
     virtual void visit(StringLiteral *e) = 0;
+    virtual void visit(FloatLiteral *e) = 0;
     virtual void visit(Times *e) = 0;
     virtual void visit(Divide *e) = 0;
 };

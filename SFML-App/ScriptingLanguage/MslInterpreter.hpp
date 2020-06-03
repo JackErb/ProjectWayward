@@ -17,13 +17,15 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <chrono>
 
 class Character;
+
+using namespace std::chrono;
 
 class MslInterpreter: public Visitor {
 public:
     MslInterpreter(Character *ch);
-    ~MslInterpreter() {}
     
 private:
     void initializeBindings();
@@ -48,31 +50,34 @@ public:
     void visit(Var *e);
     void visit(IntLiteral *e) ;
     void visit(StringLiteral *e);
+    void visit(FloatLiteral *e);
     void visit(Times *e);
     void visit(Divide *e);
     
 private:
     // Variables used while visiting AST
     typedef enum Type {
-        INT, STRING, ERR
+        INT, FLOAT, STRING, ERR
     } BaseType;
     
     typedef struct ExprRes {
         ExprRes() {}
         
         ExprRes(int n) : type(INT), n(n) {}
-        
-        ExprRes(BaseType t) : type(t), str(""), n(0) {}
-        
+        ExprRes(float f) : type(FLOAT), f(f) {}
+        ExprRes(std::string s) : type(STRING), str(s) {}
+                
         ExprRes(const ExprRes &r) {
             type= r.type;
             str = r.str;
             n = r.n;
+            f = r.f;
         }
         
         BaseType type;
         std::string str;
         int n;
+        float f;
     } ExprRes;
         
     ExprRes exprRes_;
@@ -80,12 +85,17 @@ private:
     static bool err(const ExprRes &e1);
     static bool eq(const ExprRes &e1, const BaseType &t);
     
+public:
+    const static std::vector<Msl::MoveScript*> scripts;
+    
 private:
     Character *ch_;
     
     std::unordered_map<std::string, ExprRes> vals_;
-    std::vector<Msl::MoveScript*> scripts_;
+    std::vector<ExprRes> params_;
+    
     std::unordered_map<std::string, std::function<void(void)>> bindings_;
+    time_point<high_resolution_clock> time;
 };
 
 #endif /* MslInterpreter_hpp */

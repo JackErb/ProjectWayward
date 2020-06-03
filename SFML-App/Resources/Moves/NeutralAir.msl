@@ -1,4 +1,9 @@
 func ProcessInput() {
+    vector();
+    gravity(0.9);
+    
+    y = 1.5;
+    
     switch frame {
     case 36:
         quit();
@@ -10,6 +15,6 @@ func Tick() {
 }
 
 func Land() {
-
-    var test = 10; # h
+    # Comment
+    var test = 10;
 }

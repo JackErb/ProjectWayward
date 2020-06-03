@@ -25,9 +25,12 @@
 #include "Var.h"
 #include "IntLiteral.h"
 #include "StringLiteral.h"
+#include "FloatLiteral.h"
 #include "SwitchStatement.h"
 
 #include <iostream>
+
+using namespace std::chrono;
 
 using std::string;
 using std::cerr;
@@ -35,15 +38,28 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+const vector<Msl::MoveScript*> MslInterpreter::scripts = MoveLoader::LoadMoves();
+
 MslInterpreter::MslInterpreter(Character* ch) : ch_(ch), exprRes_(ERR) {
-    scripts_ = MoveLoader::LoadMoves();
     initializeBindings();
 }
 
 void MslInterpreter::initializeBindings() {
+    // These are bindings that can be called in the scripting language
     bindings_["jump"] = [=]() {
         this->ch_->SetActionState(new AirborneNeutralState(ch_));
         this->ch_->Jump(JUP, true);
+    };
+    
+    bindings_["vector"] = [=]() {
+        this->ch_->Vector();
+    };
+    
+    bindings_["gravity"] = [=]() {
+        float f;
+        if (this->params_.size() == 0) { f = 1.f; }
+        else { f = this->params_[0].f; cerr << "FLOAT " << f << endl;}
+        this->ch_->ApplyGravity(f);
     };
     
     bindings_["quit"] = [=]() {
@@ -62,6 +78,7 @@ void MslInterpreter::InitScript(int move) {
 
 void MslInterpreter::PreTick(int frame) {
     // Update Msl vars
+    time = high_resolution_clock::now();
     vals_["frame"] = ExprRes(frame);
 }
 
@@ -71,19 +88,22 @@ void MslInterpreter::ProcessInput() {
 
 void MslInterpreter::Tick() {
     CallFunction("Tick");
+    
+    auto now = high_resolution_clock::now();
+    //cerr << "Total time " << duration_cast<microseconds>(now - time).count() << endl;
 }
 
 void MslInterpreter::CallFunction(string name) {
-    auto it = scripts_[0]->find(name);
-    if (it == scripts_[0]->end()) {
+    // Check if function exists
+    auto it = scripts[0]->find(name);
+    if (it == scripts[0]->end()) {
         cerr << "undefined script function " << name << "()" << endl;
         return;
     }
     
+    // Run function
     Func *f = it->second;
-    for (Statement *s : f->statements) {
-        s->accept(this);
-    }
+    f->s->accept(this);
 }
 
 bool MslInterpreter::err(const ExprRes &e1) {
@@ -95,7 +115,7 @@ bool MslInterpreter::eq(const ExprRes &e1, const BaseType &t) {
 }
 
 void MslInterpreter::visit(Func *s) {
-    for (Statement *ss : s->statements) ss->accept(this);
+    s->s->accept(this);
 }
 
 void MslInterpreter::visit(AssignStatement *s) {
@@ -132,6 +152,11 @@ void MslInterpreter::visit(Block *s) {
 void MslInterpreter::visit(FunctionCall *s) {
     auto f = bindings_.find(s->name);
     if (f != bindings_.end()) {
+        params_.clear();
+        for (Expression *e : s->params) {
+            e->accept(this);
+            params_.push_back(ExprRes(exprRes_));
+        }
         f->second();
     } else {
         cerr << "undefined function " << s->name << "()" << endl;
@@ -192,6 +217,11 @@ void MslInterpreter::visit(IntLiteral *e) {
 void MslInterpreter::visit(StringLiteral *e) {
     exprRes_ = ExprRes(STRING);
     exprRes_.str = e->s;
+}
+
+void MslInterpreter::visit(FloatLiteral *e) {
+    exprRes_ = ExprRes(FLOAT);
+    exprRes_.f = e->f;
 }
 
 void MslInterpreter::visit(Times *e) {

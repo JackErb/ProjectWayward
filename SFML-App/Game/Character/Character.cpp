@@ -25,6 +25,9 @@
 #include "MslScanner.hpp"
 
 using std::list;
+using std::cerr;
+using std::cout;
+using std::endl;
 
 Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
     input_ = nullptr;
@@ -42,6 +45,7 @@ void Character::ProcessInput(const PlayerInput &input) {
 }
 
 void Character::Tick() {
+    fill = false;
     // Teleport back above stage
     if (Position().y > 1500) {
         SetPosition({Position().x, -1000});
@@ -110,6 +114,10 @@ void Character::Rollback() {
 void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     if (entity.id == data.fallthrough_) {
         return;
+    }
+    
+    if (entity.Type() == CHARACTER) {
+        fill = true;
     }
     
     if (actionState_->GetState() == AIRBORNE) {
@@ -204,20 +212,28 @@ void Character::Dash(float m) {
     data.velocity_.x = m * attr.MaxGroundSpeed;
 }
 
-void Character::Vector(float m) {
+void Character::Vector(float v) {
     if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
         return;
     }
     
-    if (abs(m) > 1.f) {
-        std::cerr << "INVALID VECTOR MODIFIER" << std::endl;
+    float hyp = input_->stick.hyp();
+    if (hyp <= PlayerInput::DEAD_ZONE) {
+        ApplyFriction();
         return;
     }
     
-    data.velocity_.x += m * attr.AirAccel;
-    data.velocity_.x = (data.velocity_.x < 0 ? -1 : 1) *
-    fmin(attr.MaxAirSpeed, abs(data.velocity_.x));
+    float m = (abs(input_->stick.xAxis) > 60.f ? 60.f : abs(input_->stick.xAxis)) / 60.f;
+    if (input_->stick.xAxis < 0) m *= -1;
+    
+    data.velocity_.x += m * v * attr.AirAccel;
+    int sign = data.velocity_.x < 0 ? -1 : 1;
+    data.velocity_.x = sign * fmin(attr.MaxAirSpeed, abs(data.velocity_.x));
+    
+    if (input_->stick.inDirection(DOWN_T) && hyp > 50.f && data.velocity_.y > 0.f) {
+        FastFall();
+    }
 }
 
 void Character::ApplyFriction() {

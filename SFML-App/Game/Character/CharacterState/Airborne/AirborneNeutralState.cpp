@@ -38,26 +38,11 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    float hyp = input.stick.hyp();
-    if (input.stick.inDirection(DOWN_T) && hyp > 50.f && character_->Velocity().y > 0.f) {
-        character_->FastFall();
-    }
-    
-    if (hyp > PlayerInput::DEAD_ZONE) {
-        float m = (abs(input.stick.xAxis) > 60.f ? 60.f : abs(input.stick.xAxis)) / 60.f;
-        if (input.stick.xAxis < 0) m *= -1;
-        character_->Vector(m);
-    } else {
-        character_->ApplyFriction();
-    }
+     character_->Vector();
 }
 
 void AirborneNeutralState::Tick() {
-    if (!character_->IsFastFalling()) {
-        character_->ApplyGravity();
-    } else {
-        character_->FastFall();
-    }
+    character_->ApplyGravity();
     character_->ApplyVelocity();
 }
 

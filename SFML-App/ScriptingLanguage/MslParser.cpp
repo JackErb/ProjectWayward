@@ -83,15 +83,16 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
                 assertNext(Msl::RPAREN);
                 assertNext(Msl::LCURL);
                 
+                // Parse the contents of the function
                 curr_ = s_->NextToken();
-                vector<Statement*> ls;
+                Block *b = new Block();
                 while (curr_ != Msl::RCURL) {
                     Statement *s = statement();
                     if (err_) break;
-                    ls.push_back(s);
+                    b->ls.push_back(s);
                 }
                 
-                std::pair<string, Func*> p(name, new Func(name, ls));
+                std::pair<string, Func*> p(name, new Func(name, b));
                 res->insert(p);
                 break;
             }
@@ -109,7 +110,8 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
         curr_ = s_->NextToken();
     }
     
-    for (auto it = res->begin(); it != res->end(); it++) {
+    /* Print abstract representation of program */
+     for (auto it = res->begin(); it != res->end(); it++) {
         ASTPrintVisitor pv;
         pv.visit(it->second);
     }
@@ -122,10 +124,9 @@ Statement* MslParser::statement() {
         case Msl::SWITCH: {
             // Switch statement
             // switch <EXPR> {
-            // case 0:
-            //    ...
-            // case 1:
-            //    ...
+            // case 0: ...
+            // case 1: ...
+            // default: ...
             // }
             
             // Get switch expression
@@ -142,10 +143,12 @@ Statement* MslParser::statement() {
                     // End switch statement
                     break;
                 } else if (curr_ == Msl::CASE) {
+                    // Case branch
                     pair<int, Statement*> r = switchCase();
                     if (err_) return nullptr;
                     res->cases[r.first] = r.second;
                 } else if (curr_ == Msl::DEFAULT) {
+                    // Default branch
                     pair<int, Statement*> r = switchCase();
                     if (err_) return nullptr;
                     res->defBranch = true;
@@ -160,6 +163,7 @@ Statement* MslParser::statement() {
             return res;
         }
         case Msl::VAR: {
+            // var <NAME> = <EXPR>
             assertNext(Msl::IDENTIFIER);
             if (err_) return nullptr;
             string name = s_->getId();
@@ -178,13 +182,16 @@ Statement* MslParser::statement() {
             string name = s_->getId();
             curr_ = s_->NextToken();
             if (curr_ == Msl::LPAREN) {
-                assertNext(Msl::RPAREN);
+                curr_ = s_->NextToken();
+                vector<Expression*> params = exprList();
                 if (err_) return nullptr;
+                
                 assertNext(Msl::EOL);
                 if (err_) return nullptr;
-                curr_ = s_->NextToken();
                 
-                return new FunctionCall(name);
+                curr_ = s_->NextToken();
+                                
+                return new FunctionCall(name, params);
             } else if (curr_ == Msl::EQUALS) {
                 curr_ = s_->NextToken();
                 Expression *e = expr();
@@ -206,6 +213,9 @@ Statement* MslParser::statement() {
 pair<int, Statement*> MslParser::switchCase() {
     switch (curr_) {
         case Msl::CASE: {
+            // case 0:
+            //      Statement;
+            //      Statement;
             assertNext(Msl::INT);
             if (err_) return {0, nullptr};
             int n = s_->getIntLiteral();
@@ -224,6 +234,7 @@ pair<int, Statement*> MslParser::switchCase() {
             return {n, b};
         }
         case Msl::DEFAULT: {
+            // default:
             assertNext(Msl::COLON);
             if (err_) return {0, nullptr};
             
@@ -241,6 +252,28 @@ pair<int, Statement*> MslParser::switchCase() {
             error("unexpected token in switch case " + Msl::toString(curr_));
             return {0, nullptr};
     }
+}
+
+vector<Expression*> MslParser::exprList() {
+    vector<Expression*> ret;
+    exprList_ = true;
+    while (curr_ != Msl::RPAREN) {
+        Expression *e = expr();
+        if (err_) return ret;
+        ret.push_back(e);
+        if (curr_ == Msl::RPAREN) break;
+        
+        curr_ = s_->NextToken();
+        if (curr_ == Msl::COMMA) {
+            curr_ = s_->NextToken();
+        }
+    }
+    exprList_ = false;
+    if (curr_ != Msl::RPAREN) {
+        error("unexpected token in function call");
+        return ret;
+    }
+    return ret;
 }
 
 Expression* MslParser::expr() {
@@ -267,12 +300,13 @@ Expression* MslParser::exprtail(Expression *e1) {
             return exprtail(new Minus(e1, e2));
         }
         case Msl::RPAREN:
+            parenDepth_--;
             return e1;
         case Msl::EOL:
             curr_ = s_->NextToken();
             return e1;
         default:
-            if (statementExpr_ && curr_ == Msl::LCURL) return e1;
+            if (statementExpr_ || exprList_) return e1;
             error("expr(): unexpected token " + Msl::toString(curr_));
             return nullptr;
     }
@@ -310,7 +344,7 @@ Expression *MslParser::termtail(Expression *e1) {
         case Msl::EOL:
             return e1;
         default:
-            if (statementExpr_ && curr_ == Msl::LCURL) return e1;
+            if (statementExpr_ || exprList_) return e1;
             error("term(): unexpected token " + Msl::toString(curr_));
             return nullptr;
     }
@@ -322,7 +356,10 @@ Expression *MslParser::factor() {
             return new Var(s_->getId());
         case Msl::INT:
             return new IntLiteral(s_->getIntLiteral());
+        case Msl::FLOAT:
+            return new FloatLiteral(s_->getFloatLiteral());
         case Msl::LPAREN:
+            parenDepth_++;
             curr_ = s_->NextToken();
             return expr();
         default:

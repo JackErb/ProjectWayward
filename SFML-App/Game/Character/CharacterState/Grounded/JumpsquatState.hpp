@@ -10,11 +10,12 @@
 #define JumpsquatState_hpp
 
 #include "GroundedState.hpp"
+#include "CharacterProperties.hpp"
 
 class JumpsquatState : public GroundedState {
 public:
     JumpsquatState(Character *ch) : GroundedState(ch) {
-        data.type_ = 0;
+        data.type_ = JUP;
         data.frame_ = 0;
         data.b1 = true;
     }

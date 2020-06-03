@@ -32,7 +32,7 @@ void MslScanner::nextLine() {
     }
     
     // Prep the string
-    std::regex r("[+-*/(){}=;:#]");
+    std::regex r("[+-*/(){}=;:#,]");
     line_ = std::regex_replace(line_, r, " $0 ");
 }
 
@@ -61,7 +61,6 @@ Msl::Token MslScanner::NextToken() {
         if (p2 == string::npos) {
             Msl::Token token = getToken(line_.substr(p1));
             line_ = "";
-            cerr << "TOKEN " << Msl::toString(token) << endl;
             return token;
         }
         
@@ -69,6 +68,8 @@ Msl::Token MslScanner::NextToken() {
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
         // Clip line
         line_ = line_.substr(p2);
+        
+        cerr << Msl::toString(token) << " ";
         return token;
     }
     return Msl::EOF_;
@@ -93,6 +94,7 @@ Msl::Token MslScanner::getToken(std::string s) {
         if (s.compare("/") == 0) return Msl::DIV;
         if (s.compare(";") == 0) return Msl::EOL;
         if (s.compare(":") == 0) return Msl::COLON;
+        if (s.compare(",") == 0) return Msl::COMMA;
     } else {
         if (s.compare("func") == 0) return Msl::FUNC;
         if (s.compare("var") == 0) return Msl::VAR;
@@ -101,12 +103,19 @@ Msl::Token MslScanner::getToken(std::string s) {
         if (s.compare("default") == 0) return Msl::DEFAULT;
     }
     
-    // Check if int literal
-    int n;
-    std::istringstream(s) >> n;
-    if (n != 0 || s.compare("0") == 0) {
-        n_ = n;
+    std::regex r_i("[0-9]+");
+    std::regex r_f("[0-9]+\\.[0-9]*");
+    
+    std::istringstream st(s);
+    
+    if (std::regex_match(s, r_i)) {
+        st >> n_;
         return Msl::INT;
+    }
+    
+    if (std::regex_match(s, r_f)) {
+        st >> f_;
+        return Msl::FLOAT;
     }
     
     // Assume identifier
@@ -125,4 +134,8 @@ std::string MslScanner::getStringLiteral() {
 
 int MslScanner::getIntLiteral() {
     return n_;
+}
+
+float MslScanner::getFloatLiteral() {
+    return f_;
 }

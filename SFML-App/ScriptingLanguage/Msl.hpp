@@ -17,9 +17,9 @@ class Func;
 namespace Msl {
     typedef enum Token {
         FUNC, VAR, EQUALS,
-        LPAREN, RPAREN, LCURL, RCURL, COLON,
+        LPAREN, RPAREN, LCURL, RCURL, COLON, COMMA,
         PLUS, TIMES, MINUS, DIV, SWITCH, CASE,
-        IDENTIFIER, INT, STRING, EOF_, EOL,
+        IDENTIFIER, INT, FLOAT, STRING, EOF_, EOL,
         INVALID, DEFAULT
     } Token;
     
@@ -39,6 +39,8 @@ namespace Msl {
                 return "switch";
             case CASE:
                 return "case";
+            case COMMA:
+                return ",";
             case LPAREN:
                 return "(";
             case RPAREN:
@@ -61,6 +63,8 @@ namespace Msl {
                 return "$$ID";
             case INT:
                 return "$$INT";
+            case FLOAT:
+                return "$$FLOAT";
             case STRING:
                 return "$$STRING";
             case EOF_:

@@ -99,8 +99,12 @@ public:
     void NullVelocityY() { data.velocity_.y = 0; }
     void NullVelocityX() { data.velocity_.x = 0; }
     void Dash(float m);
-    void Vector(float angle);
+    void Vector(float v = 1.f);
     void ApplyGravity(float m = 1.f) {
+        if (data.airborneData.fastfall) {
+            FastFall();
+            return;
+        }
         data.velocity_.y += m * attr.Gravity;
         data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
     }
@@ -130,6 +134,8 @@ public:
     // The input for this frame
     const PlayerInput* input_;
     MslInterpreter *mslIntp;
+    
+    bool fill = false;
     
 private:
     typedef struct CharacterData {

@@ -1,13 +1,13 @@
 //
-//  AirborneScripState.hpp
+//  AirborneScriptState.hpp
 //  SFML-App
 //
 //  Created by Jack Erb on 6/1/20.
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#ifndef AirborneScripState_hpp
-#define AirborneScripState_hpp
+#ifndef AirborneScriptState_hpp
+#define AirborneScriptState_hpp
 
 #include "AirborneState.hpp"
 
@@ -33,4 +33,4 @@ private:
     void init(int m);
 };
 
-#endif /* AirborneScripState_hpp */
+#endif /* AirborneScriptState_hpp */

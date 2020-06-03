@@ -120,12 +120,6 @@ int main(int, char const**)
         if (!pause && n->dropFrames_ == 0) {
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
-                /*int idx = controller.network_.localFrameIndex_;
-                if (focus) {
-                    controller.ProcessInput(playerInput, controller.network_.inputData_[idx].remote);
-                } else {
-                    controller.ProcessInput(PlayerInput(), controller.network_.inputData_[idx].remote);
-                }*/
                 controller.ProcessInput(p1, p2);
                 controller.Tick();
             } else {
@@ -140,6 +134,10 @@ int main(int, char const**)
                     controller.RollbackTick();
                 } else if (p1.IsPressed(0)) {
                     controller.RollbackAndReplay();
+                } else if (p1.IsPressed(1)) {
+                    controller.PreTick();
+                    controller.ProcessInput(p1, p2);
+                    controller.Tick();
                 }
             }
         } else {

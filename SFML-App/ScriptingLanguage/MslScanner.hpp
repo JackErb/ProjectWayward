@@ -25,6 +25,7 @@ public:
     
     std::string getId();
     int getIntLiteral();
+    float getFloatLiteral();
     std::string getStringLiteral();
     
 private:
@@ -38,6 +39,7 @@ private:
     
     std::string str_;
     int n_;
+    float f_;
 };
 
 #endif /* MslScanner_hpp */

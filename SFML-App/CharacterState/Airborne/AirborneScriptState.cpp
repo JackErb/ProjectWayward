@@ -23,6 +23,7 @@ void AirborneScriptState::ProcessInput(const PlayerInput &input) {
 
 void AirborneScriptState::Tick() {
     character_->mslIntp->Tick();
+    character_->ApplyVelocity();
 }
 
 void AirborneScriptState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

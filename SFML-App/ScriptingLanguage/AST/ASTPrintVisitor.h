@@ -10,6 +10,19 @@
 #define ASTPrintVisit_h
 
 #include "ASTVisitor.h"
+#include "Expression.h"
+#include "AssignStatement.h"
+#include "FunctionCall.h"
+#include "Plus.h"
+#include "Minus.h"
+#include "Times.h"
+#include "Divide.h"
+#include "Block.h"
+#include "Var.h"
+#include "IntLiteral.h"
+#include "StringLiteral.h"
+#include "FloatLiteral.h"
+#include "SwitchStatement.h"
 
 #include <iostream>
 #include <string>
@@ -41,7 +54,7 @@ public:
         print("func " + s->name + ":");
         println();
         depth++;
-        for (Statement *s : s->statements) s->accept(this);
+        s->s->accept(this);
         depth--;
     }
     
@@ -88,7 +101,12 @@ public:
     
     void visit(FunctionCall *s) {
         indent();
-        print(s->name + "()");
+        print(s->name + "(");
+        for (int i = 0; i < s->params.size(); i++) {
+            s->params[i]->accept(this);
+            if (i != s->params.size() - 1) print(", ");
+        }
+        print(")");
         println();
     }
     
@@ -118,6 +136,10 @@ public:
     
     void visit(StringLiteral *e) {
         print(e->s);
+    }
+    
+    void visit(FloatLiteral *e) {
+        print(std::to_string(e->f));
     }
     
     void visit(Times *e) {

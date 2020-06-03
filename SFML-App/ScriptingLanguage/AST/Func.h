@@ -15,10 +15,10 @@
 #include <string>
 
 struct Func {
-    Func(std::string n, std::vector<Statement*> ls) : name(n), statements(ls) {}
+    Func(std::string n, Statement* s) : name(n), s(s) {}
     
     std::string name;
-    std::vector<Statement*> statements;
+    Statement *s;
 };
 
 #endif /* Func_h */

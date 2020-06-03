@@ -14,6 +14,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include <utility>
 
 class MslScanner;
@@ -32,6 +33,8 @@ private:
     // Recursive descent parser functions
     Statement* statement();
     std::pair<int, Statement*> switchCase();
+    std::vector<Expression*> exprList();
+    
     Expression* expr();
     Expression* exprtail(Expression *e1);
     Expression* term();
@@ -50,6 +53,8 @@ private:
     Msl::Token curr_;
     bool err_ = false;
     bool statementExpr_ = false;
+    bool exprList_ = false;
+    int parenDepth_ = 0;
 };
 
 #endif /* MslParser_hpp */

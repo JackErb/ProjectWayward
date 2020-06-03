@@ -17,7 +17,7 @@ class Expression;
 
 // <NAME>(<PARAM LIST>)
 struct FunctionCall: public Statement {
-    FunctionCall(std::string n) : name(n) {}
+    FunctionCall(std::string n, std::vector<Expression*> p) : name(n), params(p) {}
     
     std::string name;
     std::vector<Expression*> params;

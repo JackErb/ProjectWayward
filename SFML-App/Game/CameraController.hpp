@@ -17,6 +17,9 @@ using std::vector;
 
 class CameraController {
 public:
+    bool drawHitboxes = true;
+    
+public:
     CameraController(vector<Entity*> *entities, float w, float h) : entities_(entities) {
         windowOffset_ = {w / 2.f, h / 2.f};
         cameraOffset_ = {0.f, 0.f};
@@ -55,7 +58,7 @@ public:
             if (dir == -1) {
                 float w = e->Sprite()->getTextureRect().width * 0.1515;
                 e->Sprite()->scale(-1, 1);
-                e->Sprite()->move(w / 2.f, 0);
+                e->Sprite()->move(w, 0);
             }
             
             if (e->Type() == CHARACTER) {
@@ -72,6 +75,41 @@ public:
     void Render(sf::RenderWindow *window) {
         for (Entity *e : *entities_) {
             window->draw(*e->Sprite());
+            
+            if (drawHitboxes && e->Type() == CHARACTER) {
+                vector<Polygon> v = e->Polygons();
+                sf::Color col;
+                if (((Character*)e)->fill) {
+                    col = sf::Color(50, 255, 50, 120);
+                } else {
+                    col = sf::Color(255, 50, 50, 120);
+                }
+                
+                for (const Polygon &p : v) {
+                    if (p.size() == 2) {
+                        sf::CircleShape c(p[1].x * scale);
+                        sf::Vector2f pos = p[0];
+                        pos.x -= p[1].x;
+                        pos.y -= p[1].x;
+                        c.setOrigin(0.5f, 0.5f);
+                        c.setPosition((pos + cameraOffset_) * scale + windowOffset_);
+                        
+                        c.setFillColor(col);
+                        window->draw(c);
+                        continue;
+                    }
+                    
+                    sf::ConvexShape shape;
+                    shape.setPointCount(p.size());
+                    int i = 0;
+                    for (const sf::Vector2f &vert : p) {
+                        shape.setPoint(i, (vert + cameraOffset_) * scale + windowOffset_);
+                        i++;
+                    }
+                    shape.setFillColor(col);
+                    window->draw(shape);
+                }
+            }
             
             // TODO: Don't draw if the sprite is off the screen
         }

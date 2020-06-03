@@ -26,8 +26,11 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), remotePlayer_(5, {-90.f, 0.f}), camera_(&entities_, w, h) {
-    player_.SetPolygons({{{0.f, 0.f}, {175.f, 0.f}, {175.f, 250.f}, {0.f, 250.f}}});
+GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), remotePlayer_(5, {-90.f, -500.f}), camera_(&entities_, w, h) {
+    player_.SetPolygons({
+        {{70.f, 100.f}, {180.f, 100.f}, {180.f, 250.f}, {70.f, 250.f}},
+        {{125.f, 60.f}, {70.f, 0.f}}
+    });
     SpriteLoader::AnimationResult res = SpriteLoader::LoadAnimations({"dash"});
     player_.SetAnimMap(res.anims);
     player_.SetSprite(res.anims["dash"][0]);
@@ -35,7 +38,10 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, 0.f}), rem
         textures_.push_back(text);
     }
     
-    remotePlayer_.SetPolygons({{{0.f, 0.f}, {175.f, 0.f}, {175.f, 250.f}, {0.f, 250.f}}});
+    remotePlayer_.SetPolygons({
+        {{70.f, 100.f}, {180.f, 100.f}, {180.f, 250.f}, {70.f, 250.f}},
+        {{125.f, 60.f}, {70.f, 0.f}}
+    });
     SpriteLoader::AnimationResult res2 = SpriteLoader::LoadAnimations({"dash"});
     remotePlayer_.SetAnimMap(res2.anims);
     remotePlayer_.SetSprite(res2.anims["dash"][0]);
