@@ -13,6 +13,7 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <list>
+#include <vector>
 
 #include "Entity.hpp"
 #include "PlayerInput.hpp"
@@ -24,6 +25,7 @@
 
 using std::string;
 using std::list;
+using std::vector;
 
 class MslInterpreter;
 
@@ -90,24 +92,33 @@ public:
     void RollbackTick() override;
     void Rollback() override;
     
+    void CreateHitbox(const HitboxData &hitbox) {
+        hitboxes.push_back(hitbox);
+    }
+    
+    void RemoveHitbox(int id) {
+        for (auto it = hitboxes.begin(); it != hitboxes.end(); it++) {
+            if (it->id == id) {
+                hitboxes.erase(it);
+                return;
+            }
+        }
+    }
+    
+    void ClearHitboxes() {
+        hitboxes.clear();
+    }
     
     /* Methods involving action, and should only be called by the current actionState_
      * ALL OF THESE METHODS NEED TO BE ABLE TO ROLL BACK */
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
-    void FastFall() { data.velocity_.y = attr.FastFallSpeed; data.airborneData.fastfall = true; }
+    void FastFall();
     void NullVelocityY() { data.velocity_.y = 0; }
     void NullVelocityX() { data.velocity_.x = 0; }
     void Dash(float m);
     void Vector(float v = 1.f);
-    void ApplyGravity(float m = 1.f) {
-        if (data.airborneData.fastfall) {
-            FastFall();
-            return;
-        }
-        data.velocity_.y += m * attr.Gravity;
-        data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
-    }
+    void ApplyGravity(float m = 1.f);
     void ApplyVelocity() { Transform(data.velocity_); }
     void ApplyFriction();
     void FallthroughPlatform();

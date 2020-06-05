@@ -135,7 +135,9 @@ public:
     }
     
     void visit(StringLiteral *e) {
+        print("\"");
         print(e->s);
+        print("\"");
     }
     
     void visit(FloatLiteral *e) {

@@ -25,7 +25,9 @@ using std::max;
 
 vector<sf::Vector2f> get_orthogonals(const Polygon &p1, const Polygon &p2);
 
-pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis, const Polygon &p1, const Polygon &p2);
+pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
+                                            const Polygon &p1, const sf::Vector2f &pos1,
+                                            const Polygon &p2, const sf::Vector2f &pos2);
 
 float dot(const sf::Vector2f &v1, const sf::Vector2f &v2) {
     return v1.x * v2.x + v1.y * v2.y;
@@ -67,9 +69,21 @@ void PhysicsEngine::Update() {
         for (Entity *e : entities_) {
             if (character == e) continue;
             
-            auto res = checkCollision(*character, *e);
-            if (res.first) {
-                character->HandleCollision(*e, res.second);
+            for (const Polygon &p1 : character->polygons) {
+                for (const Polygon &p2 : e->polygons) {
+                    auto res = checkCollision(p1, character->Position(), p2, e->Position());
+                    if (res.first)
+                        character->HandleCollision(*e, res.second);
+                }
+            }
+            
+            int i = 0;
+            for (const HitboxData &h1 : character->hitboxes) {
+                for (const Polygon &p2 : e->polygons) {
+                    auto res = checkCollision(h1.hitbox, character->Position(), p2, e->Position());
+                    // if (res.first) e->HandleHit(character->HitboxData(i));
+                }
+                i++;
             }
         }
     }
@@ -90,11 +104,14 @@ void PhysicsEngine::Rollback() {
     }
 }
 
-pair<bool, sf::Vector2f> PhysicsEngine::checkCollision(const Polygon &p1, const Polygon &p2) {
+pair<bool, sf::Vector2f>
+  PhysicsEngine::checkCollision(const Polygon &p1, const sf::Vector2f &pos1,
+                                const Polygon &p2, const sf::Vector2f &pos2) {
     // Separating Axis Theorem
     if (p1.size() == 2 && p2.size() == 2) {
         // They are both circles
-        float dist = pow(p2[0].x - p1[0].x, 2) + pow(p2[0].y - p1[0].y, 2);
+        sf::Vector2f c1 = p1[0] + pos1, c2 = p2[0] + pos2;
+        float dist = pow(c2.x - c1.x, 2) + pow(c2.y - c1.y, 2);
         float rad = p1[1].x + p2[1].x;
         // TODO: Calculate push vec
         if (dist < rad * rad) {
@@ -103,7 +120,7 @@ pair<bool, sf::Vector2f> PhysicsEngine::checkCollision(const Polygon &p1, const 
         return {false, {0,0}};
     } else if (p2.size() == 2) {
         // Call with circle in first parameter
-        return checkCollision(p2, p1);
+        return checkCollision(p2, pos2, p1, pos1);
     }
     
     // Get the perpendicular vectors for each side of both polygons
@@ -112,7 +129,7 @@ pair<bool, sf::Vector2f> PhysicsEngine::checkCollision(const Polygon &p1, const 
     // Check if there is a separating axis along each orthogonal
     vector<sf::Vector2f> push_vectors;
     for (const auto &vec : orthogonals) {
-        pair<bool, sf::Vector2f> res = is_separating_axis(unit_vec(vec), p1, p2);
+        auto res = is_separating_axis(unit_vec(vec), p1, pos1, p2, pos2);
         if (res.first) {
             // The polygons do not collide
             return make_pair(false, sf::Vector2f(0,0));
@@ -128,7 +145,8 @@ pair<bool, sf::Vector2f> PhysicsEngine::checkCollision(const Polygon &p1, const 
     }
     
     // Check that the push vector is pointing the right direction
-    sf::Vector2f displacement = geometric_center(p2) - geometric_center(p1);
+    sf::Vector2f displacement = (geometric_center(p2) + pos2) -
+      (geometric_center(p1) + pos1);
     if (dot(displacement, min_pv) > 0) {
         min_pv.x *= -1;
         min_pv.y *= -1;
@@ -159,9 +177,7 @@ vector<sf::Vector2f> get_orthogonals(const Polygon &p1, const Polygon &p2) {
         }
         
         res.push_back(vec - p1[0]);
-        float x = res[0].x, y = res[0].y;
-        res[0].x = -y;
-        res[0].y = x;
+        res.push_back({-res[0].y,res[0].x});
     }
     
     // Get the edge vectors
@@ -190,8 +206,8 @@ vector<sf::Vector2f> get_orthogonals(const Polygon &p1, const Polygon &p2) {
  * If not, returns the pair (false, pv) where pv is (0,0)
  */
 pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
-                                            const Polygon &p1,
-                                            const Polygon &p2) {
+                                            const Polygon &p1, const sf::Vector2f &pos1,
+                                            const Polygon &p2, const sf::Vector2f &pos2) {
     float min1 = std::numeric_limits<float>::max(),
           max1 = std::numeric_limits<float>::min(),
           min2 = min1,
@@ -199,19 +215,19 @@ pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
         
     if (p1.size() == 2) {
         // p1 is a circle
-        float proj = dot(axis, p1[0]);
+        float proj = dot(axis, p1[0] + pos1);
         min1 = proj - p1[1].x;
         max1 = proj + p1[1].x;
     } else {
         for (const sf::Vector2f &vert : p1) {
-            float proj = dot(axis, vert);
+            float proj = dot(axis, vert + pos1);
             min1 = min(proj, min1);
             max1 = max(proj, max1);
         }
     }
 
     for (const sf::Vector2f &vert : p2) {
-        float proj = dot(axis, vert);
+        float proj = dot(axis, vert + pos2);
         min2 = min(proj, min2);
         max2 = max(proj, max2);
     }

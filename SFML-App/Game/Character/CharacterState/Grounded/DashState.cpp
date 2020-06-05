@@ -18,10 +18,15 @@ int sign(float f) {
     return f < 0.f ? -1 : 1;
 }
 
-bool DashState::setDirInfluence(float a, float x) {
-    if (fabs(x) > PlayerInput::DEAD_ZONE) {
+void DashState::init() {
+    setDirInfluence();
+}
+
+bool DashState::setDirInfluence() {
+    const PlayerInput *in = character_->input_;
+    if (in->stickHyp() > PlayerInput::DEAD_ZONE) {
         float old = data.dirInfluence_;
-        data.dirInfluence_ = clamp(x / 55.f, -1.f, 1.f);
+        data.dirInfluence_ = clamp(in->stickX() / 55.f, -1.f, 1.f);
         
         if (sign(old) != sign(data.dirInfluence_)) {
             return false;
@@ -44,7 +49,7 @@ void DashState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    bool res = setDirInfluence(input.stick.angle(), input.stick.xAxis);
+    bool res = setDirInfluence();
     if (!res) {
         // The player inputted the opposite direction. Only turnaround
         // If the hyp is not super small

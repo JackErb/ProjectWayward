@@ -40,6 +40,7 @@
 		26D4F7C32482CE8100B54F64 /* TurnaroundState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D4F7BE2482CE8100B54F64 /* TurnaroundState.cpp */; };
 		26D4F7C82482CF5900B54F64 /* MslInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D4F7C62482CF5900B54F64 /* MslInterpreter.cpp */; };
 		26D4F7CB2482D02500B54F64 /* MslScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D4F7C92482D02500B54F64 /* MslScanner.cpp */; };
+		26D50A8C248A990F0036E89E /* Character_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D50A8B248A990F0036E89E /* Character_state.cpp */; };
 		26D81F2D245549AB00CEAB55 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 26DE8461245368AD003D05FE /* icon.png */; };
 		26DE8456245368AD003D05FE /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8455245368AD003D05FE /* ResourcePath.mm */; };
 		26DE8459245368AD003D05FE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26DE8458245368AD003D05FE /* main.cpp */; };
@@ -129,6 +130,8 @@
 		26D4F7C72482CF5900B54F64 /* MslInterpreter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MslInterpreter.hpp; sourceTree = "<group>"; };
 		26D4F7C92482D02500B54F64 /* MslScanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MslScanner.cpp; sourceTree = "<group>"; };
 		26D4F7CA2482D02500B54F64 /* MslScanner.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MslScanner.hpp; sourceTree = "<group>"; };
+		26D50A89248A98F00036E89E /* HitboxData.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = HitboxData.hpp; sourceTree = "<group>"; };
+		26D50A8B248A990F0036E89E /* Character_state.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Character_state.cpp; sourceTree = "<group>"; };
 		26DE8450245368AD003D05FE /* SFML-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SFML-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		26DE8454245368AD003D05FE /* SFML-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SFML-App-Info.plist"; path = "../SFML-App-Info.plist"; sourceTree = "<group>"; };
 		26DE8455245368AD003D05FE /* ResourcePath.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
@@ -234,8 +237,10 @@
 			children = (
 				26D4F7922482CD6100B54F64 /* Character.hpp */,
 				26D4F7912482CD6100B54F64 /* Character.cpp */,
+				26D50A8B248A990F0036E89E /* Character_state.cpp */,
 				26D4F7932482CD6100B54F64 /* CharacterProperties.hpp */,
 				26D4F78F2482CBE400B54F64 /* CharacterState */,
+				26D50A89248A98F00036E89E /* HitboxData.hpp */,
 			);
 			name = Character;
 			path = ..;
@@ -532,6 +537,7 @@
 				26D4F7B32482CE7700B54F64 /* AirdodgeState.cpp in Sources */,
 				26D4F7B22482CE7700B54F64 /* AirborneNeutralState.cpp in Sources */,
 				264612242482F904008C4494 /* MslParser.cpp in Sources */,
+				26D50A8C248A990F0036E89E /* Character_state.cpp in Sources */,
 				26D4F7C22482CE8100B54F64 /* LandingLagState.cpp in Sources */,
 				26D4F7C12482CE8100B54F64 /* DashState.cpp in Sources */,
 				26339019248607240042D227 /* AirborneScriptState.cpp in Sources */,
@@ -581,7 +587,7 @@
 					"$(inherited)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -653,7 +659,7 @@
 					"$(inherited)",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

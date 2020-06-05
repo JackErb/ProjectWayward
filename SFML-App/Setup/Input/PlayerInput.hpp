@@ -121,7 +121,11 @@ public:
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Released;
     }
-
+    
+    float stickHyp() const { return stick.hyp(); }
+    float stickX() const { return stick.xAxis; }
+    float stickY() const { return stick.yAxis; }
+    
 public:
     // Contains all the buttons that are currently being pressed/held
     std::map<int, ButtonState> buttons;

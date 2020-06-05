@@ -9,12 +9,13 @@
 #ifndef Entity_hpp
 #define Entity_hpp
 
+#include "HitboxData.hpp"
+
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <limits>
 #include <list>
-#include "NetworkController.hpp"
 
 typedef std::vector<sf::Vector2f> Polygon;
 
@@ -55,18 +56,18 @@ public:
         float px = data.position_.x;
         float py = data.position_.y;
         
-        if (polygons_.size() == 0) return {px, py, 0, 0};
+        if (polygons.size() == 0) return {px, py, 0, 0};
         
         float min_x = std::numeric_limits<float>::max(),
               max_x = std::numeric_limits<float>::min(),
               min_y = min_x,
               max_y = max_x;
-        for (const Polygon &p : polygons_) {
+        for (const Polygon &p : polygons) {
             if (p.size() == 2) {
                 // p is a circle
                 float r = p[1].x + 0.1f;
-                sf::Vector2f corner = {p[0].x - sqrt(2.f) * r,
-                                       p[0].y - sqrt(2.f) * r};
+                sf::Vector2f corner = {p[0].x - r,
+                                       p[0].y - r};
                 min_x = fmin(min_x, fmin(corner.x, corner.x + r * 2));
                 max_x = fmax(max_x, fmax(corner.x, corner.x + r * 2));
                 min_y = fmin(min_y, fmin(corner.y, corner.y + r * 2));
@@ -81,7 +82,7 @@ public:
             }
         }
         
-        return {px + min_x - 1, py + min_y - 1, max_x - min_x + 1, max_y - min_y + 1};
+        return {px + min_x + .5f, py + min_y - .5f, max_x - min_x + .5f, max_y - min_y + .5f};
     }
     
     void Transform(sf::Vector2f v) {
@@ -99,29 +100,7 @@ public:
     }
     
     sf::Sprite* Sprite() const { return data.sprite_; }
-    
-    void SetPolygons(std::vector<Polygon> polygons) { polygons_ = polygons; }
-    
-    std::vector<Polygon> Polygons() const {
-        std::vector<Polygon> res;
-        for (int i = 0; i < polygons_.size(); i++) {
-            Polygon polygon;
-            for (int j = 0; j < polygons_[i].size(); j++) {
-                sf::Vector2f vec;
-                if (polygons_[i].size() == 2 && j == 1) {
-                    // Special case for circle
-                    vec = sf::Vector2f(polygons_[i][j].x, 0);
-                } else {
-                    vec = sf::Vector2f(polygons_[i][j].x + data.position_.x,
-                                       polygons_[i][j].y + data.position_.y);
-                }
-                polygon.push_back(vec);
-            }
-            res.push_back(polygon);
-        }
-        return res;
-    }
-    
+        
     virtual int Direction() const { return 1; }
         
 public:
@@ -133,6 +112,11 @@ public:
     
     PhysicsEngine *engine;
     
+    // Each polygon is a vector of (x,y) pairs describing the vertices in the
+    // counterclockwise direction of this shape, where (0,0) is the entity's center
+    std::vector<Polygon> polygons; // i.e. hurtboxes
+    std::vector<HitboxData> hitboxes; // i.e. hitboxes
+    
 private:
     struct GameData {
         // The top left corner of this player's bounding box
@@ -142,10 +126,6 @@ private:
     
     GameData data;
     GameData rollback_;
-    
-    // Each polygon is a vector of (x,y) pairs describing the vertices in the
-    // counterclockwise direction of this shape, where (0,0) is the entity's center
-    std::vector<Polygon> polygons_;
 };
 
 #endif /* Entity_hpp */

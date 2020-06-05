@@ -23,7 +23,6 @@ using std::endl;
 /* PhysicsEngine stores and processes all the physics information of the scene.
  * It contains all the entities (plus their positions, velocities, collision boxes, etc.)
  * And calculates the physics for each time step (frame) of the game.
- * Will alert delegate_ (if set) of things like collisions, etc.
  */
 class PhysicsEngine {
 public:
@@ -66,17 +65,8 @@ public:
     void RollbackTick();
     
 private:
-    pair<bool, sf::Vector2f> checkCollision(const Entity &e1, const Entity &e2) {
-        for (const Polygon &p1 : e1.Polygons()) {
-            for (const Polygon &p2 : e2.Polygons()) {
-                auto res = checkCollision(p1, p2);
-                if (res.first)
-                    return res;
-            }
-        }
-        return std::make_pair(false, sf::Vector2f(0,0));
-    }
-    pair<bool, sf::Vector2f> checkCollision(const Polygon &p1, const Polygon &p2);
+    pair<bool, sf::Vector2f> checkCollision(const Polygon &p1, const sf::Vector2f &pos1,
+                                            const Polygon &p2, const sf::Vector2f &pos2);
     
 private:
     vector<Entity*> entities_;

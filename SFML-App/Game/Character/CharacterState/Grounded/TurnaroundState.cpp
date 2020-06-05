@@ -27,8 +27,7 @@ void TurnaroundState::ProcessInput(const PlayerInput &input) {
 void TurnaroundState::Tick() {
     data.frame_--;
     if (data.frame_ == 0) {
-        PlayerInput::StickState stick = character_->input_->stick;
-        character_->SetActionState(new DashState(character_, stick.angle(), stick.xAxis));
+        character_->SetActionState(new DashState(character_));
         return;
     }
 }

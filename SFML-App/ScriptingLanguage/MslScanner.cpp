@@ -67,7 +67,7 @@ Msl::Token MslScanner::NextToken() {
         // Next token is substr of p1 to p2
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
         // Clip line
-        line_ = line_.substr(p2);
+        if (token != Msl::STRING) line_ = line_.substr(p2);
         
         cerr << Msl::toString(token) << " ";
         return token;
@@ -103,6 +103,13 @@ Msl::Token MslScanner::getToken(std::string s) {
         if (s.compare("default") == 0) return Msl::DEFAULT;
     }
     
+    if (s[0] == '"') {
+        string::size_type i1 = line_.find_first_of('"');
+        string::size_type i2 = line_.find_first_of('"', i1+1);
+        str_ = line_.substr(i1+1, i2 - i1 - 1);
+        line_ = line_.substr(i2+1);
+        return Msl::STRING;
+    }
     std::regex r_i("[0-9]+");
     std::regex r_f("[0-9]+\\.[0-9]*");
     

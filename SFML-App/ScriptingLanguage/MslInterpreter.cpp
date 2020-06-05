@@ -13,6 +13,7 @@
 #include "MslScanner.hpp"
 #include "Character.hpp"
 #include "AirborneNeutralState.hpp"
+#include "LandingLagState.hpp"
 
 #include "Expression.h"
 #include "AssignStatement.h"
@@ -46,11 +47,6 @@ MslInterpreter::MslInterpreter(Character* ch) : ch_(ch), exprRes_(ERR) {
 
 void MslInterpreter::initializeBindings() {
     // These are bindings that can be called in the scripting language
-    bindings_["jump"] = [=]() {
-        this->ch_->SetActionState(new AirborneNeutralState(ch_));
-        this->ch_->Jump(JUP, true);
-    };
-    
     bindings_["vector"] = [=]() {
         this->ch_->Vector();
     };
@@ -58,7 +54,7 @@ void MslInterpreter::initializeBindings() {
     bindings_["gravity"] = [=]() {
         float f;
         if (this->params_.size() == 0) { f = 1.f; }
-        else { f = this->params_[0].f; cerr << "FLOAT " << f << endl;}
+        else { f = this->params_[0].f; }
         this->ch_->ApplyGravity(f);
     };
     
@@ -69,11 +65,38 @@ void MslInterpreter::initializeBindings() {
     bindings_["rotate"] = [=]() {
         this->ch_->IncRot(10);
     };
+    
+    bindings_["rotate0"] = [=]() {
+        this->ch_->Sprite()->setRotation(0);
+    };
+    
+    bindings_["setState"] = [=]() {
+        std::string state = this->params_[0].str;
+        if (state.compare("LandingLag") == 0) {
+            int f = this->params_[1].n;
+            this->ch_->SetActionState(new LandingLagState(ch_, f));
+        }
+    };
+    
+    bindings_["circleHitbox"] = [=]() {
+        HitboxData data;
+        data.hitbox = {{params_[0].f, params_[1].f}, {params_[2].f`, 0}};
+        ch_->CreateHitbox(data);
+    };
+    
+    bindings_["removeHitbox"] = [=]() {
+        ch_->RemoveHitbox(params_[0].n);
+    };
+    
+    bindings_["clearHitboxes"] = [=]() {
+        ch_->ClearHitboxes();
+    };
 }
 
 void MslInterpreter::InitScript(int move) {
     // Initialize global variables/functions
     // Reset state of interpreter entirely
+    CallFunction("Init");
 }
 
 void MslInterpreter::PreTick(int frame) {
@@ -90,7 +113,7 @@ void MslInterpreter::Tick() {
     CallFunction("Tick");
     
     auto now = high_resolution_clock::now();
-    //cerr << "Total time " << duration_cast<microseconds>(now - time).count() << endl;
+    cerr << "Total time " << duration_cast<microseconds>(now - time).count() << endl;
 }
 
 void MslInterpreter::CallFunction(string name) {

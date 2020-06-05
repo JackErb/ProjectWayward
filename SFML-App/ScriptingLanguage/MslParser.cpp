@@ -358,6 +358,8 @@ Expression *MslParser::factor() {
             return new IntLiteral(s_->getIntLiteral());
         case Msl::FLOAT:
             return new FloatLiteral(s_->getFloatLiteral());
+        case Msl::STRING:
+            return new StringLiteral(s_->getStringLiteral());
         case Msl::LPAREN:
             parenDepth_++;
             curr_ = s_->NextToken();

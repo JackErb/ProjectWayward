@@ -38,7 +38,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
             character_->SetActionState(new AirborneNeutralState(character_));
             return;
         } else {
-            character_->SetActionState(new DashState(character_, input.stick.angle(), input.stick.xAxis));
+            character_->SetActionState(new DashState(character_));
             return;
         }
     }

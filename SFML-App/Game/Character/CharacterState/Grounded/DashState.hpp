@@ -10,12 +10,13 @@
 #define DashState_hpp
 
 #include "GroundedState.hpp"
+#include "PlayerInput.hpp"
 #include <list>
 
 class DashState : public GroundedState {
 public:
-    DashState(Character *ch, float angle, float x) : GroundedState(ch) {
-        setDirInfluence(angle, x);
+    DashState(Character *ch) : GroundedState(ch) {
+        init();
         data.frame_ = 0;
     }
     DashState(Character *ch, bool rb) : GroundedState(ch) {}
@@ -30,9 +31,10 @@ public:
     CharStateType GetStateType() const override { return Dash; }
 
 private:
+    void init();
     
     // Returns false if the angle switched from positive to negative or vice versa
-    bool setDirInfluence(float angle, float x);
+    bool setDirInfluence();
 };
 
 #endif /* DashState_hpp */
