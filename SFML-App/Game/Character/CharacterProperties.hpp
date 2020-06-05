@@ -23,6 +23,4 @@ typedef enum CharState {
     GROUNDED, AIRBORNE
 } CharState;
 
-
-
 #endif /* CharacterProperties_hpp */

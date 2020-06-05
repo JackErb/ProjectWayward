@@ -10,7 +10,7 @@
 #include "Character.hpp"
 #include "MslInterpreter.hpp"
 
-void AirborneScriptState::init(int m) {
+void AirborneScriptState::init(std::string m) {
     data.frame_ = 0;
     character_->mslIntp->InitScript(m);
 }

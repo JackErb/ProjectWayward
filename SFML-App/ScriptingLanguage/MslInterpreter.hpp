@@ -32,7 +32,7 @@ private:
     
 public:
     // AST Visitor functions
-    void InitScript(int move);
+    void InitScript(std::string move);
     void PreTick(int frame);
     void ProcessInput();
     void Tick();
@@ -86,9 +86,12 @@ private:
     static bool eq(const ExprRes &e1, const BaseType &t);
     
 public:
-    const static std::vector<Msl::MoveScript*> scripts;
+    const static std::unordered_map<std::string, Msl::MoveScript*> scripts;
     
 private:
+    // The current running script
+    std::string script;
+    
     Character *ch_;
     
     std::unordered_map<std::string, ExprRes> vals_;

@@ -19,7 +19,7 @@ class Func;
 
 class MoveLoader {
 public:
-    static std::vector<Msl::MoveScript*> LoadMoves();
+    static std::unordered_map<std::string, Msl::MoveScript*> LoadMoves();
 };
 
 #endif /* MoveLoader_hpp */

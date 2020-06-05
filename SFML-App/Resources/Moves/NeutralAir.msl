@@ -1,5 +1,8 @@
+script "NAIR";
+
 func Init() {
-    
+    Hitbox_Circle(0, 125., 80., 140.);
+    Hitbox_Circle(1, 125., 80., 100.);
 }
 
 func ProcessInput() {
@@ -10,9 +13,12 @@ func ProcessInput() {
     
     switch frame {
     case 5:
-        circleHitbox(125., 80., 100.);
-    case 24:
-        removeHitbox(0);
+        Hitbox_Spawn(0);
+    case 19:
+        Hitbox_Remove(0);
+        Hitbox_Spawn(1);
+    case 26:
+        Hitbox_Remove(1);
     case 36:
         quit();
     }
@@ -24,6 +30,6 @@ func Tick() {
 
 func Land() {
     rotate0();
-    clearHitboxes();
+    Hitbox_Clear();
     setState("LandingLag", 10);
 }

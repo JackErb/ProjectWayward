@@ -14,6 +14,7 @@
 #include <math.h>
 #include <list>
 #include <vector>
+#include <set>
 
 #include "Entity.hpp"
 #include "PlayerInput.hpp"
@@ -91,23 +92,6 @@ public:
     
     void RollbackTick() override;
     void Rollback() override;
-    
-    void CreateHitbox(const HitboxData &hitbox) {
-        hitboxes.push_back(hitbox);
-    }
-    
-    void RemoveHitbox(int id) {
-        for (auto it = hitboxes.begin(); it != hitboxes.end(); it++) {
-            if (it->id == id) {
-                hitboxes.erase(it);
-                return;
-            }
-        }
-    }
-    
-    void ClearHitboxes() {
-        hitboxes.clear();
-    }
     
     /* Methods involving action, and should only be called by the current actionState_
      * ALL OF THESE METHODS NEED TO BE ABLE TO ROLL BACK */

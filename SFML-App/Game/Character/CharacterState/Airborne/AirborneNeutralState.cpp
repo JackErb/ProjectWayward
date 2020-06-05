@@ -29,7 +29,7 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     }
     
     if (input.IsPressed(1)) {
-        character_->SetActionState(new AirborneScriptState(character_, 0));
+        character_->SetActionState(new AirborneScriptState(character_, "NAIR"));
         return;
     }
     

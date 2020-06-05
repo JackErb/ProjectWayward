@@ -15,7 +15,9 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <limits>
-#include <list>
+#include <string>
+#include <set>
+#include <unordered_map>
 
 typedef std::vector<sf::Vector2f> Polygon;
 
@@ -102,6 +104,28 @@ public:
     sf::Sprite* Sprite() const { return data.sprite_; }
         
     virtual int Direction() const { return 1; }
+    
+    void CreateHitbox(std::string move, HitboxData data) {
+        hitboxes[move][data.id] = data;
+    }
+    
+    void SpawnHitbox(int id) {
+        HitboxData d = hitboxes[move][id];
+        activeHitboxes.insert(d);
+    }
+    
+    void RemoveHitbox(int id) {
+        for (auto it = activeHitboxes.begin(); it != activeHitboxes.end(); it++) {
+            if (it->id == id) {
+                activeHitboxes.erase(it);
+                return;
+            }
+        }
+    }
+    
+    void ClearHitboxes() {
+        activeHitboxes.clear();
+    }
         
 public:
     int id;
@@ -115,7 +139,10 @@ public:
     // Each polygon is a vector of (x,y) pairs describing the vertices in the
     // counterclockwise direction of this shape, where (0,0) is the entity's center
     std::vector<Polygon> polygons; // i.e. hurtboxes
-    std::vector<HitboxData> hitboxes; // i.e. hitboxes
+    std::unordered_map<std::string, std::unordered_map<int, HitboxData>> hitboxes; // i.e. hitboxes
+    
+    std::string move;
+    std::set<HitboxData> activeHitboxes;
     
 private:
     struct GameData {

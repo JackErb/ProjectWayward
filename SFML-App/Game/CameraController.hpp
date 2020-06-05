@@ -82,7 +82,7 @@ public:
                     DrawShape(p, pos, sf::Color(50, 255, 50, 120), window);
                 }
                 
-                for (const HitboxData &p : e->hitboxes) {
+                for (const HitboxData &p : e->activeHitboxes) {
                     DrawShape(p.hitbox, pos, sf::Color(255, 50, 50, 120), window);
                 }
             }

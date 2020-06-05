@@ -10,12 +10,13 @@
 #define AirborneScriptState_hpp
 
 #include "AirborneState.hpp"
+#include <string>
 
 class MslInterpreter;
 
 class AirborneScriptState : public AirborneState {
 public:
-    AirborneScriptState(Character *ch, int move) : AirborneState(ch) {
+    AirborneScriptState(Character *ch, std::string move) : AirborneState(ch) {
         init(move);
     }
     
@@ -30,7 +31,7 @@ public:
     }
     
 private:
-    void init(int m);
+    void init(std::string m);
 };
 
 #endif /* AirborneScriptState_hpp */

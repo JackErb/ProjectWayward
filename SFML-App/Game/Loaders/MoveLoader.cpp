@@ -14,15 +14,17 @@
 
 #include <filesystem>
 #include <iostream>
-#include <vector>
+#include <unordered_map>
+#include <string>
 
-std::vector<Msl::MoveScript*> MoveLoader::LoadMoves() {
+std::unordered_map<std::string, Msl::MoveScript*> MoveLoader::LoadMoves() {
     MslScanner s;
     MslParser p;
         
     s.FeedInput(resourcePath() + "NeutralAir.msl");
-    std::vector<Msl::MoveScript*> res;
-    res.push_back(p.parseProgram(&s));
+    std::unordered_map<std::string, Msl::MoveScript*> res;
+    Msl::MoveScript *ms = p.parseProgram(&s);
+    res[ms->name] = ms;
     return res;
 }
 

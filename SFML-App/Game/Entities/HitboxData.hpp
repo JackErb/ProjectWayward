@@ -23,6 +23,9 @@ struct HitboxData {
     float angle; // [0, 2pi]
     float basekb;
     float kbscale;
+    
+    friend bool operator== (const HitboxData& p1, const HitboxData& p2);
+    friend bool operator< (const HitboxData& p1, const HitboxData& p2);
 };
 
 #endif /* HitboxData_hpp */

@@ -61,10 +61,21 @@ bool MslParser::assertNext(Msl::Token exp) {
 }
 
 Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
-    unordered_map<string, Func*>* res = new unordered_map<string, Func*>();
     s_ = s;
-    
+        
+    // script "NAME";
+    assertNext(Msl::IDENTIFIER);
+    if (s->getStringLiteral().compare("script") != 0) {
+        cerr << "Script tag header not found, quitting parsing" << endl;
+    }
+    assertNext(Msl::STRING);
+    std::string scriptName = s->getStringLiteral();
+    assertNext(Msl::EOL);
     curr_ = s->NextToken();
+    
+    Msl::MoveScript *res = new Msl::MoveScript();
+    res->name = scriptName;
+    
     // Keep parsing functions until reached EOF
     // Will exit as soon as an error is encountered
     while (curr_ != Msl::EOF_) {
@@ -74,7 +85,7 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
                 assertNext(Msl::IDENTIFIER);
                 string name = s_->getId();
                 
-                if (res->find(name) != res->end()) {
+                if (res->funcs.find(name) != res->funcs.end()) {
                     error("duplicate function declaration " + name);
                     break;
                 }
@@ -93,7 +104,7 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
                 }
                 
                 std::pair<string, Func*> p(name, new Func(name, b));
-                res->insert(p);
+                res->funcs.insert(p);
                 break;
             }
             default: {
@@ -111,7 +122,7 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
     }
     
     /* Print abstract representation of program */
-     for (auto it = res->begin(); it != res->end(); it++) {
+    for (auto it = res->funcs.begin(); it != res->funcs.end(); it++) {
         ASTPrintVisitor pv;
         pv.visit(it->second);
     }

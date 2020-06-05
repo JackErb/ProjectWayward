@@ -80,7 +80,11 @@ namespace Msl {
         NAIR
     } MoveType;
 
-    typedef std::unordered_map<std::string, Func*> MoveScript;
+
+    typedef struct MoveScript {
+        std::string name;
+        std::unordered_map<std::string, Func*> funcs;
+    } MoveScript;
 };
 
 #endif /* Msl_hpp */

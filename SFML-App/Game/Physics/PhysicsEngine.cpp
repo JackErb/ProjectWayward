@@ -78,7 +78,7 @@ void PhysicsEngine::Update() {
             }
             
             int i = 0;
-            for (const HitboxData &h1 : character->hitboxes) {
+            for (const HitboxData &h1 : character->activeHitboxes) {
                 for (const Polygon &p2 : e->polygons) {
                     auto res = checkCollision(h1.hitbox, character->Position(), p2, e->Position());
                     // if (res.first) e->HandleHit(character->HitboxData(i));
