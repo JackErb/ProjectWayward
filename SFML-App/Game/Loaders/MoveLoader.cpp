@@ -20,11 +20,14 @@
 std::unordered_map<std::string, Msl::MoveScript*> MoveLoader::LoadMoves() {
     MslScanner s;
     MslParser p;
-        
-    s.FeedInput(resourcePath() + "NeutralAir.msl");
+    
+    std::string files[] = {"Jab.msl","Nair.msl"};
     std::unordered_map<std::string, Msl::MoveScript*> res;
-    Msl::MoveScript *ms = p.parseProgram(&s);
-    res[ms->name] = ms;
+    for (std::string file : files) {
+        s.FeedInput(resourcePath() + file);
+        Msl::MoveScript *ms = p.parseProgram(&s);
+        res[ms->name] = ms;
+    }
     return res;
 }
 

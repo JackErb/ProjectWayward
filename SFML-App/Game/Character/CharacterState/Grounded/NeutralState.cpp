@@ -10,6 +10,7 @@
 #include "AirborneNeutralState.hpp"
 #include "DashState.hpp"
 #include "JumpsquatState.hpp"
+#include "GroundedScriptState.hpp"
 #include "Character.hpp"
 #include "Entity.hpp"
 
@@ -24,8 +25,9 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.IsPressed(2)) {
-        data.frame_++;
+    if (input.IsPressed(1)) {
+        character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+        return;
     }
     
     float hyp = input.stick.hyp();

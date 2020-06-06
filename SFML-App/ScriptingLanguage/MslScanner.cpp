@@ -19,6 +19,8 @@ using std::string;
 
 void MslScanner::FeedInput(std::string filename) {
     file_ = std::ifstream(filename);
+    line_ = "";
+    eof_ = false;
     if (!file_.is_open()) {
         cerr << "Error opening file: " << filename <<endl;
     }
@@ -68,7 +70,7 @@ Msl::Token MslScanner::NextToken() {
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
         // Clip line
         if (token != Msl::STRING) line_ = line_.substr(p2);
-        
+                
         return token;
     }
     return Msl::EOF_;

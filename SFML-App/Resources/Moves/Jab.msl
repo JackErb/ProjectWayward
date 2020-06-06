@@ -1,0 +1,27 @@
+script "JAB";
+
+func Init() {
+    Hitbox_Circle(0, 100., 0., 130.);
+    Hitbox_Damage(0, 8.);
+    Hitbox_Knockback(0, 20, 20., 30.);
+}
+
+func ProcessInput() {
+    switch frame {
+    case 5:
+        Hitbox_Spawn(0);
+    case 7:
+        Hitbox_Remove(0);
+    case 15:
+        quit();
+    }
+}
+
+func Tick() {
+
+}
+
+func Airborne() {
+    Hitbox_Clear();
+    setState("AirborneNeutralState");
+}

@@ -63,7 +63,7 @@ public:
                 lo = - M_PI * 3.f / 4.f; hi = - M_PI / 4.f;
                 break;
             case LEFT:
-                return a >= M_PI / 3.f / 4.f || a <= - M_PI * 3.f / 4.f;
+                return a >= M_PI * 3.f / 4.f || a <= - M_PI * 3.f / 4.f;
             case UP_T:
                 lo = M_PI / 3.f; hi = M_PI * 2.f / 3.f;
                 break;

@@ -14,6 +14,7 @@
 #include "Character.hpp"
 #include "MathHelper.hpp"
 #include "AirborneNeutralState.hpp"
+#include "NeutralState.hpp"
 #include "LandingLagState.hpp"
 
 #include <iostream>
@@ -87,7 +88,14 @@ void MslInterpreter::initializeBindings() {
     };
     
     bindings_["quit"] = [=]() {
-        this->ch_->SetActionState(new AirborneNeutralState(ch_));
+        switch (this->ch_->actionState_->GetState()) {
+            case GROUNDED:
+                this->ch_->SetActionState(new NeutralState(ch_));
+                break;
+            case AIRBORNE:
+                this->ch_->SetActionState(new AirborneNeutralState(ch_));
+                break;
+        }
     };
     
     bindings_["rotate"] = [=]() {

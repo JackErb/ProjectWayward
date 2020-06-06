@@ -48,9 +48,9 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     
     StageEntity *stage = new StageEntity(1, {0.f, 800.f});
     stage->polygons = {
-        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}},
+        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}}/*,
         {{-1200.f, -2000.f}, {-1200.f, 2000.f}, {-2000.f, 0.f}},
-        {{1200.f, -2000.f}, {1200.f, 2000.f}, {2000.f, 0.f}}
+        {{1200.f, -2000.f}, {1200.f, 2000.f}, {2000.f, 0.f}}*/
     };
     stage->isStatic = true;
     sf::Texture *btexture = new sf::Texture();

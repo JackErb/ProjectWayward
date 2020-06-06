@@ -156,6 +156,8 @@ private:
     
     const Attributes attr;
     AnimMap anims_;
+    
+    friend class MslInterpreter;
 };
 
 #endif /* Character_hpp */
