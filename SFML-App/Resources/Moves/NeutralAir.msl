@@ -2,15 +2,17 @@ script "NAIR";
 
 func Init() {
     Hitbox_Circle(0, 125., 80., 140.);
+    Hitbox_Damage(0, 8.);
+    Hitbox_Knockback(0, 45, 30., 40.);
+    Hitbox_Reverse(0);
+    
     Hitbox_Circle(1, 125., 80., 100.);
+    Hitbox_Damage(1, 6.);
+    Hitbox_Knockback(1, 35, 20., 30.);
+    Hitbox_Reverse(1);
 }
 
 func ProcessInput() {
-    vector();
-    gravity(0.9);
-    
-    y = 1.5;
-    
     switch frame {
     case 5:
         Hitbox_Spawn(0);
@@ -25,11 +27,11 @@ func ProcessInput() {
 }
 
 func Tick() {
-    rotate();
+    vector();
+    gravity();
 }
 
 func Land() {
-    rotate0();
     Hitbox_Clear();
     setState("LandingLag", 10);
 }

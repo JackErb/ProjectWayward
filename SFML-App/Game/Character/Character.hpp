@@ -77,7 +77,6 @@ public:
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
     sf::Vector2f Velocity() const { return data.velocity_; }
-    int Direction() const override { return data.direction_; }
     sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
     const StageEntity *Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }
@@ -89,6 +88,7 @@ public:
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void HandleHit(const Entity *e, const HitboxData &hd) override;
     
     void RollbackTick() override;
     void Rollback() override;
@@ -109,8 +109,7 @@ public:
     void WallJump(int dir);
     void Airdodge();
     void UpB() { data.velocity_.y = -80.f; }
-    void Turnaround() { data.direction_ *= -1; }
-    void SetDirection(int dir) { data.direction_ = dir; }
+    void Turnaround() { SetDirection(Direction() * -1); }
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
     
@@ -138,9 +137,10 @@ private:
         CharacterState::GameData actionStateData_;
         
         sf::Vector2f velocity_ = {0.f, 0.f};
-        int direction_ = 1;
         int fallthrough_ = -1;
         int ftCount_ = 0;
+        
+        float percent_ = 0.f;
         
         union {
             GroundedData groundedData;

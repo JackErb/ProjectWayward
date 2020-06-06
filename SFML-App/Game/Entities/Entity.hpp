@@ -41,6 +41,7 @@ public:
     
     /* Game Processing Functions */
     virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) = 0;
+    virtual void HandleHit(const Entity *e, const HitboxData &hd) = 0;
     virtual void Tick() = 0;
     
     virtual void RollbackTick() {
@@ -103,24 +104,21 @@ public:
     
     sf::Sprite* Sprite() const { return data.sprite_; }
         
-    virtual int Direction() const { return 1; }
+    int Direction() const { return data.dir_; }
+    void SetDirection(int d) { data.dir_ = d; }
     
     void CreateHitbox(std::string move, HitboxData data) {
         hitboxes[move][data.id] = data;
     }
     
     void SpawnHitbox(int id) {
-        HitboxData d = hitboxes[move][id];
-        activeHitboxes.insert(d);
+        activeHitboxes.insert(hitboxes[move][id]);
     }
     
     void RemoveHitbox(int id) {
-        for (auto it = activeHitboxes.begin(); it != activeHitboxes.end(); it++) {
-            if (it->id == id) {
-                activeHitboxes.erase(it);
-                return;
-            }
-        }
+        HitboxData d;
+        d.id = id;
+        activeHitboxes.erase(d);
     }
     
     void ClearHitboxes() {
@@ -149,6 +147,7 @@ private:
         // The top left corner of this player's bounding box
         sf::Vector2f position_;
         sf::Sprite *sprite_;
+        int dir_ = 1;
     };
     
     GameData data;

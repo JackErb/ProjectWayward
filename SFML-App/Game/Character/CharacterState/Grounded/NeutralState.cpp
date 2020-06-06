@@ -13,7 +13,6 @@
 #include "Character.hpp"
 #include "Entity.hpp"
 
-#define PI 3.14159
 
 void NeutralState::NullVelocity() {
     character_->NullVelocityY();
@@ -47,7 +46,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
 void NeutralState::Tick() {    
     character_->ApplyFriction();
     character_->ApplyVelocity();
-    character_->SetSprite(character_->GetSprite("dash", data.frame_ % 11));
+    //character_->SetSprite(character_->GetSprite("dash", data.frame_ % 11));
 }
 
 void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

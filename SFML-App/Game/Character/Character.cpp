@@ -7,6 +7,7 @@
 //
 
 #include "Character.hpp"
+
 #include "NeutralState.hpp"
 #include "PhysicsEngine.hpp"
 #include "AirborneNeutralState.hpp"
@@ -22,6 +23,7 @@
 
 #include "MslInterpreter.hpp"
 #include "MslScanner.hpp"
+#include "MathHelper.hpp"
 
 using std::list;
 using std::cerr;
@@ -161,4 +163,26 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     }
     
     actionState_->HandleCollision(entity, pv);
+}
+
+void Character::HandleHit(const Entity *e, const HitboxData &hd) {
+    SetActionState(new AirborneNeutralState(this));
+    float kb = hd.basekb + hd.kbscale * (data.percent_ / 100.f);
+    data.percent_ += hd.dmg;
+    
+    float angle = hd.angle;
+    if (hd.reverse) {
+        sf::Vector2f center = geometric_center(hd.hitbox);
+        center.x *= e->Direction();
+        center += e->Position();
+        if (e->Direction() == 1 && Position().x > center.x) {
+            angle -= PI / 2.f;
+        } else if (e->Direction() == -1 && Position().x < center.x) {
+            angle += PI / 2.f;
+        }
+    } else {
+        if (e->Direction() == -1) angle -= PI / 2.f;
+    }
+    
+    data.velocity_ = {cos(angle) * kb, sin(angle) * kb};
 }

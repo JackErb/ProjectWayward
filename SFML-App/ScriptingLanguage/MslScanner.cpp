@@ -69,7 +69,6 @@ Msl::Token MslScanner::NextToken() {
         // Clip line
         if (token != Msl::STRING) line_ = line_.substr(p2);
         
-        cerr << Msl::toString(token) << " ";
         return token;
     }
     return Msl::EOF_;

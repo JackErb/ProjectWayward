@@ -164,7 +164,7 @@ int main(int, char const**)
         i++;
         
         if (i == 100) {
-            cout << "Average frame time: " << count / i << endl;
+            //cout << "Average frame time: " << count / i << endl;
             count = i = 0;
         }
     }

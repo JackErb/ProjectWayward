@@ -52,11 +52,12 @@ public:
                 e->Sprite()->setScale(scale, scale);
             }
             
-            e->Sprite()->setPosition(pos);
+            sf::Rect<float> r = e->Sprite()->getGlobalBounds();
+            e->Sprite()->setPosition(pos - sf::Vector2f(r.width / 2, r.height / 2));
             
             int dir = e->Direction();
             if (dir == -1) {
-                float w = e->Sprite()->getTextureRect().width * 0.1515;
+                float w = e->Sprite()->getGlobalBounds().width;
                 e->Sprite()->scale(-1, 1);
                 e->Sprite()->move(w, 0);
             }
@@ -78,12 +79,13 @@ public:
             
             if (drawHitboxes && e->Type() == CHARACTER) {
                 const sf::Vector2f &pos = e->Position();
+                int dir = e->Direction();
                 for (const Polygon &p : e->polygons) {
-                    DrawShape(p, pos, sf::Color(50, 255, 50, 120), window);
+                    DrawShape(p, pos, dir, sf::Color(50, 255, 50, 120), window);
                 }
                 
                 for (const HitboxData &p : e->activeHitboxes) {
-                    DrawShape(p.hitbox, pos, sf::Color(255, 50, 50, 120), window);
+                    DrawShape(p.hitbox, pos, dir, sf::Color(255, 50, 50, 120), window);
                 }
             }
             
@@ -91,14 +93,13 @@ public:
         }
     }
     
-    void DrawShape(const Polygon &p, const sf::Vector2f pos,
+    void DrawShape(const Polygon &p, const sf::Vector2f pos, int dir,
                    sf::Color col, sf::RenderWindow *window) {
         if (p.size() == 2) {
             sf::CircleShape c(p[1].x * scale);
-            sf::Vector2f ps = p[0] + pos;
+            sf::Vector2f ps = sf::Vector2f(dir * p[0].x, p[0].y) + pos;
             ps.x -= p[1].x;
             ps.y -= p[1].x;
-            c.setOrigin(0.5f, 0.5f);
             c.setPosition((ps + cameraOffset_) * scale + windowOffset_);
             
             c.setFillColor(col);
@@ -110,7 +111,8 @@ public:
         shape.setPointCount(p.size());
         int i = 0;
         for (const sf::Vector2f &vert : p) {
-            shape.setPoint(i, ((vert + pos) + cameraOffset_) * scale + windowOffset_);
+            sf::Vector2f vp = sf::Vector2f(dir * vert.x, vert.y) + pos;
+            shape.setPoint(i, (vp + cameraOffset_) * scale + windowOffset_);
             i++;
         }
         shape.setFillColor(col);

@@ -28,8 +28,8 @@ using std::endl;
 
 GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), remotePlayer_(5, {-90.f, -500.f}), camera_(&entities_, w, h) {
     player_.polygons = {
-        {{70.f, 100.f}, {180.f, 100.f}, {180.f, 250.f}, {70.f, 250.f}},
-        {{125.f, 60.f}, {70.f, 0.f}}
+        {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
+        {{40.f, -75.f}, {57.f, 0.f}}
     };
     SpriteLoader::AnimationResult res = SpriteLoader::LoadAnimations({"dash"});
     player_.SetAnimMap(res.anims);
@@ -39,15 +39,19 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     }
     
     remotePlayer_.polygons = {
-        {{70.f, 100.f}, {180.f, 100.f}, {180.f, 250.f}, {70.f, 250.f}},
-        {{125.f, 60.f}, {70.f, 0.f}}
+        {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
+        {{40.f, -75.f}, {57.f, 0.f}}
     };
     SpriteLoader::AnimationResult res2 = SpriteLoader::LoadAnimations({"dash"});
     remotePlayer_.SetAnimMap(res2.anims);
     remotePlayer_.SetSprite(res2.anims["dash"][0]);
     
-    StageEntity *stage = new StageEntity(1, {-1200.f, 300.f});
-    stage->polygons = {{{0.f, 0.f}, {2400.f, 0.f}, {2400.f, 1000.f}, {0.f, 1000.f}}};
+    StageEntity *stage = new StageEntity(1, {0.f, 800.f});
+    stage->polygons = {
+        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}},
+        {{-1200.f, -2000.f}, {-1200.f, 2000.f}, {-2000.f, 0.f}},
+        {{1200.f, -2000.f}, {1200.f, 2000.f}, {2000.f, 0.f}}
+    };
     stage->isStatic = true;
     sf::Texture *btexture = new sf::Texture();
     textures_.push_back(btexture);
@@ -59,8 +63,8 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     sprites_.push_back(s1);
     stage->SetSprite(s1);
     
-    PlatformEntity *platform = new PlatformEntity(3, {-300.f, -75.f});
-    platform->polygons = {{{0.f, 0.f}, {600.f, 0.f}, {600.f, 20.f}, {0.f, 20.f}}};
+    PlatformEntity *platform = new PlatformEntity(3, {0.f, 0.f});
+    platform->polygons = {{{-300.f, -10.f}, {300.f, -10.f}, {300.f, 10.f}, {-300.f, 10.f}}};
     platform->isStatic = true;
     sf::Texture *pltexture = new sf::Texture();
     textures_.push_back(pltexture);

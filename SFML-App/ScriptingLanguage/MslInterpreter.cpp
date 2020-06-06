@@ -12,6 +12,7 @@
 #include "MoveLoader.hpp"
 #include "MslScanner.hpp"
 #include "Character.hpp"
+#include "MathHelper.hpp"
 #include "AirborneNeutralState.hpp"
 #include "LandingLagState.hpp"
 
@@ -44,7 +45,21 @@ void MslInterpreter::initializeBindings() {
         HitboxData data;
         data.id = params_[0].n;
         data.hitbox = {{params_[1].f, params_[2].f}, {params_[3].f, 0}};
-        this->ch_->CreateHitbox(vals_["scriptName"].str, data);
+        this->ch_->CreateHitbox(script, data);
+    };
+    
+    bindings_["Hitbox_Damage"] = [=]() {
+        this->ch_->hitboxes[script][params_[0].n].dmg = params_[1].f;
+    };
+    
+    bindings_["Hitbox_Knockback"] = [=]() {
+        this->ch_->hitboxes[script][params_[0].n].angle = (360 - (float)params_[1].n) * PI / 180.f;
+        this->ch_->hitboxes[script][params_[0].n].basekb = params_[2].f;
+        this->ch_->hitboxes[script][params_[0].n].kbscale = params_[3].f;
+    };
+    
+    bindings_["Hitbox_Reverse"] = [=]() {
+        this->ch_->hitboxes[script][params_[0].n].reverse = !this->ch_->hitboxes[script][params_[0].n].reverse;
     };
     
     bindings_["Hitbox_Spawn"] = [=]() {
@@ -96,6 +111,7 @@ void MslInterpreter::InitScript(string move) {
     // Initialize global variables/functions
     // Reset state of interpreter entirely
     script = move;
+    ch_->move = move;
 }
 
 void MslInterpreter::PreTick(int frame) {
@@ -112,7 +128,7 @@ void MslInterpreter::Tick() {
     CallFunction("Tick");
     
     auto now = high_resolution_clock::now();
-    cerr << "Total time " << duration_cast<microseconds>(now - time).count() << endl;
+    // cerr << "Total time " << duration_cast<microseconds>(now - time).count() << endl;
 }
 
 void MslInterpreter::CallFunction(string name) {
