@@ -97,7 +97,7 @@ private:
     std::unordered_map<std::string, ExprRes> vals_;
     std::vector<ExprRes> params_;
     
-    std::unordered_map<std::string, std::function<void(void)>> bindings_;
+    std::unordered_map<std::string, std::function<void(void)> > bindings_;
     time_point<high_resolution_clock> time;
 };
 

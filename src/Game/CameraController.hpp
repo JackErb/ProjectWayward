@@ -22,15 +22,16 @@ public:
 
 public:
 	CameraController(vector<Entity*>* entities, float w, float h) : entities_(entities) {
-		windowOffset_ = { w / 2.f, h / 2.f };
-		cameraOffset_ = { 0.f, 0.f };
+		windowOffset_ = sf::Vector2f(w / 2.f, h / 2.f);
+		cameraOffset_ = sf::Vector2f(0.f, 0.f);
 	}
 
 void Tick() {
 	if (cameraOffsetFinal_.x != cameraOffset_.x) {
 		float a = atan2(-cameraOffset_.y + cameraOffsetFinal_.y,
 			cameraOffsetFinal_.x - cameraOffset_.x);
-		cameraOffset_ += {cos(a)* cameraOffsetSpeed, sin(a)* cameraOffsetSpeed};
+        cameraOffset_.x += cos(a) * cameraOffsetSpeed;
+        cameraOffset_.y += sin(a) * cameraOffsetSpeed;
 
 		if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {
 			cameraOffset_.x = cameraOffsetFinal_.x;
@@ -124,10 +125,10 @@ void DrawShape(const PolygonV& p, const sf::Vector2f pos, int dir,
 }
 
 void TransformCamera(float x, float y) {
-	cameraOffsetFinal_ = { x, y };
+	cameraOffsetFinal_ = sf::Vector2f(x, y);
 
 }
-void SetCameraOffset(float x, float y) { cameraOffset_ = { x, y }; }
+void SetCameraOffset(float x, float y) { cameraOffset_ = sf::Vector2f(x, y); }
 void SetScale(float s) { scale = s; }
 
 public:

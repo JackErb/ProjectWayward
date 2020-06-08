@@ -8,6 +8,7 @@
 
 #include "Game/GameController.hpp"
 #include "Game/PlayerInput.hpp"
+#include "Game/Loaders/ResourcePath.hpp"
 
 using std::list;
 using std::map;
@@ -32,7 +33,7 @@ int main(int, char const**) {
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile("icon.png")) {
+    if (!icon.loadFromFile(ResourcePath() + "icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
@@ -50,7 +51,7 @@ int main(int, char const**) {
         // Clear screen
         window.clear();
         
-        /*NetworkController *n = &controller.network_;
+        NetworkController *n = &controller.network_;
 		if (n->IsConnected() && n->rlCount_ >= n->dropFramesPeriod_) {
 			float drop = ((float)n->lSum_ / (float)n->lCount_) - ((float)n->rlSum_ / (float)n->rlCount_);
 			cout << "Lag " << drop << endl;
@@ -58,11 +59,11 @@ int main(int, char const**) {
                 n->dropFrames_ = (int)(drop);
 			}
             n->ResetLagCounters();
-		}*/
+		}
         
         /* ************************** */
         /* INPUT AND EVENT PROCESSING */
-        /* ************************** */ /*
+        /* ************************** */
         // Poll window for events
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -89,7 +90,7 @@ int main(int, char const**) {
         
         /* ************************** */
         /* GAME CONTROLLER PROCESSING */
-        /* ************************** */ /*
+        /* ************************** */
         if (!pause && n->dropFrames_ == 0) {
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
@@ -126,9 +127,9 @@ int main(int, char const**) {
         while (duration_cast<microseconds>(now - start).count() < 14500) {
             std::this_thread::sleep_for(microseconds(100));
             now = high_resolution_clock::now();
-        }*/
+        }
         
-		auto now = high_resolution_clock::now();
+		now = high_resolution_clock::now();
         while (duration_cast<microseconds>(now - start).count() < 16700) {
             std::this_thread::sleep_for(microseconds(500));
             now = high_resolution_clock::now();

@@ -12,7 +12,7 @@
 #include "Statement.h"
 #include <string>
 
-class Expression;
+struct Expression;
 
 // var <VAR> = <EXPR>
 struct AssignStatement: public Statement {

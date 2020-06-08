@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-class Expression;
+struct Expression;
 
 // <NAME>(<PARAM LIST>)
 struct FunctionCall: public Statement {

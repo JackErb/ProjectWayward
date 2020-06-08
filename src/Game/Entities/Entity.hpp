@@ -60,18 +60,19 @@ public:
 		float px = data.position_.x;
 		float py = data.position_.y;
 
-		if (polygons.size() == 0) return { px, py, 0, 0 };
+		if (polygons.size() == 0) return Rectangle(px, py, 0, 0);
 
 		float min_x = std::numeric_limits<float>::max(),
 			max_x = std::numeric_limits<float>::min(),
 			min_y = min_x,
 			max_y = max_x;
+        
+        int d = Direction();
 		for (const PolygonV& p : polygons) {
 			if (p.size() == 2) {
 				// p is a circle
 				float r = p[1].x + 0.1f;
-				sf::Vector2f corner = { p[0].x - r,
-										p[0].y - r };
+				sf::Vector2f corner = sf::Vector2f(d * p[0].x - r, p[0].y - r);
 				min_x = fmin(min_x, fmin(corner.x, corner.x + r * 2));
 				max_x = fmax(max_x, fmax(corner.x, corner.x + r * 2));
 				min_y = fmin(min_y, fmin(corner.y, corner.y + r * 2));
@@ -79,8 +80,8 @@ public:
 			}
 			else {
 				for (const sf::Vector2f& v : p) {
-					min_x = fmin(min_x, v.x);
-					max_x = fmax(max_x, v.x);
+                    min_x = fmin(min_x, d * v.x);
+					max_x = fmax(max_x, d * v.x);
 					min_y = fmin(min_y, v.y);
 					max_y = fmax(max_y, v.y);
 				}
@@ -138,7 +139,7 @@ public:
 	// Each polygon is a vector of (x,y) pairs describing the vertices in the
 	// counterclockwise direction of this shape, where (0,0) is the entity's center
 	std::vector<PolygonV> polygons; // i.e. hurtboxes
-	std::unordered_map<std::string, std::unordered_map<int, HitboxData>> hitboxes; // i.e. hitboxes
+	std::unordered_map<std::string, std::unordered_map<int, HitboxData> > hitboxes; // i.e. hitboxes
 
 	std::string move;
 	std::set<HitboxData> activeHitboxes;

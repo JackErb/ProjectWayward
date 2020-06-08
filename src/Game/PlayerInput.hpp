@@ -29,6 +29,8 @@ public:
     } ButtonState;
     
     typedef struct StickState {
+        StickState() : xAxis(0), yAxis(0) {}
+        StickState(float x, float y) : xAxis(x), yAxis(y) {}
         float xAxis;
         float yAxis;
         
@@ -80,12 +82,12 @@ public:
         return a >= lo && a <= hi;
     }
     
-    constexpr static float DEAD_ZONE = 10.f;
+    constexpr const static float DEAD_ZONE = 10.f;
     
 public:
     PlayerInput() : buttons() {
-        stick = {0.f, 0.f};
-        cStick = {0.f, 0.f};
+        stick = StickState();
+        cStick = StickState();
     }
 
 	void UpdateControllerState(unsigned int c) {
@@ -105,8 +107,8 @@ public:
 			}
 		}
 
-		stick = { 0.f, 0.f };
-		cStick = { 0.f, 0.f };
+		stick = StickState();
+		cStick = StickState();
 
 		if (sf::Joystick::isConnected(c)) {
 			// Check the controller's buttons
@@ -123,8 +125,8 @@ public:
 			}
 
 			// Check the controller's sticks
-			stick = { sf::Joystick::getAxisPosition(c, sf::Joystick::X),
-							sf::Joystick::getAxisPosition(c, sf::Joystick::Y) };
+			stick = StickState(sf::Joystick::getAxisPosition(c, sf::Joystick::X),
+                    sf::Joystick::getAxisPosition(c, sf::Joystick::Y));
 		} else {
 			std::cerr << "Controller not connected" << std::endl;
 		}

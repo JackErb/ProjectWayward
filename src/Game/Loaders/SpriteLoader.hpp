@@ -19,7 +19,7 @@ using std::string;
 using std::vector;
 using std::unordered_map;
 
-typedef unordered_map<string, vector<sf::Sprite*>> AnimMap;
+typedef unordered_map< string, vector<sf::Sprite*> > AnimMap;
 
 class SpriteLoader {
 public:

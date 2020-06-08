@@ -34,14 +34,10 @@ void MslScanner::nextLine() {
         eof_ = true;
         file_.close();
     }
-
-	std::cerr << line_ << endl;
     
     // Prep the string
-    std::regex r("[+-\*/(){}=;:#,]");
-	std::cerr << "HERE" << endl;
+    std::regex r("[+-*/(){}=;:#,]");
     line_ = std::regex_replace(line_, r, " $0 ");
-	std::cerr << line_ << 2 << endl;
 }
 
 Msl::Token MslScanner::NextToken() {

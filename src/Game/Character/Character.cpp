@@ -49,7 +49,7 @@ void Character::Tick() {
     fill = false;
     // Teleport back above stage
     if (Position().y > 1500) {
-        SetPosition({Position().x, -1000});
+        SetPosition(sf::Vector2f(Position().x, -1000));
     }
     
     if (data.ftCount_ > 0)  {
@@ -184,5 +184,5 @@ void Character::HandleHit(const Entity *e, const HitboxData &hd) {
         if (e->Direction() == -1) angle -= PI / 2.f;
     }
     
-    data.velocity_ = {cos(angle) * kb, sin(angle) * kb};
+    data.velocity_ = sf::Vector2f(cos(angle) * kb, sin(angle) * kb);
 }

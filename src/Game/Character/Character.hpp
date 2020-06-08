@@ -136,7 +136,7 @@ private:
         CharStateType actionStateT_;
         CharacterState::GameData actionStateData_;
         
-        sf::Vector2f velocity_ = {0.f, 0.f};
+        sf::Vector2f velocity_ = sf::Vector2f(0.f, 0.f);
         int fallthrough_ = -1;
         int ftCount_ = 0;
         

@@ -9,20 +9,20 @@
 #ifndef ASTPrintVisit_h
 #define ASTPrintVisit_h
 
-#include "AST/Func.h"
-#include "AST/ASTPrintVisitor.h"
-#include "AST/Expressions/Plus.h"
-#include "AST/Expressions/Minus.h"
-#include "AST/Expressions/Times.h"
-#include "AST/Expressions/Divide.h"
-#include "AST/Expressions/IntLiteral.h"
-#include "AST/Expressions/StringLiteral.h"
-#include "AST/Expressions/FloatLiteral.h"
-#include "AST/Expressions/Var.h"
-#include "AST/Statements/AssignStatement.h"
-#include "AST/Statements/FunctionCall.h"
-#include "AST/Statements/Block.h"
-#include "AST/Statements/SwitchStatement.h"
+#include "Func.h"
+#include "ASTPrintVisitor.h"
+#include "Expressions/Plus.h"
+#include "Expressions/Minus.h"
+#include "Expressions/Times.h"
+#include "Expressions/Divide.h"
+#include "Expressions/IntLiteral.h"
+#include "Expressions/StringLiteral.h"
+#include "Expressions/FloatLiteral.h"
+#include "Expressions/Var.h"
+#include "Statements/AssignStatement.h"
+#include "Statements/FunctionCall.h"
+#include "Statements/Block.h"
+#include "Statements/SwitchStatement.h"
 
 #include <iostream>
 #include <string>

@@ -12,7 +12,7 @@
 #include "Statement.h"
 #include <unordered_map>
 
-class Expression;
+struct Expression;
 
 // NOTE: Is only valid for integers
 // switch <EXPR>

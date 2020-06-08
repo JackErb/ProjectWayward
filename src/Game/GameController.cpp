@@ -19,13 +19,14 @@
 #include "Entities/StageEntity.hpp"
 #include "Loaders/SpriteLoader.hpp"
 #include "Loaders/MoveLoader.hpp"
+#include "Loaders/ResourcePath.hpp"
 
 using std::list;
 using std::cout;
 using std::cerr;
 using std::endl;
 
-GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), remotePlayer_(5, {-90.f, -500.f}), camera_(&entities_, w, h) {
+GameController::GameController(float w, float h) : player_(0, sf::Vector2f(-90.f, -500.f)), remotePlayer_(5, sf::Vector2f(-90.f, -500.f)), camera_(&entities_, w, h) {
     player_.polygons = {
         {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
         {{40.f, -75.f}, {57.f, 0.f}}
@@ -54,7 +55,7 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     stage->isStatic = true;
     sf::Texture *btexture = new sf::Texture();
     textures_.push_back(btexture);
-    if (!btexture->loadFromFile("stage.png")) {
+    if (!btexture->loadFromFile(ResourcePath() + "stage.png")) {
 
     }
     sf::Sprite *s1 = new sf::Sprite(*btexture);
@@ -66,7 +67,7 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     platform->isStatic = true;
     sf::Texture *pltexture = new sf::Texture();
     textures_.push_back(pltexture);
-    if (!pltexture->loadFromFile("platform.png")) {
+    if (!pltexture->loadFromFile(ResourcePath() + "platform.png")) {
 
     }
     sf::Sprite *s2 = new sf::Sprite(*pltexture);
