@@ -27,15 +27,21 @@ void MslScanner::FeedInput(std::string filename) {
 }
 
 void MslScanner::nextLine() {
+	if (eof_) return;
+
     // Get the next line from the file
     if (!std::getline(file_, line_)) {
         eof_ = true;
         file_.close();
     }
+
+	std::cerr << line_ << endl;
     
     // Prep the string
-    std::regex r("[+-*/(){}=;:#,]");
+    std::regex r("[+-\*/(){}=;:#,]");
+	std::cerr << "HERE" << endl;
     line_ = std::regex_replace(line_, r, " $0 ");
+	std::cerr << line_ << 2 << endl;
 }
 
 Msl::Token MslScanner::NextToken() {

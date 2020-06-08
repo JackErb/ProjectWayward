@@ -7,12 +7,12 @@
 //
 
 #include "DashState.hpp"
-#include "PlayerInput.hpp"
+#include "../../../PlayerInput.hpp"
 #include "NeutralState.hpp"
-#include "AirborneNeutralState.hpp"
+#include "../Airborne/AirborneNeutralState.hpp"
 #include "JumpsquatState.hpp"
 #include "TurnaroundState.hpp"
-#include "Character.hpp"
+#include "../../Character.hpp"
 
 int sign(float f) {
     return f < 0.f ? -1 : 1;

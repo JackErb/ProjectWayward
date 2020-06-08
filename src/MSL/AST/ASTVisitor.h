@@ -9,18 +9,18 @@
 #ifndef ASTVisitor_h
 #define ASTVisitor_h
 
-class AssignStatement;
-class SwitchStatement;
-class Block;
-class FunctionCall;
-class Plus;
-class Minus;
-class Times;
-class Divide;
-class IntLiteral;
-class StringLiteral;
-class FloatLiteral;
-class Var;
+struct AssignStatement;
+struct SwitchStatement;
+struct Block;
+struct FunctionCall;
+struct Plus;
+struct Minus;
+struct Times;
+struct Divide;
+struct IntLiteral;
+struct StringLiteral;
+struct FloatLiteral;
+struct Var;
 
 class Visitor {
 public:

@@ -9,13 +9,11 @@
 #ifndef MoveLoader_hpp
 #define MoveLoader_hpp
 
-#include "Msl.hpp"
+#include "../../MSL/Msl.hpp"
 
 #include <unordered_map>
 #include <string>
 #include <vector>
-
-class Func;
 
 class MoveLoader {
 public:

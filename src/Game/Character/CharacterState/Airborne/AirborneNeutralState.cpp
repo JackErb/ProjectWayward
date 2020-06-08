@@ -7,12 +7,11 @@
 //
 
 #include "AirborneNeutralState.hpp"
-#include "NeutralState.hpp"
-#include "LandingLagState.hpp"
+#include "../Grounded/NeutralState.hpp"
+#include "../Grounded/LandingLagState.hpp"
 #include "AirdodgeState.hpp"
-#include "Character.hpp"
+#include "../../Character.hpp"
 #include "AirborneScriptState.hpp"
-#include "MslInterpreter.hpp"
 
 AirborneNeutralState::AirborneNeutralState(Character* ch) : AirborneState(ch) {
     

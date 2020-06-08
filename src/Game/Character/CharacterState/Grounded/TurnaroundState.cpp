@@ -9,8 +9,8 @@
 #include "TurnaroundState.hpp"
 #include "DashState.hpp"
 #include "JumpsquatState.hpp"
-#include "AirborneNeutralState.hpp"
-#include "Character.hpp"
+#include "../Airborne/AirborneNeutralState.hpp"
+#include "../../Character.hpp"
 
 void TurnaroundState::Turnaround() {
     character_->NullVelocityX();

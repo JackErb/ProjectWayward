@@ -12,12 +12,12 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-typedef std::vector<sf::Vector2f> Polygon;
+typedef std::vector<sf::Vector2f> PolygonV;
 
 struct HitboxData {
     int id;
     // The polygons of the hitbox, relative to to the player
-    Polygon hitbox;
+    PolygonV hitbox;
     
     float dmg;
     float angle; // [0, 2pi]

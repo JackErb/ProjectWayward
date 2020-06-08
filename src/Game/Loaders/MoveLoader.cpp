@@ -8,8 +8,8 @@
 
 #include "MoveLoader.hpp"
 
-#include "MslParser.hpp"
-#include "MslScanner.hpp"
+#include "../../MSL/MslParser.hpp"
+#include "../../MSL/MslScanner.hpp"
 #include "ResourcePath.hpp"
 
 #include <filesystem>
@@ -21,10 +21,10 @@ std::unordered_map<std::string, Msl::MoveScript*> MoveLoader::LoadMoves() {
     MslScanner s;
     MslParser p;
     
-    std::string files[] = {"Jab.msl","Nair.msl"};
+	std::string files[] = {"Jab.msl", "Nair.msl"};
     std::unordered_map<std::string, Msl::MoveScript*> res;
     for (std::string file : files) {
-        s.FeedInput(resourcePath() + file);
+        s.FeedInput(ResourcePath() + "Moves/" + file);
         Msl::MoveScript *ms = p.parseProgram(&s);
         res[ms->name] = ms;
     }

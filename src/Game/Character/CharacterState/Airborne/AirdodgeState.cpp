@@ -8,8 +8,8 @@
 
 #include "AirdodgeState.hpp"
 #include "AirborneNeutralState.hpp"
-#include "LandingLagState.hpp"
-#include "Character.hpp"
+#include "../Grounded/LandingLagState.hpp"
+#include "../../Character.hpp"
 
 void AirdodgeState::Airdodge() {
     character_->Airdodge();

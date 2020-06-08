@@ -9,7 +9,7 @@
 #ifndef NetworkController_hpp
 #define NetworkController_hpp
 
-#include "PlayerInput.hpp"
+#include "../Game/PlayerInput.hpp"
 
 #include <SFML/Network.hpp>
 #include <iostream>
@@ -76,10 +76,7 @@ public:
                     HoldFrame = d.frame;
                     std::cerr << "DESYNCED " << HoldFrame << " " << frame_ << std::endl;
                 }
-            }
-            
-            assert(d.isPlayerValid);
-            
+            }            
             res->push_front(d);
         }
         return res;

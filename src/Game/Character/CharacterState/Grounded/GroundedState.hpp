@@ -9,7 +9,7 @@
 #ifndef GroundedState_hpp
 #define GroundedState_hpp
 
-#include "CharacterState.hpp"
+#include "../CharacterState.hpp"
 
 class GroundedState : public CharacterState {
 public:

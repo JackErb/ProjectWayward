@@ -12,8 +12,8 @@
 #include <iostream>
 #include <vector>
 
-#include "Entity.hpp"
-#include "Character.hpp"
+#include "../Entities/Entity.hpp"
+#include "../Character/Character.hpp"
 
 using std::vector;
 using std::pair;
@@ -65,8 +65,8 @@ public:
     void RollbackTick();
     
 private:
-    pair<bool, sf::Vector2f> checkCollision(const Polygon &p1, const sf::Vector2f &pos1, int dir1,
-                                            const Polygon &p2, const sf::Vector2f &pos2, int dir2);
+    pair<bool, sf::Vector2f> checkCollision(const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
+                                            const PolygonV &p2, const sf::Vector2f &pos2, int dir2);
     
 private:
     vector<Entity*> entities_;

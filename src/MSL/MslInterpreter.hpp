@@ -9,9 +9,9 @@
 #ifndef MslInterpreter_hpp
 #define MslInterpreter_hpp
 
-#include "MoveLoader.hpp"
+#include "../Game/Loaders/MoveLoader.hpp"
 #include "Msl.hpp"
-#include "ASTVisitor.h"
+#include "AST/ASTVisitor.h"
 
 #include <unordered_map>
 #include <vector>

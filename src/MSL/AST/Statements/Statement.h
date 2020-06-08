@@ -1,18 +1,18 @@
 //
-//  Expression.h
+//  Statement.h
 //  SFML-App
 //
 //  Created by Jack Erb on 5/30/20.
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#ifndef Expression_h
-#define Expression_h
+#ifndef Statement_h
+#define Statement_h
 
-#include "ASTVisitor.h"
+#include "../ASTVisitor.h"
 
-struct Expression {
+struct Statement {
     virtual void accept(Visitor *v) = 0;
 };
 
-#endif /* Expression_h */
+#endif /* Statement_h */

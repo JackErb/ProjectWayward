@@ -9,14 +9,16 @@
 #ifndef MathHelper_hpp
 #define MathHelper_hpp
 
-#define PI 3.1415926535
-typedef std::vector<sf::Vector2f> Polygon;
+#include <SFML/Graphics.hpp>
+
+#define PI 3.1415926535f
+typedef std::vector<sf::Vector2f> PolygonV;
 
 float clamp(float f, float l, float h);
 
 float dot(const sf::Vector2f &v1, const sf::Vector2f &v2);
 
-sf::Vector2f geometric_center(const Polygon &p);
+sf::Vector2f geometric_center(const PolygonV &p);
 
 sf::Vector2f unit_vec(sf::Vector2f v);
 

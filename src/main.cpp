@@ -1,20 +1,3 @@
-
-//
-// Disclaimer:
-// ----------
-//
-// This code will work only if you selected window, graphics and audio.
-//
-// Note that the "Run Script" build phase will copy the required frameworks
-// or dylibs to your application bundle so you can execute it on any OS X
-// computer.
-//
-// Your resource files (images, sounds, fonts, ...) are also copied to your
-// application bundle. To get the path to these resources, use the helper
-// function `resourcePath()` from ResourcePath.hpp
-//
-
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
 #include <list>
@@ -23,13 +6,8 @@
 #include <chrono>
 #include <thread>
 
-#include "OfflineGameController.hpp"
-#include "GameController.hpp"
-#include "Event.hpp"
-#include "PlayerInput.hpp"
-
-// Here is a small helper for you! Have a look.
-#include "ResourcePath.hpp"
+#include "Game/GameController.hpp"
+#include "Game/PlayerInput.hpp"
 
 using std::list;
 using std::map;
@@ -38,10 +16,7 @@ using std::cerr;
 using std::endl;
 using namespace std::chrono;
 
-static void UpdateControllerState(PlayerInput *input, unsigned int c);
-
-int main(int, char const**)
-{
+int main(int, char const**) {
     const float WIDTH = 2800;
     const float HEIGHT = 1750;
     
@@ -57,7 +32,7 @@ int main(int, char const**)
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile(resourcePath() + "icon.png")) {
+    if (!icon.loadFromFile("icon.png")) {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
@@ -75,7 +50,7 @@ int main(int, char const**)
         // Clear screen
         window.clear();
         
-        NetworkController *n = &controller.network_;
+        /*NetworkController *n = &controller.network_;
 		if (n->IsConnected() && n->rlCount_ >= n->dropFramesPeriod_) {
 			float drop = ((float)n->lSum_ / (float)n->lCount_) - ((float)n->rlSum_ / (float)n->rlCount_);
 			cout << "Lag " << drop << endl;
@@ -83,11 +58,11 @@ int main(int, char const**)
                 n->dropFrames_ = (int)(drop);
 			}
             n->ResetLagCounters();
-		}
+		}*/
         
         /* ************************** */
         /* INPUT AND EVENT PROCESSING */
-        /* ************************** */
+        /* ************************** */ /*
         // Poll window for events
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -102,11 +77,9 @@ int main(int, char const**)
         }
         
         // Update the player input
-        p1.Tick();
-        p2.Tick();
         sf::Joystick::update();
-        UpdateControllerState(&p1, 0);
-        //UpdateControllerState(&p2, 1);
+        p1.UpdateControllerState(0);
+        //p2.UpdateControllerState(1);
         
         if (p1.IsPressed(2)) {
             pause = !pause;
@@ -116,7 +89,7 @@ int main(int, char const**)
         
         /* ************************** */
         /* GAME CONTROLLER PROCESSING */
-        /* ************************** */
+        /* ************************** */ /*
         if (!pause && n->dropFrames_ == 0) {
             if (!controller.network_.PauseAndWait) {
                 controller.PreTick();
@@ -153,43 +126,20 @@ int main(int, char const**)
         while (duration_cast<microseconds>(now - start).count() < 14500) {
             std::this_thread::sleep_for(microseconds(100));
             now = high_resolution_clock::now();
-        }
+        }*/
         
+		auto now = high_resolution_clock::now();
         while (duration_cast<microseconds>(now - start).count() < 16700) {
-            std::this_thread::sleep_for(microseconds(0));
+            std::this_thread::sleep_for(microseconds(500));
             now = high_resolution_clock::now();
         }
-        
         count += (long) duration_cast<microseconds>(now - start).count();
         i++;
         
         if (i == 100) {
-            //cout << "Average frame time: " << count / i << endl;
-            count = i = 0;
+           cout << "Average frame time: " << count / i << endl;
+           count = i = 0;
         }
     }
-
     return EXIT_SUCCESS;
-}
-
-void UpdateControllerState(PlayerInput *input, unsigned int c) {
-    if (sf::Joystick::isConnected(c)) {
-        // Check the controller's buttons
-        for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {
-            bool contains = input->buttons.find(i) != input->buttons.end();
-            if (sf::Joystick::isButtonPressed(c, i) && !contains) {
-                // This button was just pressed
-                input->buttons[i] = PlayerInput::Pressed;
-                // cout << "Button: " << i << std::endl;
-            } else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
-                input->buttons[i] = PlayerInput::Released;
-            }
-        }
-        
-        // Check the controller's sticks
-        input->stick = {sf::Joystick::getAxisPosition(c, sf::Joystick::X),
-                       sf::Joystick::getAxisPosition(c, sf::Joystick::Y)};
-    } else {
-        cerr << "Controller not connected" << endl;
-    }
-}
+} 

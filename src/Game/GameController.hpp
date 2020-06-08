@@ -14,12 +14,12 @@
 #include <vector>
 
 #include "PlayerInput.hpp"
-#include "PhysicsEngine.hpp"
-#include "Entity.hpp"
-#include "Character.hpp"
-#include "PlatformEntity.hpp"
+#include "Physics/PhysicsEngine.hpp"
+#include "Entities/Entity.hpp"
+#include "Character/Character.hpp"
+#include "Entities/PlatformEntity.hpp"
 #include "CameraController.hpp"
-#include "NetworkController.hpp"
+#include "../Network/NetworkController.hpp"
 
 class GameController {
 public:

@@ -7,13 +7,11 @@
 //
 
 #include "PhysicsEngine.hpp"
-#include "Entity.hpp"
 
 #include <iostream>
 #include <vector>
 #include <limits>
 #include <algorithm>
-
 #include <SFML/Graphics.hpp>
 
 using std::pair;
@@ -23,12 +21,12 @@ using std::endl;
 using std::min;
 using std::max;
 
-vector<sf::Vector2f> get_orthogonals(const Polygon &p1, int dir1, const Polygon &p2, int dir2);
+vector<sf::Vector2f> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2, int dir2);
 
 pair<bool, sf::Vector2f>
     is_separating_axis(const sf::Vector2f &axis,
-                       const Polygon &p1, const sf::Vector2f &pos1, int dir1,
-                       const Polygon &p2, const sf::Vector2f &pos2, int dir2);
+                       const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
+                       const PolygonV &p2, const sf::Vector2f &pos2, int dir2);
 
 bool PhysicsEngine::Intersects(const Entity &e1, const Entity &e2) {
     Rectangle b1 = e1.BoundingBox(), b2 = e2.BoundingBox();
@@ -49,8 +47,8 @@ void PhysicsEngine::Update() {
         for (Entity *e : entities_) {
             if (character == e) continue;
             
-            for (const Polygon &p1 : character->polygons) {
-                for (const Polygon &p2 : e->polygons) {
+            for (const PolygonV &p1 : character->polygons) {
+                for (const PolygonV &p2 : e->polygons) {
                     auto res = checkCollision(p1, character->Position(), character->Direction(),
                                               p2, e->Position(), e->Direction());
                     if (res.first)
@@ -59,7 +57,7 @@ void PhysicsEngine::Update() {
             }
             
             for (const HitboxData &h1 : character->activeHitboxes) {
-                for (const Polygon &p2 : e->polygons) {
+                for (const PolygonV &p2 : e->polygons) {
                     auto res = checkCollision(h1.hitbox, character->Position(), character->Direction(),
                                               p2, e->Position(), e->Direction());
                     if (res.first) e->HandleHit(character, h1);
@@ -85,8 +83,8 @@ void PhysicsEngine::Rollback() {
 }
 
 pair<bool, sf::Vector2f>
-  PhysicsEngine::checkCollision(const Polygon &p1, const sf::Vector2f &pos1, int dir1,
-                                const Polygon &p2, const sf::Vector2f &pos2, int dir2) {
+  PhysicsEngine::checkCollision(const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
+                                const PolygonV &p2, const sf::Vector2f &pos2, int dir2) {
     // Separating Axis Theorem
     if (p1.size() == 2 && p2.size() == 2) {
         // They are both circles
@@ -137,7 +135,7 @@ pair<bool, sf::Vector2f>
 }
 
 /* Returns the orthogonal vectors of all sides of this polygon. */
-vector<sf::Vector2f> get_orthogonals(const Polygon &p1, int dir1, const Polygon &p2, int dir2) {
+vector<sf::Vector2f> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2, int dir2) {
     vector<sf::Vector2f> res;
     
     size_t n = p1.size();
@@ -195,8 +193,8 @@ vector<sf::Vector2f> get_orthogonals(const Polygon &p1, int dir1, const Polygon 
  * If not, returns the pair (false, pv) where pv is (0,0)
  */
 pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
-                                            const Polygon &p1, const sf::Vector2f &pos1, int dir1,
-                                            const Polygon &p2, const sf::Vector2f &pos2, int dir2) {
+                                            const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
+                                            const PolygonV &p2, const sf::Vector2f &pos2, int dir2) {
     float min1 = std::numeric_limits<float>::max(),
           max1 = std::numeric_limits<float>::min(),
           min2 = min1,

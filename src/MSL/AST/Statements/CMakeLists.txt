@@ -1,0 +1,1 @@
+target_sources(main PRIVATE AssignStatement.h Block.h FunctionCall.h Statement.h SwitchStatement.h)

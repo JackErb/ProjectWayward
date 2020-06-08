@@ -16,13 +16,13 @@
 #include <vector>
 #include <set>
 
-#include "Entity.hpp"
-#include "PlayerInput.hpp"
-#include "StageEntity.hpp"
-#include "SpriteLoader.hpp"
-#include "CharacterState.hpp"
+#include "../Entities/Entity.hpp"
+#include "../PlayerInput.hpp"
+#include "../Entities/StageEntity.hpp"
+#include "../Loaders/SpriteLoader.hpp"
+#include "CharacterState/CharacterState.hpp"
 #include "CharacterProperties.hpp"
-#include "MoveLoader.hpp"
+#include "../Loaders/MoveLoader.hpp"
 
 using std::string;
 using std::list;

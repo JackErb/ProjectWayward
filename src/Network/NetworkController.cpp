@@ -219,7 +219,6 @@ void NetworkController::SendPlayerInput(const PlayerInput &input) {
         }
                 
         InputData data = inputData_[j];
-        assert (inputData_[j].isPlayerValid);
         
         // Build and send the input data
         InputPacket idata = {data.frame, nextRemoteFrame_, data.player.stick.xAxis, data.player.stick.yAxis, static_cast<int>(data.player.buttons.size())};

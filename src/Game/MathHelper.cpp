@@ -10,7 +10,7 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 
-typedef std::vector<sf::Vector2f> Polygon;
+typedef std::vector<sf::Vector2f> PolygonV;
 
 float clamp(float f, float l, float h) {
     if (f < l) return l;
@@ -22,7 +22,7 @@ float dot(const sf::Vector2f &v1, const sf::Vector2f &v2) {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
-sf::Vector2f geometric_center(const Polygon &p) {
+sf::Vector2f geometric_center(const PolygonV &p) {
     // Special case for circles
     if (p.size() == 2) return p[0];
     

@@ -7,8 +7,8 @@
 //
 
 #include "JumpsquatState.hpp"
-#include "AirborneNeutralState.hpp"
-#include "Character.hpp"
+#include "../Airborne/AirborneNeutralState.hpp"
+#include "../../Character.hpp"
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
     if (input.stick.hyp() > 40.f) {

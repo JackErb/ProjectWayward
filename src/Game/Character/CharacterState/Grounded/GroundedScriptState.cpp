@@ -7,8 +7,8 @@
 //
 
 #include "GroundedScriptState.hpp"
-#include "Character.hpp"
-#include "MslInterpreter.hpp"
+#include "../../Character.hpp"
+#include "./../../../../MSL/MslInterpreter.hpp"
 
 void GroundedScriptState::init(std::string m) {
     data.frame_ = 0;

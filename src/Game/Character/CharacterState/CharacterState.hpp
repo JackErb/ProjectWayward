@@ -9,11 +9,12 @@
 #ifndef CharacterState_hpp
 #define CharacterState_hpp
 
-#include <SFML/Graphics.hpp>
-#include "MathHelper.hpp"
-#include "PlayerInput.hpp"
-#include "CharacterProperties.hpp"
+#include "../../MathHelper.hpp"
+#include "../../PlayerInput.hpp"
+#include "../CharacterProperties.hpp"
+
 #include <list>
+#include <SFML/Graphics.hpp>
 
 using std::list;
 

@@ -8,22 +8,22 @@
 
 #include "Character.hpp"
 
-#include "NeutralState.hpp"
-#include "PhysicsEngine.hpp"
-#include "AirborneNeutralState.hpp"
-#include "LandingLagState.hpp"
-#include "StageEntity.hpp"
-#include "PlatformEntity.hpp"
-#include "CharacterState.hpp"
-#include "DashState.hpp"
-#include "TurnaroundState.hpp"
-#include "JumpsquatState.hpp"
-#include "AirdodgeState.hpp"
-#include "MoveLoader.hpp"
+#include "CharacterState/Grounded/NeutralState.hpp"
+#include "CharacterState/Airborne/AirborneNeutralState.hpp"
+#include "CharacterState/Grounded/LandingLagState.hpp"
+#include "CharacterState/Grounded/DashState.hpp"
+#include "CharacterState/Grounded/TurnaroundState.hpp"
+#include "CharacterState/Grounded/JumpsquatState.hpp"
+#include "CharacterState/Airborne/AirdodgeState.hpp"
 
-#include "MslInterpreter.hpp"
-#include "MslScanner.hpp"
-#include "MathHelper.hpp"
+#include "../Physics/PhysicsEngine.hpp"
+#include "../Entities/StageEntity.hpp"
+#include "../Entities/PlatformEntity.hpp"
+#include "../Loaders/MoveLoader.hpp"
+
+#include "../../MSL/MslInterpreter.hpp"
+#include "../../MSL/MslScanner.hpp"
+#include "../MathHelper.hpp"
 
 using std::list;
 using std::cerr;

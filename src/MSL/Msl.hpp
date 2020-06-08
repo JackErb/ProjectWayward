@@ -12,7 +12,7 @@
 #include <string>
 #include <unordered_map>
 
-class Func;
+struct Func;
 
 namespace Msl {
     typedef enum Token {

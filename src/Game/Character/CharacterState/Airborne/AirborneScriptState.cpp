@@ -7,8 +7,8 @@
 //
 
 #include "AirborneScriptState.hpp"
-#include "Character.hpp"
-#include "MslInterpreter.hpp"
+#include "../../Character.hpp"
+#include "../../../../MSL/MslInterpreter.hpp"
 
 void AirborneScriptState::init(std::string m) {
     data.frame_ = 0;

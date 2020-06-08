@@ -9,7 +9,7 @@
 #ifndef AirborneState_hpp
 #define AirborneState_hpp
 
-#include "CharacterState.hpp"
+#include "../CharacterState.hpp"
 
 class AirborneState : public CharacterState {
 public:

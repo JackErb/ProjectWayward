@@ -1,0 +1,1 @@
+target_sources(main PUBLIC MoveLoader.hpp MoveLoader.cpp SpriteLoader.hpp SpriteLoader.cpp ResourcePath.hpp ResourcePath.cpp)

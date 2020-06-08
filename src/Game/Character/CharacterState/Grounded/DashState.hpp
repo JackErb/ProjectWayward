@@ -10,7 +10,7 @@
 #define DashState_hpp
 
 #include "GroundedState.hpp"
-#include "PlayerInput.hpp"
+#include "../../../PlayerInput.hpp"
 #include <list>
 
 class DashState : public GroundedState {

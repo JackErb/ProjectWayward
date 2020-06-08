@@ -10,7 +10,7 @@
 #define MslParser_hpp
 
 #include "Msl.hpp"
-#include "MoveLoader.hpp"
+#include "../Game/Loaders/MoveLoader.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -18,9 +18,9 @@
 #include <utility>
 
 class MslScanner;
-class Func;
-class Expression;
-class Statement;
+struct Func;
+struct Expression;
+struct Statement;
 
 class MslParser {
 public:

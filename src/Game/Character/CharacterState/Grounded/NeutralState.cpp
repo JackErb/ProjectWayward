@@ -7,12 +7,12 @@
 //
 
 #include "NeutralState.hpp"
-#include "AirborneNeutralState.hpp"
+#include "../Airborne/AirborneNeutralState.hpp"
 #include "DashState.hpp"
 #include "JumpsquatState.hpp"
 #include "GroundedScriptState.hpp"
-#include "Character.hpp"
-#include "Entity.hpp"
+#include "../../Character.hpp"
+#include "../../../Entities/Entity.hpp"
 
 
 void NeutralState::NullVelocity() {

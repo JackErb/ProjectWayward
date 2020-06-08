@@ -7,15 +7,16 @@
 //
 
 #include "MslInterpreter.hpp"
+#include "AST/Statements/Statement.h"
 
-#include "Func.h"
-#include "MoveLoader.hpp"
+#include "AST/Func.h"
+#include "../Game/Loaders/MoveLoader.hpp"
 #include "MslScanner.hpp"
-#include "Character.hpp"
-#include "MathHelper.hpp"
-#include "AirborneNeutralState.hpp"
-#include "NeutralState.hpp"
-#include "LandingLagState.hpp"
+#include "../Game/Character/Character.hpp"
+#include "../Game/MathHelper.hpp"
+#include "../Game/Character/CharacterState/Airborne/AirborneNeutralState.hpp"
+#include "../Game/Character/CharacterState/Grounded/NeutralState.hpp"
+#include "../Game/Character/CharacterState/Grounded/LandingLagState.hpp"
 
 #include <iostream>
 #include <unordered_map>

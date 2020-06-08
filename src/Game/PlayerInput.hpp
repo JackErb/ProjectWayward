@@ -9,8 +9,9 @@
 #ifndef PlayerInput_hpp
 #define PlayerInput_hpp
 
+#include "MathHelper.hpp"
+
 #include <iostream>
-#include <SFML/Window.hpp>
 #include <map>
 #include <math.h>
 
@@ -54,27 +55,27 @@ public:
         float lo, hi;
         switch(dir) {
             case UP:
-                lo = M_PI / 4.f; hi = M_PI * 3.f / 4.f;
+                lo = PI / 4.f; hi = PI * 3.f / 4.f;
                 break;
             case RIGHT:
-                lo = - M_PI / 4.f; hi = M_PI / 4.f;
+                lo = - PI / 4.f; hi = PI / 4.f;
                 break;
             case DOWN:
-                lo = - M_PI * 3.f / 4.f; hi = - M_PI / 4.f;
+                lo = - PI * 3.f / 4.f; hi = - PI / 4.f;
                 break;
             case LEFT:
-                return a >= M_PI * 3.f / 4.f || a <= - M_PI * 3.f / 4.f;
+                return a >= PI * 3.f / 4.f || a <= - PI * 3.f / 4.f;
             case UP_T:
-                lo = M_PI / 3.f; hi = M_PI * 2.f / 3.f;
+                lo = PI / 3.f; hi = PI * 2.f / 3.f;
                 break;
             case RIGHT_T:
-                lo = - M_PI / 6.f; hi = M_PI / 6.f;
+                lo = - PI / 6.f; hi = PI / 6.f;
                 break;
             case DOWN_T:
-                lo = - M_PI * 2.f / 3.f; hi = - M_PI * 1.f / 3.f;
+                lo = - PI * 2.f / 3.f; hi = - PI * 1.f / 3.f;
                 break;
             case LEFT_T:
-                return a >= M_PI * 5.f / 6.f || a <= - M_PI * 5.f / 6.f;
+                return a >= PI * 5.f / 6.f || a <= - PI * 5.f / 6.f;
         }
         return a >= lo && a <= hi;
     }
@@ -86,26 +87,48 @@ public:
         stick = {0.f, 0.f};
         cStick = {0.f, 0.f};
     }
-    
-    void Tick() {
-        // Update all the button's state
-        for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
-            if (it->second == ButtonState::Pressed) {
-                it->second = ButtonState::Held;
-            }
-            
-            // If this key has state Released, them remove it from the map
-            // And update the iterator
-            if (it->second == ButtonState::Released) {
-                it = buttons.erase(it);
-            } else {
-                it++;
-            }
-        }
-        
-        stick = {0.f, 0.f};
-        cStick = {0.f, 0.f};
-    }
+
+	void UpdateControllerState(unsigned int c) {
+		// Update all the button's state
+		for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
+			if (it->second == ButtonState::Pressed) {
+				it->second = ButtonState::Held;
+			}
+
+			// If this key has state Released, them remove it from the map
+			// And update the iterator
+			if (it->second == ButtonState::Released) {
+				it = buttons.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+
+		stick = { 0.f, 0.f };
+		cStick = { 0.f, 0.f };
+
+		if (sf::Joystick::isConnected(c)) {
+			// Check the controller's buttons
+			for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {
+				bool contains = buttons.find(i) != buttons.end();
+				if (sf::Joystick::isButtonPressed(c, i) && !contains) {
+					// This button was just pressed
+					buttons[i] = PlayerInput::Pressed;
+					// cout << "Button: " << i << std::endl;
+				}
+				else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
+					buttons[i] = PlayerInput::Released;
+				}
+			}
+
+			// Check the controller's sticks
+			stick = { sf::Joystick::getAxisPosition(c, sf::Joystick::X),
+							sf::Joystick::getAxisPosition(c, sf::Joystick::Y) };
+		} else {
+			std::cerr << "Controller not connected" << std::endl;
+		}
+	}
     
     bool IsPressed(unsigned int button) const {
         auto res = buttons.find(button);

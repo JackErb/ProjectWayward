@@ -14,12 +14,11 @@
 
 #include "GameController.hpp"
 #include "PlayerInput.hpp"
-#include "PhysicsEngine.hpp"
-#include "Entity.hpp"
-#include "ResourcePath.hpp"
-#include "SpriteLoader.hpp"
-#include "BlankEntity.hpp"
-#include "MoveLoader.hpp"
+#include "Physics/PhysicsEngine.hpp"
+#include "Entities/PlatformEntity.hpp"
+#include "Entities/StageEntity.hpp"
+#include "Loaders/SpriteLoader.hpp"
+#include "Loaders/MoveLoader.hpp"
 
 using std::list;
 using std::cout;
@@ -55,9 +54,8 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     stage->isStatic = true;
     sf::Texture *btexture = new sf::Texture();
     textures_.push_back(btexture);
-    if (!btexture->loadFromFile(resourcePath() + "stage.png")) {
-        // Couldn't load texture
-        assert(false);
+    if (!btexture->loadFromFile("stage.png")) {
+
     }
     sf::Sprite *s1 = new sf::Sprite(*btexture);
     sprites_.push_back(s1);
@@ -68,9 +66,8 @@ GameController::GameController(float w, float h) : player_(0, {-90.f, -500.f}), 
     platform->isStatic = true;
     sf::Texture *pltexture = new sf::Texture();
     textures_.push_back(pltexture);
-    if (!pltexture->loadFromFile(resourcePath() + "platform.png")) {
-        // Couldn't load texture
-        assert(false);
+    if (!pltexture->loadFromFile("platform.png")) {
+
     }
     sf::Sprite *s2 = new sf::Sprite(*pltexture);
     sprites_.push_back(s2);
@@ -155,7 +152,6 @@ void GameController::RollbackAndReplay() {
     delete ls;
     
     sf::Vector2f pos2 = player_.Position();
-    assert(fabs(pos1.x - pos2.x) < 0.01 && fabs(pos1.y - pos2.y) < 0.01);
 }
 
 

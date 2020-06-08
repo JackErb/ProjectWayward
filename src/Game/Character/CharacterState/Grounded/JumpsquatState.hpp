@@ -10,7 +10,7 @@
 #define JumpsquatState_hpp
 
 #include "GroundedState.hpp"
-#include "CharacterProperties.hpp"
+#include "../../CharacterProperties.hpp"
 
 class JumpsquatState : public GroundedState {
 public:

@@ -9,10 +9,10 @@
 #ifndef Func_h
 #define Func_h
 
-#include "Statement.h"
-
 #include <vector>
 #include <string>
+
+struct Statement;
 
 struct Func {
     Func(std::string n, Statement* s) : name(n), s(s) {}

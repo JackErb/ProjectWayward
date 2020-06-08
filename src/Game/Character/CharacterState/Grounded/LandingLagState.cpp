@@ -8,8 +8,8 @@
 
 #include "LandingLagState.hpp"
 #include "NeutralState.hpp"
-#include "AirborneNeutralState.hpp"
-#include "Character.hpp"
+#include "../Airborne/AirborneNeutralState.hpp"
+#include "../../Character.hpp"
 
 void LandingLagState::ProcessInput(const PlayerInput &input) {
     

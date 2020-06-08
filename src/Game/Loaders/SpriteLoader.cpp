@@ -6,9 +6,8 @@
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#include "ResourcePath.hpp"
 #include "SpriteLoader.hpp"
-#include <iostream>
+#include "ResourcePath.hpp"
 
 SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names) {
     AnimMap anims;
@@ -18,7 +17,7 @@ SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names)
         
         sf::Texture *text = new sf::Texture();
         int i = 0;
-        while (i <= 10 && text->loadFromFile(resourcePath() + s + "_" +
+        while (i <= 10 && text->loadFromFile(ResourcePath() + s + "_" +
                                   std::to_string(i) + ".png")) {
             anims[s].push_back(new sf::Sprite(*text));
             texts.push_back(text);
