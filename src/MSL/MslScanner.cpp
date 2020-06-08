@@ -36,8 +36,9 @@ void MslScanner::nextLine() {
     }
     
     // Prep the string
-    std::regex r("[+-*/(){}=;:#,]");
+    std::regex r("[\\+\\-\\*/(){}=;:#,]");
     line_ = std::regex_replace(line_, r, " $0 ");
+    cerr << line_ << endl;
 }
 
 Msl::Token MslScanner::NextToken() {
@@ -70,9 +71,9 @@ Msl::Token MslScanner::NextToken() {
         
         // Next token is substr of p1 to p2
         Msl::Token token = getToken(line_.substr(p1, (p2 - p1)));
-        // Clip line
+        // Clip line. Strings are clipped by getToken()
         if (token != Msl::STRING) line_ = line_.substr(p2);
-                
+        
         return token;
     }
     return Msl::EOF_;

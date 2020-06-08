@@ -17,7 +17,7 @@ public:
     
     void Tick() override {}
     void HandleCollision(const Entity &e1, sf::Vector2f pv) override {}
-    void HandleHit(const Entity *e, const HitboxData &hd) override {}
+    bool HandleHit(const Entity *e, int f, const HitboxData &hd) override { return false; }
     void RollbackTick() override { Entity::RollbackTick(); }
     
     EntityType Type() const override { return PLATFORM; }

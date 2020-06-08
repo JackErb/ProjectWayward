@@ -76,6 +76,10 @@ void MslInterpreter::initializeBindings() {
         this->ch_->ClearHitboxes();
     };
     
+    bindings_["NullVelocity"] = [=]() {
+        this->ch_->NullVelocityX();
+        this->ch_->NullVelocityY();
+    };
     
     bindings_["vector"] = [=]() {
         this->ch_->Vector();

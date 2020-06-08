@@ -1,0 +1,28 @@
+script "DAIR";
+
+func Init() {
+    Hitbox_Circle(0, 0., 150., 125.);
+    Hitbox_Damage(0, 14.);
+    Hitbox_Knockback(0, 270, 140., 100.);
+}
+
+func ProcessInput() {
+    switch frame {
+    case 12:
+        Hitbox_Spawn(0);
+    case 15:
+        Hitbox_Remove(0);
+    case 25:
+        quit();
+    }
+}
+
+func Tick() {
+    vector();
+    gravity();
+}
+
+func Land() {
+    Hitbox_Clear();
+    setState("LandingLag", 16);
+}

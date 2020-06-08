@@ -152,7 +152,6 @@ void GameController::RollbackAndReplay() {
         
     delete ls;
     
-    sf::Vector2f pos2 = player_.Position();
 }
 
 

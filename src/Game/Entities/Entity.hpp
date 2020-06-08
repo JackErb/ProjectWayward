@@ -42,7 +42,7 @@ public:
 
 	/* Game Processing Functions */
 	virtual void HandleCollision(const Entity& entity, sf::Vector2f pv) = 0;
-	virtual void HandleHit(const Entity* e, const HitboxData& hd) = 0;
+	virtual bool HandleHit(const Entity* e, int f, const HitboxData& hd) = 0;
 	virtual void Tick() = 0;
 
 	virtual void RollbackTick() {

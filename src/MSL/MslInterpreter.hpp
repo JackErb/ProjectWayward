@@ -53,6 +53,7 @@ public:
     void visit(FloatLiteral *e);
     void visit(Times *e);
     void visit(Divide *e);
+    void visit(Negate *e);
     
 private:
     // Variables used while visiting AST

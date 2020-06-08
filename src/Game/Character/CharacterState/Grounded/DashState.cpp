@@ -13,6 +13,7 @@
 #include "JumpsquatState.hpp"
 #include "TurnaroundState.hpp"
 #include "../../Character.hpp"
+#include "GroundedScriptState.hpp"
 
 int sign(float f) {
     return f < 0.f ? -1 : 1;
@@ -41,6 +42,25 @@ bool DashState::setDirInfluence() {
 void DashState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3)) {
         character_->SetActionState(new JumpsquatState(character_));
+        return;
+    }
+    
+    if (input.IsPressed(1)) {
+        if (input.stick.inDirection(UP_T)) {
+            character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
+        } else if (input.stick.inDirection(LEFT_T)) {
+            if (character_->Direction() == 1) {
+                character_->Turnaround();
+            }
+            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+        } else if (input.stick.inDirection(RIGHT_T)) {
+            if (character_->Direction() == -1) {
+                character_->Turnaround();
+            }
+            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+        } else {
+            character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+        }
         return;
     }
     

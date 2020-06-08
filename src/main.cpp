@@ -131,7 +131,7 @@ int main(int, char const**) {
         
 		now = high_resolution_clock::now();
         while (duration_cast<microseconds>(now - start).count() < 16700) {
-            std::this_thread::sleep_for(microseconds(500));
+            std::this_thread::sleep_for(microseconds(0));
             now = high_resolution_clock::now();
         }
         count += (long) duration_cast<microseconds>(now - start).count();

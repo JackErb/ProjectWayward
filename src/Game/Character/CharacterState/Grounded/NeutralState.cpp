@@ -26,7 +26,21 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     }
     
     if (input.IsPressed(1)) {
-        character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+        if (input.stick.inDirection(UP_T)) {
+            character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
+        } else if (input.stick.inDirection(LEFT_T)) {
+            if (character_->Direction() == 1) {
+                character_->Turnaround();
+            }
+            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+        } else if (input.stick.inDirection(RIGHT_T)) {
+            if (character_->Direction() == -1) {
+                character_->Turnaround();
+            }
+            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+        } else {
+            character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+        }
         return;
     }
     

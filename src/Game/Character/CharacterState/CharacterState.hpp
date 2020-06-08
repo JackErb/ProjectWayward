@@ -44,6 +44,7 @@ protected:
         int type_;
         float dirInfluence_;
         bool b1;
+        float angle_, kb_;
         
     } GameData;
     CharacterStateData data;

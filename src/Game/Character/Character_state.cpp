@@ -26,7 +26,9 @@ void Character::ApplyGravity(float m) {
         return;
     }
     data.velocity_.y += m * attr.Gravity;
-    data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
+    if (actionState_->GetStateType() != Hitstun) {
+        data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
+    }
 }
 
 void Character::Jump(JumpType type, bool fullhop) {

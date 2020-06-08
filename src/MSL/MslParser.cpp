@@ -19,6 +19,7 @@
 #include "AST/Expressions/Divide.h"
 #include "AST/Expressions/IntLiteral.h"
 #include "AST/Expressions/StringLiteral.h"
+#include "AST/Expressions/Negate.h"
 #include "AST/Expressions/Var.h"
 #include "AST/Statements/AssignStatement.h"
 #include "AST/Statements/FunctionCall.h"
@@ -123,10 +124,10 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
     }
     
     /* Print abstract representation of program */
-    /*for (auto it = res->funcs.begin(); it != res->funcs.end(); it++) {
+    for (auto it = res->funcs.begin(); it != res->funcs.end(); it++) {
         ASTPrintVisitor pv;
         pv.visit(it->second);
-    }*/
+    }
     
     return res;
 }
@@ -363,6 +364,11 @@ Expression *MslParser::termtail(Expression *e1) {
 }
 
 Expression *MslParser::factor() {
+    if (curr_ == Msl::MINUS) {
+        curr_ = s_->NextToken();
+        return new Negate(factor());
+    }
+    
     switch (curr_) {
         case Msl::IDENTIFIER:
             return new Var(s_->getId());

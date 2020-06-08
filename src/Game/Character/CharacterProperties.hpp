@@ -16,7 +16,7 @@ typedef enum JumpType {
 
 typedef enum CharStateType {
     LandingLag, Neutral, Dash, Jumpsquat, Turnaround,
-    AirborneNeutral, Airdodge, Script
+    AirborneNeutral, Airdodge, Script, Hitlag, Hitstun
 } CharacterStateType;
 
 typedef enum CharState {

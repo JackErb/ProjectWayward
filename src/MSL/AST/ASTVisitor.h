@@ -21,6 +21,7 @@ struct IntLiteral;
 struct StringLiteral;
 struct FloatLiteral;
 struct Var;
+struct Negate;
 
 class Visitor {
 public:
@@ -39,6 +40,7 @@ public:
     virtual void visit(FloatLiteral *e) = 0;
     virtual void visit(Times *e) = 0;
     virtual void visit(Divide *e) = 0;
+    virtual void visit(Negate *e) = 0;
 };
 
 #endif /* ASTVisitor_h */

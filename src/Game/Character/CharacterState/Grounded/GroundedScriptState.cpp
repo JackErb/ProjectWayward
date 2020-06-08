@@ -23,7 +23,6 @@ void GroundedScriptState::ProcessInput(const PlayerInput &input) {
 
 void GroundedScriptState::Tick() {
     character_->mslIntp->Tick();
-    character_->ApplyVelocity();
 }
 
 void GroundedScriptState::HandleCollision(const Entity &entity, sf::Vector2f pv) {

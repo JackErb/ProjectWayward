@@ -19,6 +19,7 @@
 #include "AST/Expressions/IntLiteral.h"
 #include "AST/Expressions/StringLiteral.h"
 #include "AST/Expressions/Var.h"
+#include "AST/Expressions/Negate.h"
 #include "AST/Statements/AssignStatement.h"
 #include "AST/Statements/FunctionCall.h"
 #include "AST/Statements/Block.h"
@@ -134,18 +135,15 @@ void MslInterpreter::visit(Var *e) {
 }
 
 void MslInterpreter::visit(IntLiteral *e) {
-    exprRes_ = ExprRes(INT);
-    exprRes_.n = e->n;
+    exprRes_ = ExprRes(e->n);
 }
 
 void MslInterpreter::visit(StringLiteral *e) {
-    exprRes_ = ExprRes(STRING);
-    exprRes_.str = e->s;
+    exprRes_ = ExprRes(e->s);
 }
 
 void MslInterpreter::visit(FloatLiteral *e) {
-    exprRes_ = ExprRes(FLOAT);
-    exprRes_.f = e->f;
+    exprRes_ = ExprRes(e->f);
 }
 
 void MslInterpreter::visit(Times *e) {
@@ -180,6 +178,22 @@ void MslInterpreter::visit(Divide *e) {
         exprRes_.n = r1.n / r2.n;
     } else {
         cerr << "division between two non-numbers" << endl;
+        exprRes_ = ExprRes(ERR);
+    }
+}
+
+void MslInterpreter::visit(Negate *e) {
+    cout << "Here" << endl;
+    e->e->accept(this);
+    if (err(exprRes_)) return;
+    
+    if (eq(exprRes_, INT)) {
+        exprRes_.n *= -1;
+    } else if (eq(exprRes_, FLOAT)) {
+        cout << "HERE" << endl;
+        exprRes_.f *= -1;
+    } else {
+        cerr << "negation of non-number" << endl;
         exprRes_ = ExprRes(ERR);
     }
 }

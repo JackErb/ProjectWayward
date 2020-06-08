@@ -82,13 +82,14 @@ public:
     int Jumps() const { return data.airborneData.jumps; }
     bool IsFastFalling() const  { return data.airborneData.fastfall; }
     bool HasAirdodge() const { return data.airborneData.airdodge; }
+    float Percent() const { return data.percent_; }
     
     
     /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
-    void HandleHit(const Entity *e, const HitboxData &hd) override;
+    bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
     
     void RollbackTick() override;
     void Rollback() override;
@@ -100,6 +101,11 @@ public:
     void FastFall();
     void NullVelocityY() { data.velocity_.y = 0; }
     void NullVelocityX() { data.velocity_.x = 0; }
+    void Knockback(float angle, float kb) {
+        data.velocity_ = sf::Vector2f(cos(angle) * kb, sin(angle) * kb);
+    }
+    void ClearHitboxIgnore() { ignoreHits.clear(); }
+    void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
     void Dash(float m);
     void Vector(float v = 1.f);
     void ApplyGravity(float m = 1.f);
@@ -142,6 +148,9 @@ private:
         
         float percent_ = 0.f;
         
+        bool freeze_ = false;
+        int freezeFr_ = 0;
+        
         union {
             GroundedData groundedData;
             AirborneData airborneData;
@@ -152,12 +161,16 @@ private:
     GameData data;
     GameData rollback_;
     
+    // ids of entities to ignore hits from
+    std::set<int> ignoreHits;
+    
     CharacterState *actionState_;
     
     const Attributes attr;
     AnimMap anims_;
     
     friend class MslInterpreter;
+    friend class PhysicsEngine;
 };
 
 #endif /* Character_hpp */

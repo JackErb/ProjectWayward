@@ -9,12 +9,13 @@
 #include "Character.hpp"
 
 #include "CharacterState/Grounded/NeutralState.hpp"
-#include "CharacterState/Airborne/AirborneNeutralState.hpp"
 #include "CharacterState/Grounded/LandingLagState.hpp"
 #include "CharacterState/Grounded/DashState.hpp"
 #include "CharacterState/Grounded/TurnaroundState.hpp"
 #include "CharacterState/Grounded/JumpsquatState.hpp"
 #include "CharacterState/Airborne/AirdodgeState.hpp"
+#include "CharacterState/Airborne/HitlagState.hpp"
+#include "CharacterState/Airborne/AirborneNeutralState.hpp"
 
 #include "../Physics/PhysicsEngine.hpp"
 #include "../Entities/StageEntity.hpp"
@@ -41,11 +42,24 @@ Character::~Character() {
 }
 
 void Character::ProcessInput(const PlayerInput &input) {
+    if (data.freeze_) {
+        // Buffer ?
+        return;
+    }
+    
     input_ = const_cast<PlayerInput* >(&input);
     actionState_->ProcessInput(input);
 }
 
 void Character::Tick() {
+    if (data.freeze_) {
+        data.freezeFr_--;
+        if (data.freezeFr_ <= 0) {
+            data.freeze_ = false;
+        }
+        return;
+    }
+    
     fill = false;
     // Teleport back above stage
     if (Position().y > 1500) {
@@ -153,11 +167,7 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
                     actionState_->SwitchState(GROUNDED);
                     data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                     return;
-                } else {
-                    cout << "HERE" << endl;
                 }
-            } else {
-                cout << "HERE2" << endl;
             }
         }
     }
@@ -165,24 +175,28 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     actionState_->HandleCollision(entity, pv);
 }
 
-void Character::HandleHit(const Entity *e, const HitboxData &hd) {
-    SetActionState(new AirborneNeutralState(this));
-    float kb = hd.basekb + hd.kbscale * (data.percent_ / 100.f);
+bool Character::HandleHit(const Entity *e, int f, const HitboxData &hd) {
+    int hash = e->id * 10000 + hd.id;
+    if (ignoreHits.find(hash) != ignoreHits.end()) {
+        return false;
+    }
+    ignoreHits.insert(hash);
     data.percent_ += hd.dmg;
     
+    // Calculate angle
     float angle = hd.angle;
     if (hd.reverse) {
         sf::Vector2f center = geometric_center(hd.hitbox);
         center.x *= e->Direction();
         center += e->Position();
-        if (e->Direction() == 1 && Position().x > center.x) {
+        
+        if (Position().x < center.x) {
             angle -= PI / 2.f;
-        } else if (e->Direction() == -1 && Position().x < center.x) {
-            angle += PI / 2.f;
         }
     } else {
-        if (e->Direction() == -1) angle -= PI / 2.f;
+        if (e->Direction() == -1) angle = PI - angle;
     }
     
-    data.velocity_ = sf::Vector2f(cos(angle) * kb, sin(angle) * kb);
+    SetActionState(new HitlagState(this, f, angle, hd.basekb, hd.kbscale));
+    return true;
 }

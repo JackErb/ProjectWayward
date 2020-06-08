@@ -19,6 +19,7 @@
 #include "Expressions/StringLiteral.h"
 #include "Expressions/FloatLiteral.h"
 #include "Expressions/Var.h"
+#include "Expressions/Negate.h"
 #include "Statements/AssignStatement.h"
 #include "Statements/FunctionCall.h"
 #include "Statements/Block.h"
@@ -158,6 +159,11 @@ public:
         print(" / ");
         e->e2->accept(this);
         print(")");
+    }
+    
+    void visit(Negate *e) {
+        print(" - ");
+        e->e->accept(this);
     }
 };
 

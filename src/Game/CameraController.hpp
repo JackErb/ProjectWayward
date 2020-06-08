@@ -89,7 +89,6 @@ void Render(sf::RenderWindow* window) {
 			}
 
 			for (const HitboxData& p : e->activeHitboxes) {
-				cout << "DATA" << endl;
 				DrawShape(p.hitbox, pos, dir, sf::Color(255, 50, 50, 120), window);
 			}
 		}

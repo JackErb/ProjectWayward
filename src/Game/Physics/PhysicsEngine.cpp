@@ -43,7 +43,7 @@ void PhysicsEngine::Update() {
     }
     
     // Check for collisions
-    for (Entity *character : characters_) {
+    for (Character *character : characters_) {
         for (Entity *e : entities_) {
             if (character == e) continue;
             
@@ -60,7 +60,13 @@ void PhysicsEngine::Update() {
                 for (const PolygonV &p2 : e->polygons) {
                     auto res = checkCollision(h1.hitbox, character->Position(), character->Direction(),
                                               p2, e->Position(), e->Direction());
-                    if (res.first) e->HandleHit(character, h1);
+                    if (res.first) {
+                        int f = h1.dmg * 0.4;
+                        bool r = e->HandleHit(character, f, h1);
+                        if (r && e->Type() == CHARACTER) {
+                            character->Freeze(f);
+                        }
+                    }
                 }
             }
         }

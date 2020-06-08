@@ -1,0 +1,35 @@
+script "FTILT";
+
+func Init() {
+    Hitbox_Circle(0, 200., 0., 140.);
+    Hitbox_Damage(0, 12.);
+    Hitbox_Knockback(0, 40, 40., 70.);
+    
+    Hitbox_Circle(1, 100., 0., 80.);
+    Hitbox_Damage(1, 10.);
+    Hitbox_Knockback(1, 60, 40., 70.);
+}
+
+func ProcessInput() {
+    switch (frame) {
+    case 0:
+        NullVelocity();
+    case 8:
+        Hitbox_Spawn(0);
+        Hitbox_Spawn(1);
+    case 15:
+        Hitbox_Remove(0);
+        Hitbox_Remove(1);
+    case 20:
+        quit();
+    }
+}
+
+func Tick() {
+
+}
+
+func Airborne() {
+    Hitbox_Clear();
+    setState("AirborneNeutralState");
+}
