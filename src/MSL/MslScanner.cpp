@@ -36,9 +36,8 @@ void MslScanner::nextLine() {
     }
     
     // Prep the string
-    std::regex r("[\\+\\-\\*/(){}=;:#,]");
-    line_ = std::regex_replace(line_, r, " $0 ");
-    cerr << line_ << endl;
+    std::regex r("([\\+\\-\\*/(){}=;:#,])");
+    line_ = std::regex_replace(line_, r, " $1 ");
 }
 
 Msl::Token MslScanner::NextToken() {

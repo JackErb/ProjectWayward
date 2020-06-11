@@ -30,6 +30,10 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(1)) {
         if (input.stick.inDirection(DOWN_T)) {
             character_->SetActionState(new AirborneScriptState(character_, "DAIR"));
+        } else if (input.stick.inDirection(LEFT_T) || input.stick.inDirection(RIGHT_T)) {
+            character_->SetActionState(new AirborneScriptState(character_, "FAIR"));
+        } else if (input.stick.inDirection(UP_T)) {
+            character_->SetActionState(new AirborneScriptState(character_, "UAIR"));
         } else {
             character_->SetActionState(new AirborneScriptState(character_, "NAIR"));
         }

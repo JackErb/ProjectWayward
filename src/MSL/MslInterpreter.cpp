@@ -33,7 +33,7 @@ using std::endl;
 
 const unordered_map<string, Msl::MoveScript*> MslInterpreter::scripts = MoveLoader::LoadMoves();
 
-MslInterpreter::MslInterpreter(Character* ch) : ch_(ch), exprRes_(ERR) {
+MslInterpreter::MslInterpreter(Character* ch) : exprRes_(ERR), ch_(ch) {
     initializeBindings();
     for (auto it = scripts.begin(); it != scripts.end(); it++) {
         InitScript(it->first);
@@ -46,30 +46,43 @@ void MslInterpreter::initializeBindings() {
     bindings_["Hitbox_Circle"] = [=]() {
         HitboxData data;
         data.id = params_[0].n;
+        data.pid = this->ch_->hitboxes[script][data.id].size();
         data.hitbox = {{params_[1].f, params_[2].f}, {params_[3].f, 0}};
         this->ch_->CreateHitbox(script, data);
     };
     
     bindings_["Hitbox_Damage"] = [=]() {
-        this->ch_->hitboxes[script][params_[0].n].dmg = params_[1].f;
+        int id = params_[0].n;
+        this->ch_->hitboxes[script][id].back().dmg = params_[1].f;
     };
     
     bindings_["Hitbox_Knockback"] = [=]() {
-        this->ch_->hitboxes[script][params_[0].n].angle = (360 - (float)params_[1].n) * PI / 180.f;
-        this->ch_->hitboxes[script][params_[0].n].basekb = params_[2].f;
-        this->ch_->hitboxes[script][params_[0].n].kbscale = params_[3].f;
+        int id = params_[0].n;
+        this->ch_->hitboxes[script][id].back().angle = (360 - (float)params_[1].n) * PI / 180.f;
+        this->ch_->hitboxes[script][id].back().basekb = params_[2].f;
+        this->ch_->hitboxes[script][id].back().kbscale = params_[3].f;
     };
     
     bindings_["Hitbox_Reverse"] = [=]() {
-        this->ch_->hitboxes[script][params_[0].n].reverse = !this->ch_->hitboxes[script][params_[0].n].reverse;
+        int  id = params_[0].n;
+        auto back = this->ch_->hitboxes[script][id].back();
+        back.reverse = !back.reverse;
     };
     
     bindings_["Hitbox_Spawn"] = [=]() {
-        this->ch_->SpawnHitbox(params_[0].n);
+        if (params_.size() == 2) {
+            this->ch_->SpawnHitbox(params_[0].n, params_[1].n);
+        } else {
+            this->ch_->SpawnHitbox(params_[0].n);
+        }
     };
     
     bindings_["Hitbox_Remove"] = [=]() {
-        this->ch_->RemoveHitbox(params_[0].n);
+        if (params_.size() == 2) {
+            this->ch_->RemoveHitbox(params_[0].n, params_[1].n);
+        } else {
+            this->ch_->RemoveHitbox(params_[0].n);
+        }
     };
     
     bindings_["Hitbox_Clear"] = [=]() {

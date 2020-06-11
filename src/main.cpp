@@ -39,6 +39,7 @@ int main(int, char const**) {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     
     GameController controller(WIDTH, HEIGHT);
+    NetworkController *n = &controller.network_;
     
     // Contains the state of the controller
     PlayerInput p1;
@@ -51,7 +52,6 @@ int main(int, char const**) {
         // Clear screen
         window.clear();
         
-        NetworkController *n = &controller.network_;
 		if (n->IsConnected() && n->rlCount_ >= n->dropFramesPeriod_) {
 			float drop = ((float)n->lSum_ / (float)n->lCount_) - ((float)n->rlSum_ / (float)n->rlCount_);
 			cout << "Lag " << drop << endl;
@@ -92,29 +92,23 @@ int main(int, char const**) {
         /* GAME CONTROLLER PROCESSING */
         /* ************************** */
         if (!pause && n->dropFrames_ == 0) {
-            if (!controller.network_.PauseAndWait) {
+            if (!n->PauseAndWait) {
                 controller.PreTick();
                 controller.ProcessInput(p1, p2);
                 controller.Tick();
             } else {
-                controller.network_.CheckForRemoteInput();
+                n->CheckForRemoteInput();
                 cout << "Waiting for remote input..." << endl;
             }
         } else if (pause) {
             // Paused
-            
-            if (focus) {
-                if (p1.IsPressed(3)) {
-                    controller.RollbackTick();
-                } else if (p1.IsPressed(0)) {
-                    controller.RollbackAndReplay();
-                } else if (p1.IsPressed(1)) {
-                    controller.PreTick();
-                    controller.ProcessInput(p1, p2);
-                    controller.Tick();
-                }
+            if (p1.IsPressed(1)) {
+                controller.PreTick();
+                controller.ProcessInput(p1, p2);
+                controller.Tick();
             }
         } else {
+            // Drop a frame
             n->CheckForRemoteInput();
             n->dropFrames_--;
         }
@@ -123,17 +117,26 @@ int main(int, char const**) {
         controller.Render(&window);
         window.display();
         
+        
+        /* ************************** */
+        /*   STALL UNTIL NEXT FRAME   */
+        /* ************************** */
         auto now = high_resolution_clock::now();
-        while (duration_cast<microseconds>(now - start).count() < 14500) {
-            std::this_thread::sleep_for(microseconds(100));
+        while (duration_cast<microseconds>(now - start).count() < 14000) {
+            std::this_thread::sleep_for(microseconds(500));
             now = high_resolution_clock::now();
         }
         
 		now = high_resolution_clock::now();
-        while (duration_cast<microseconds>(now - start).count() < 16700) {
+        while (duration_cast<microseconds>(now - start).count() < 16500) {
             std::this_thread::sleep_for(microseconds(0));
             now = high_resolution_clock::now();
         }
+        
+        while (duration_cast<microseconds>(now - start).count() < 16666) {
+            now = high_resolution_clock::now();
+        }
+        
         count += (long) duration_cast<microseconds>(now - start).count();
         i++;
         

@@ -25,7 +25,6 @@ void HitstunState::Tick() {
     
     data.frame_--;
     if (data.frame_ == 0) {
-        character_->ClearHitboxIgnore();
         character_->SetActionState(new AirborneNeutralState(character_));
         return;
     }

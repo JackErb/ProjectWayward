@@ -10,6 +10,7 @@
 #define CameraController_hpp
 
 #include <vector>
+#include <list>
 #include <SFML/Graphics.hpp>
 
 #include "Entities/Entity.hpp"
@@ -87,10 +88,12 @@ void Render(sf::RenderWindow* window) {
 			for (const PolygonV& p : e->polygons) {
 				DrawShape(p, pos, dir, sf::Color(50, 255, 50, 120), window);
 			}
-
-			for (const HitboxData& p : e->activeHitboxes) {
-				DrawShape(p.hitbox, pos, dir, sf::Color(255, 50, 50, 120), window);
-			}
+            
+            for (auto it = e->activeHitboxes.begin(); it != e->activeHitboxes.end(); it++) {
+                for (const HitboxData &h : it->second) {
+                    DrawShape(h.hitbox, pos, dir, sf::Color(255, 50, 50, 120), window);
+                }
+            }
 		}
 
 		// TODO: Don't draw if the sprite is off the screen

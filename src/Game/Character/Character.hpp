@@ -104,7 +104,6 @@ public:
     void Knockback(float angle, float kb) {
         data.velocity_ = sf::Vector2f(cos(angle) * kb, sin(angle) * kb);
     }
-    void ClearHitboxIgnore() { ignoreHits.clear(); }
     void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
     void Dash(float m);
     void Vector(float v = 1.f);
@@ -118,6 +117,7 @@ public:
     void Turnaround() { SetDirection(Direction() * -1); }
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
+    void Respawn() { SetPosition({0.f, -800.f}); data.percent_ = 0.f; data.velocity_ = {0.f,0.f}; }
     
     
     void IncRot(float n) { Sprite()->rotate(n); }
@@ -161,8 +161,7 @@ private:
     GameData data;
     GameData rollback_;
     
-    // ids of entities to ignore hits from
-    std::set<int> ignoreHits;
+    std::unordered_map<int, std::set<int>> ignoreHits;
     
     CharacterState *actionState_;
     

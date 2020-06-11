@@ -8,7 +8,7 @@ func Init() {
 
 func ProcessInput() {
     switch frame {
-    case 0:
+    case 1:
         NullVelocity();
     case 5:
         Hitbox_Spawn(0);

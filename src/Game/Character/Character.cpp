@@ -62,8 +62,8 @@ void Character::Tick() {
     
     fill = false;
     // Teleport back above stage
-    if (Position().y > 1500) {
-        SetPosition(sf::Vector2f(Position().x, -1000));
+    if (Position().y > 1900 || Position().y < -2600 || abs(Position().x) > 3200) {
+        Respawn();
     }
     
     if (data.ftCount_ > 0)  {
@@ -176,11 +176,6 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
 }
 
 bool Character::HandleHit(const Entity *e, int f, const HitboxData &hd) {
-    int hash = e->id * 10000 + hd.id;
-    if (ignoreHits.find(hash) != ignoreHits.end()) {
-        return false;
-    }
-    ignoreHits.insert(hash);
     data.percent_ += hd.dmg;
     
     // Calculate angle

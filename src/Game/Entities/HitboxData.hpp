@@ -16,6 +16,8 @@ typedef std::vector<sf::Vector2f> PolygonV;
 
 struct HitboxData {
     int id;
+    int pid; // priority id
+    
     // The polygons of the hitbox, relative to to the player
     PolygonV hitbox;
     

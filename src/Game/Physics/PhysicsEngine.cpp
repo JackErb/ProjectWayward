@@ -56,15 +56,23 @@ void PhysicsEngine::Update() {
                 }
             }
             
-            for (const HitboxData &h1 : character->activeHitboxes) {
-                for (const PolygonV &p2 : e->polygons) {
-                    auto res = checkCollision(h1.hitbox, character->Position(), character->Direction(),
-                                              p2, e->Position(), e->Direction());
-                    if (res.first) {
-                        int f = h1.dmg * 0.4;
-                        bool r = e->HandleHit(character, f, h1);
-                        if (r && e->Type() == CHARACTER) {
-                            character->Freeze(f);
+            for (auto it = character->activeHitboxes.begin();
+                      it != character->activeHitboxes.end(); it++) {
+                for (const HitboxData &h1 : it->second) {
+                    if (character->ignoreHits.find(e->id) != character->ignoreHits.end()
+                        && character->ignoreHits[e->id].count(h1.id) == 1) {
+                        continue;
+                    }
+                    for (const PolygonV &p2 : e->polygons) {
+                        auto res = checkCollision(h1.hitbox, character->Position(), character->Direction(),
+                                                  p2, e->Position(), e->Direction());
+                        if (res.first) {
+                            int f = h1.dmg * 0.4;
+                            bool r = e->HandleHit(character, f, h1);
+                            if (r && e->Type() == CHARACTER) {
+                                character->ignoreHits[e->id].insert(h1.id);
+                                character->Freeze(f);
+                            }
                         }
                     }
                 }
@@ -208,9 +216,9 @@ pair<bool, sf::Vector2f> is_separating_axis(const sf::Vector2f &axis,
         
     if (p1.size() == 2) {
         // p1 is a circle
-        float proj = dot(axis, p1[0] + pos1);
-        min1 = proj - (dir1 * p1[1].x);
-        max1 = proj + (dir1 * p1[1].x);
+        float proj = dot(axis, sf::Vector2f(dir1 * p1[0].x, p1[0].y) + pos1);
+        min1 = proj - p1[1].x;
+        max1 = proj + p1[1].x;
     } else {
         for (const sf::Vector2f &vert : p1) {
             float proj = dot(axis, sf::Vector2f(dir1 * vert.x, vert.y) + pos1);

@@ -123,6 +123,7 @@ void Character::ApplyFriction() {
 }
 
 void Character::SetActionState(CharacterState *s) {
+    ignoreHits.clear();
     data.actionStateT_ = s->GetStateType();
     actionState_ = s;
 }

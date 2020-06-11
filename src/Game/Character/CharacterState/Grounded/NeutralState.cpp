@@ -38,6 +38,8 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
                 character_->Turnaround();
             }
             character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+        } else if (input.stick.inDirection(DOWN_T)) {
+            character_->SetActionState(new GroundedScriptState(character_, "DTILT"));
         } else {
             character_->SetActionState(new GroundedScriptState(character_, "JAB"));
         }
