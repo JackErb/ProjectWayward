@@ -124,10 +124,10 @@ Msl::MoveScript* MslParser::parseProgram(MslScanner *s) {
     }
     
     /* Print abstract representation of program */
-    for (auto it = res->funcs.begin(); it != res->funcs.end(); it++) {
+    /*for (auto it = res->funcs.begin(); it != res->funcs.end(); it++) {
         ASTPrintVisitor pv;
         pv.visit(it->second);
-    }
+    }*/
     
     return res;
 }

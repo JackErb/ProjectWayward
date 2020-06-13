@@ -25,19 +25,28 @@ using namespace std::chrono;
 
 class MslInterpreter: public Visitor {
 public:
-    MslInterpreter(Character *ch);
-    
-private:
-    void initializeBindings();
-    
-public:
-    // AST Visitor functions
+    MslInterpreter();
+    virtual ~MslInterpreter();
+
+    void Init(std::vector<std::string> scripts);
     void InitScript(std::string move);
+    
     void PreTick(int frame);
     void ProcessInput();
     void Tick();
     void CallFunction(std::string name);
     
+    // Parameter accessing
+    int numParams() { return params_.size(); }
+    int getIntParam(int n) { return params_[n].n; }
+    std::string getStrParam(int n) { return params_[n].str; }
+    float getFloatParam(int n) { return params_[n].f; }
+    
+    void setVal(std::string v, int n) {
+        vals_[v] = ExprRes(n);
+    }
+    
+    // AST Visitor functions
     void visit(Func *s);
     
     void visit(AssignStatement *s);
@@ -86,19 +95,18 @@ private:
     static bool err(const ExprRes &e1);
     static bool eq(const ExprRes &e1, const BaseType &t);
     
+    void initializeCharacterBindings(Character *ch);
+    
 public:
     const static std::unordered_map<std::string, Msl::MoveScript*> scripts;
     
-private:
+    std::unordered_map<std::string, std::function<void(void)> > bindings_;
     // The current running script
     std::string script;
     
-    Character *ch_;
-    
+private:
     std::unordered_map<std::string, ExprRes> vals_;
     std::vector<ExprRes> params_;
-    
-    std::unordered_map<std::string, std::function<void(void)> > bindings_;
     time_point<high_resolution_clock> time;
 };
 

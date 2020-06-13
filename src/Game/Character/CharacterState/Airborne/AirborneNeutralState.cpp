@@ -40,6 +40,11 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
+    if (input.IsPressed(0)) {
+        character_->SetActionState(new AirborneScriptState(character_, "FSPECIAL"));
+        return;
+    }
+    
     if (input.IsPressed(0) && input.stick.inDirection(UP_T)) {
         character_->UpB();
         return;

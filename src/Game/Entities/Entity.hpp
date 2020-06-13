@@ -14,6 +14,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <math.h>
+#include <iostream>
 #include <limits>
 #include <string>
 #include <list>
@@ -21,6 +22,7 @@
 #include <unordered_map>
 
 typedef std::vector<sf::Vector2f> PolygonV;
+class MslInterpreter;
 
 /* Represents a bounding box of an entity w/ top left corner (x,y) */
 typedef struct Rectangle {
@@ -29,17 +31,15 @@ typedef struct Rectangle {
 } Rectangle;
 
 typedef enum EntityType {
-	CHARACTER, STAGE, PLATFORM, DECORATION
+	CHARACTER, STAGE, PLATFORM, DECORATION, PROJECTILE
 } EntityType;
 
 class PhysicsEngine;
 
 class Entity {
 public:
-	Entity(int id_, sf::Vector2f position) : id(id_), engine(nullptr) {
-		data.position_ = position;
-	}
-	virtual ~Entity() {}
+    Entity(int id, sf::Vector2f pos);
+    virtual ~Entity();
 
 	/* Game Processing Functions */
 	virtual void HandleCollision(const Entity& entity, sf::Vector2f pv) = 0;
@@ -95,20 +95,24 @@ public:
 		SetPosition(data.position_ + v);
 	}
 
-	void SetPosition(sf::Vector2f pos) {
-		data.position_ = pos;
-	}
+	void SetPosition(sf::Vector2f pos) { data.position_ = pos; }
+    sf::Vector2f Position() const { return data.position_; }
+    
+    void SetVelocity(float x, float y) { SetVelocity({x,y}); }
+    void SetVelocity(sf::Vector2f v) { data.velocity_ = v; }
+    sf::Vector2f Velocity() { return data.velocity_; }
+    void NullVelocityX() { data.velocity_.x = 0; }
+    void NullVelocityY() { data.velocity_.y = 0; }
+    
+    void ApplyVelocity() { Transform(data.velocity_); }
 
-	sf::Vector2f Position() const { return data.position_; }
-
-	void SetSprite(sf::Sprite* s) {
-		data.sprite_ = s;
-	}
-
+	void SetSprite(sf::Sprite* s) { data.sprite_ = s; }
 	sf::Sprite* Sprite() const { return data.sprite_; }
 
 	int Direction() const { return data.dir_; }
 	void SetDirection(int d) { data.dir_ = d; }
+    
+    void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
 
 	void CreateHitbox(std::string move, HitboxData data) {
         hitboxes[move][data.id].push_back(data);
@@ -148,6 +152,9 @@ public:
 	void ClearHitboxes() {
 		activeHitboxes.clear();
 	}
+    
+private:
+    void initMslBindings();
 
 public:
 	int id;
@@ -166,16 +173,27 @@ public:
 
 	std::string move;
 	std::unordered_map<int, std::list<HitboxData> > activeHitboxes;
+    std::unordered_map<int, std::set<int> > ignoreHits;
+    
+    MslInterpreter *mslIntp;
+    
+protected:
+    struct GameData {
+        // The top left corner of this player's bounding box
+        sf::Vector2f position_ = sf::Vector2f(0.f, 0.f);
+        sf::Vector2f velocity_ = sf::Vector2f(0.f, 0.f);
+        
+        sf::Sprite* sprite_;
+        
+        int dir_ = 1;
+        int frame_ = 0;
+        
+        bool freeze_ = false;
+        int freezeFr_ = 0;
+    };
+    GameData data;
 
 private:
-	struct GameData {
-		// The top left corner of this player's bounding box
-		sf::Vector2f position_;
-		sf::Sprite* sprite_;
-		int dir_ = 1;
-	};
-
-	GameData data;
 	GameData rollback_;
 };
 

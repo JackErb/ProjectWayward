@@ -76,7 +76,6 @@ public:
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    sf::Vector2f Velocity() const { return data.velocity_; }
     sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
     const StageEntity *Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }
@@ -99,25 +98,21 @@ public:
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
     void FastFall();
-    void NullVelocityY() { data.velocity_.y = 0; }
-    void NullVelocityX() { data.velocity_.x = 0; }
     void Knockback(float angle, float kb) {
-        data.velocity_ = sf::Vector2f(cos(angle) * kb, sin(angle) * kb);
+        SetVelocity(cos(angle) * kb, sin(angle) * kb);
     }
-    void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
     void Dash(float m);
     void Vector(float v = 1.f);
     void ApplyGravity(float m = 1.f);
-    void ApplyVelocity() { Transform(data.velocity_); }
     void ApplyFriction();
     void FallthroughPlatform();
     void WallJump(int dir);
     void Airdodge();
-    void UpB() { data.velocity_.y = -80.f; }
+    void UpB() { SetVelocity(Velocity().x, -120.f); }
     void Turnaround() { SetDirection(Direction() * -1); }
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
-    void Respawn() { SetPosition({0.f, -800.f}); data.percent_ = 0.f; data.velocity_ = {0.f,0.f}; }
+    void Respawn() { SetPosition({0.f, -800.f}); data.percent_ = 0.f; SetVelocity(0.f, 0.f); }
     
     
     void IncRot(float n) { Sprite()->rotate(n); }
@@ -130,10 +125,11 @@ private:
         data.airborneData.fastfall = false;
     }
     
+    void initMslBindings();
+    
 public:
     // The input for this frame
     const PlayerInput* input_;
-    MslInterpreter *mslIntp;
     
     bool fill = false;
     
@@ -142,14 +138,10 @@ private:
         CharStateType actionStateT_;
         CharacterState::GameData actionStateData_;
         
-        sf::Vector2f velocity_ = sf::Vector2f(0.f, 0.f);
         int fallthrough_ = -1;
         int ftCount_ = 0;
         
         float percent_ = 0.f;
-        
-        bool freeze_ = false;
-        int freezeFr_ = 0;
         
         union {
             GroundedData groundedData;
@@ -161,14 +153,11 @@ private:
     GameData data;
     GameData rollback_;
     
-    std::unordered_map<int, std::set<int>> ignoreHits;
-    
     CharacterState *actionState_;
     
     const Attributes attr;
     AnimMap anims_;
     
-    friend class MslInterpreter;
     friend class PhysicsEngine;
 };
 

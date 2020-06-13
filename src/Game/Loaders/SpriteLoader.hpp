@@ -28,7 +28,13 @@ public:
         AnimMap anims;
     } AnimationResult;
     
+    typedef struct SpriteResult {
+        sf::Texture *text;
+        sf::Sprite *sprite;
+    } SpriteResult;
+    
     static AnimationResult LoadAnimations(vector<string> names);
+    static SpriteResult LoadSprite(string name);
 };
 
 #endif /* SpriteLoader_hpp */

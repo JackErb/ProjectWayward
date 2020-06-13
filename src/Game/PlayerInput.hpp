@@ -117,7 +117,7 @@ public:
 				if (sf::Joystick::isButtonPressed(c, i) && !contains) {
 					// This button was just pressed
 					buttons[i] = PlayerInput::Pressed;
-					// cout << "Button: " << i << std::endl;
+					std::cout << "Button: " << i << std::endl;
 				}
 				else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
 					buttons[i] = PlayerInput::Released;

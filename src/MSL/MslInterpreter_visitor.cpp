@@ -183,14 +183,12 @@ void MslInterpreter::visit(Divide *e) {
 }
 
 void MslInterpreter::visit(Negate *e) {
-    cout << "Here" << endl;
     e->e->accept(this);
     if (err(exprRes_)) return;
     
     if (eq(exprRes_, INT)) {
         exprRes_.n *= -1;
     } else if (eq(exprRes_, FLOAT)) {
-        cout << "HERE" << endl;
         exprRes_.f *= -1;
     } else {
         cerr << "negation of non-number" << endl;

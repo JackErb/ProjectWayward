@@ -46,6 +46,11 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
+    if (input.IsPressed(0)) {
+        character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
+        return;
+    }
+    
     float hyp = input.stick.hyp();
     if (hyp >= PlayerInput::DEAD_ZONE) {
         if (input.stick.inDirection(DOWN_T) &&

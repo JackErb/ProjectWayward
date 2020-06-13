@@ -48,9 +48,9 @@ public:
         AddEntity(e);
     }
     
-    void RemoveEntity(int id) {
+    void RemoveEntity(Entity *e) {
         for (auto it = entities_.begin(); it != entities_.end(); it++) {
-            if ((*it)->id == id) {
+            if (*it == e) {
                 entities_.erase(it);
                 return;
             }
@@ -67,11 +67,14 @@ public:
 private:
     pair<bool, sf::Vector2f> checkCollision(const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
                                             const PolygonV &p2, const sf::Vector2f &pos2, int dir2);
+    void checkHitboxCollision(Entity *e1, Entity *e2);
     
 private:
     vector<Entity*> entities_;
     vector<Entity*> stage_;
     vector<Character*> characters_;
+    
+    friend class GameController;
 };
 
 #endif /* PhysicsEngine_hpp */

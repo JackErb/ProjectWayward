@@ -26,7 +26,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-GameController::GameController(float w, float h) : player_(0, sf::Vector2f(-90.f, -500.f)), remotePlayer_(5, sf::Vector2f(-90.f, -500.f)), camera_(&entities_, w, h) {
+GameController::GameController(float w, float h) : player_(0, sf::Vector2f(-90.f, -500.f)), remotePlayer_(5, sf::Vector2f(-90.f, -500.f)), camera_(&engine_.entities_, w, h) {
     player_.polygons = {
         {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
         {{40.f, -75.f}, {57.f, 0.f}}
@@ -74,11 +74,10 @@ GameController::GameController(float w, float h) : player_(0, sf::Vector2f(-90.f
     sprites_.push_back(s2);
     platform->SetSprite(s2);
                   
-    engine_ = PhysicsEngine();
-    AddCharacter(&player_);
-    AddCharacter(&remotePlayer_);
-    AddStage(stage);
-    AddStage(platform);
+    engine_.AddCharacter(&player_);
+    engine_.AddCharacter(&remotePlayer_);
+    engine_.AddStage(stage);
+    engine_.AddStage(platform);
 }
 
 void GameController::PreTick(bool rb) {

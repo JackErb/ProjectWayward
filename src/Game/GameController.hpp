@@ -32,12 +32,6 @@ public:
         for (sf::Sprite* s : sprites_) {
             delete s;
         }
-        
-        for (Entity *e : entities_) {
-            if (e != &player_ && e != &remotePlayer_) {
-                delete e;
-            }
-        }
     }
     
     void PreTick(bool rb = false);
@@ -49,16 +43,6 @@ public:
     void RollbackTick();
     void Rollback();
     void RollbackAndReplay();
-    
-    void AddCharacter(Character *ch) {
-        engine_.AddCharacter(ch);
-        entities_.push_back(ch);
-    }
-    
-    void AddStage(StageEntity *s) {
-        engine_.AddStage(s);
-        entities_.push_back(s);
-    }
         
 private:
     Character player_;
@@ -67,7 +51,6 @@ private:
     CameraController camera_;
     std::vector<sf::Texture*> textures_;
     std::vector<sf::Sprite*> sprites_;
-    std::vector<Entity*> entities_;
     
     NetworkController network_;
 

@@ -1,0 +1,15 @@
+script "FSPECIAL";
+
+func Init() {}
+
+func ProcessInput() {
+    switch frame {
+    case 1:
+        NullVelocity();
+        Projectile_Spawn("ROCKET");
+    case 30:
+        quit();
+    }
+}
+
+func Tick() {}

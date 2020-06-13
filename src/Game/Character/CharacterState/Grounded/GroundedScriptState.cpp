@@ -12,6 +12,7 @@
 
 void GroundedScriptState::init(std::string m) {
     data.frame_ = 0;
+    character_->move = m;
     character_->mslIntp->InitScript(m);
 }
 

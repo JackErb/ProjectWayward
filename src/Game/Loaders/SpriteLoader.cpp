@@ -30,3 +30,9 @@ SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names)
     
     return {texts, anims};
 }
+
+SpriteLoader::SpriteResult SpriteLoader::LoadSprite(string name) {
+    sf::Texture *text = new sf::Texture();
+    text->loadFromFile(ResourcePath() + name + ".png");
+    return {text, new sf::Sprite(*text)};
+}

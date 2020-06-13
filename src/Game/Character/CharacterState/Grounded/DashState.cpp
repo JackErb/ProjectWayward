@@ -66,6 +66,11 @@ void DashState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
+    if (input.IsPressed(0)) {
+        character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
+        return;
+    }
+    
     if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
         character_->SetActionState(new NeutralState(character_));
         return;

@@ -1,0 +1,17 @@
+script "ROCKET";
+
+func Init() {
+    Hitbox_Circle(0, 0., 0., 90.);
+    Hitbox_Damage(0, 5.);
+    Hitbox_Knockback(0, 45, 140., 100.);
+}
+
+func Tick() {
+    switch frame {
+    case 40:
+        Hitbox_Spawn(0);
+        SetVelocity(30.,0.);
+    case 120:
+        Delete();
+    }
+}

@@ -56,24 +56,34 @@ void PhysicsEngine::Update() {
                 }
             }
             
-            for (auto it = character->activeHitboxes.begin();
-                      it != character->activeHitboxes.end(); it++) {
-                for (const HitboxData &h1 : it->second) {
-                    if (character->ignoreHits.find(e->id) != character->ignoreHits.end()
-                        && character->ignoreHits[e->id].count(h1.id) == 1) {
-                        continue;
-                    }
-                    for (const PolygonV &p2 : e->polygons) {
-                        auto res = checkCollision(h1.hitbox, character->Position(), character->Direction(),
-                                                  p2, e->Position(), e->Direction());
-                        if (res.first) {
-                            int f = h1.dmg * 0.4;
-                            bool r = e->HandleHit(character, f, h1);
-                            if (r && e->Type() == CHARACTER) {
-                                character->ignoreHits[e->id].insert(h1.id);
-                                character->Freeze(f);
-                            }
-                        }
+            checkHitboxCollision(character, e);
+        }
+    }
+    
+    for (Entity *e : entities_) {
+        if (e->Type() == CHARACTER) continue;
+        for (Character *ch : characters_) {
+            checkHitboxCollision(e, ch);
+        }
+    }
+}
+
+void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
+    for (auto it = e1->activeHitboxes.begin(); it != e1->activeHitboxes.end(); it++) {
+        for (const HitboxData &h1 : it->second) {
+            if (e1->ignoreHits.find(e2->id) != e1->ignoreHits.end()
+                && e1->ignoreHits[e2->id].count(h1.id) == 1) {
+                continue;
+            }
+            for (const PolygonV &p2 : e2->polygons) {
+                auto res = checkCollision(h1.hitbox, e1->Position(), e1->Direction(),
+                                          p2, e2->Position(), e2->Direction());
+                if (res.first) {
+                    int f = h1.dmg * 0.4;
+                    bool r = e1->HandleHit(e1, f, h1);
+                    if (r) {
+                        e1->ignoreHits[e2->id].insert(h1.id);
+                        e1->Freeze(f);
                     }
                 }
             }

@@ -25,9 +25,9 @@ void Character::ApplyGravity(float m) {
         FastFall();
         return;
     }
-    data.velocity_.y += m * attr.Gravity;
+    Entity::data.velocity_.y += m * attr.Gravity;
     if (actionState_->GetStateType() != Hitstun) {
-        data.velocity_.y = fmin(attr.MaxFallSpeed, data.velocity_.y);
+        Entity::data.velocity_.y = fmin(attr.MaxFallSpeed, Entity::data.velocity_.y);
     }
 }
 
@@ -68,8 +68,8 @@ void Character::Jump(JumpType type, bool fullhop) {
             break;
     }
     SetActionState(new AirborneNeutralState(this));
-    data.velocity_.y = yv;
-    data.velocity_.x = xv;
+    Entity::data.velocity_.y = yv;
+    Entity::data.velocity_.x = xv;
 }
 
 void Character::Dash(float m) {
@@ -85,7 +85,7 @@ void Character::Dash(float m) {
     
     SetDirection(m < 0 ? -1 : 1);
         
-    data.velocity_.x = m * attr.MaxGroundSpeed;
+    Entity::data.velocity_.x = m * attr.MaxGroundSpeed;
 }
 
 void Character::Vector(float v) {
@@ -103,23 +103,22 @@ void Character::Vector(float v) {
     float m = (abs(input_->stick.xAxis) > 60.f ? 60.f : abs(input_->stick.xAxis)) / 60.f;
     if (input_->stick.xAxis < 0) m *= -1;
     
-    data.velocity_.x += m * v * attr.AirAccel;
-    int sign = data.velocity_.x < 0 ? -1 : 1;
-    data.velocity_.x = sign * fmin(attr.MaxAirSpeed, abs(data.velocity_.x));
+    Entity::data.velocity_.x += m * v * attr.AirAccel;
+    int sign = Entity::data.velocity_.x < 0 ? -1 : 1;
+    Entity::data.velocity_.x = sign * fmin(attr.MaxAirSpeed, abs(Entity::data.velocity_.x));
     
-    if (input_->stick.inDirection(DOWN_T) && hyp > 50.f && data.velocity_.y > 0.f) {
+    if (input_->stick.inDirection(DOWN_T) && hyp > 50.f && Entity::data.velocity_.y > 0.f) {
         FastFall();
     }
 }
 
 void Character::FastFall() {
-    data.velocity_.y = attr.FastFallSpeed;
+    Entity::data.velocity_.y = attr.FastFallSpeed;
     data.airborneData.fastfall = true;
 }
 
 void Character::ApplyFriction() {
-    data.velocity_.x *= (actionState_->GetState() == GROUNDED) ?
-            attr.GroundFriction : attr.AirFriction;
+    Entity::data.velocity_.x *= (actionState_->GetState() == GROUNDED) ? attr.GroundFriction : attr.AirFriction;
 }
 
 void Character::SetActionState(CharacterState *s) {
@@ -148,8 +147,7 @@ void Character::WallJump(int dir) {
     }
     
     if (data.airborneData.walljump) {
-        data.velocity_.x = dir * attr.MaxAirSpeed / 1.5f;
-        data.velocity_.y = attr.WallJump;
+        SetVelocity(dir * attr.MaxAirSpeed / 1.5f, attr.WallJump);
         data.airborneData.walljump = false;
     }
 }
@@ -163,7 +161,6 @@ void Character::Airdodge() {
     }
     
     float a = input_->stick.angle();
-    data.velocity_.x = cos(a) * attr.AirdodgeVelocity;
-    data.velocity_.y = - sin(a) * attr.AirdodgeVelocity;
+    SetVelocity(cos(a) * attr.AirdodgeVelocity, - sin(a) * attr.AirdodgeVelocity);
     data.airborneData.airdodge = false;
 }

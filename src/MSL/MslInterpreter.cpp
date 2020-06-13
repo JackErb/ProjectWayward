@@ -33,111 +33,25 @@ using std::endl;
 
 const unordered_map<string, Msl::MoveScript*> MslInterpreter::scripts = MoveLoader::LoadMoves();
 
-MslInterpreter::MslInterpreter(Character* ch) : exprRes_(ERR), ch_(ch) {
-    initializeBindings();
-    for (auto it = scripts.begin(); it != scripts.end(); it++) {
-        InitScript(it->first);
-        CallFunction("Init");
-    }
+MslInterpreter::MslInterpreter() : exprRes_(ERR) {
+    
 }
 
-void MslInterpreter::initializeBindings() {
-    // These are bindings that can be called in the scripting language
-    bindings_["Hitbox_Circle"] = [=]() {
-        HitboxData data;
-        data.id = params_[0].n;
-        data.pid = this->ch_->hitboxes[script][data.id].size();
-        data.hitbox = {{params_[1].f, params_[2].f}, {params_[3].f, 0}};
-        this->ch_->CreateHitbox(script, data);
-    };
+MslInterpreter::~MslInterpreter() {
     
-    bindings_["Hitbox_Damage"] = [=]() {
-        int id = params_[0].n;
-        this->ch_->hitboxes[script][id].back().dmg = params_[1].f;
-    };
-    
-    bindings_["Hitbox_Knockback"] = [=]() {
-        int id = params_[0].n;
-        this->ch_->hitboxes[script][id].back().angle = (360 - (float)params_[1].n) * PI / 180.f;
-        this->ch_->hitboxes[script][id].back().basekb = params_[2].f;
-        this->ch_->hitboxes[script][id].back().kbscale = params_[3].f;
-    };
-    
-    bindings_["Hitbox_Reverse"] = [=]() {
-        int  id = params_[0].n;
-        auto back = this->ch_->hitboxes[script][id].back();
-        back.reverse = !back.reverse;
-    };
-    
-    bindings_["Hitbox_Spawn"] = [=]() {
-        if (params_.size() == 2) {
-            this->ch_->SpawnHitbox(params_[0].n, params_[1].n);
-        } else {
-            this->ch_->SpawnHitbox(params_[0].n);
-        }
-    };
-    
-    bindings_["Hitbox_Remove"] = [=]() {
-        if (params_.size() == 2) {
-            this->ch_->RemoveHitbox(params_[0].n, params_[1].n);
-        } else {
-            this->ch_->RemoveHitbox(params_[0].n);
-        }
-    };
-    
-    bindings_["Hitbox_Clear"] = [=]() {
-        this->ch_->ClearHitboxes();
-    };
-    
-    bindings_["NullVelocity"] = [=]() {
-        this->ch_->NullVelocityX();
-        this->ch_->NullVelocityY();
-    };
-    
-    bindings_["vector"] = [=]() {
-        this->ch_->Vector();
-    };
-    
-    bindings_["gravity"] = [=]() {
-        float f;
-        if (this->params_.size() == 0) { f = 1.f; }
-        else { f = this->params_[0].f; }
-        this->ch_->ApplyGravity(f);
-    };
-    
-    bindings_["quit"] = [=]() {
-        switch (this->ch_->actionState_->GetState()) {
-            case GROUNDED:
-                this->ch_->SetActionState(new NeutralState(ch_));
-                break;
-            case AIRBORNE:
-                this->ch_->SetActionState(new AirborneNeutralState(ch_));
-                break;
-        }
-    };
-    
-    bindings_["rotate"] = [=]() {
-        this->ch_->IncRot(10);
-    };
-    
-    bindings_["rotate0"] = [=]() {
-        this->ch_->Sprite()->setRotation(0);
-    };
-    
-    bindings_["setState"] = [=]() {
-        std::string state = this->params_[0].str;
-        if (state.compare("LandingLag") == 0) {
-            int f = this->params_[1].n;
-            this->ch_->SetActionState(new LandingLagState(ch_, f));
-        }
-    };
+}
+
+void MslInterpreter::Init(std::vector<std::string> scripts) {
+    for (string s : scripts) {
+        InitScript(s);
+        CallFunction("Init");
+    }
 }
 
 void MslInterpreter::InitScript(string move) {
     // Initialize global variables/functions
     // Reset state of interpreter entirely
     script = move;
-    ch_->move = move;
 }
 
 void MslInterpreter::PreTick(int frame) {

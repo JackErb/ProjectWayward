@@ -32,17 +32,57 @@ using std::cout;
 using std::endl;
 
 Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
-    input_ = nullptr;
-    mslIntp = new MslInterpreter(this);
+    initMslBindings();
+    mslIntp->Init({"UTILT", "UAIR", "NAIR", "FTILT", "DAIR", "JAB", "FAIR", "DTILT"});
     SetActionState(new AirborneNeutralState(this));
 }
 
 Character::~Character() {
-    // TODO: Deal with rollback_ and other dynamically allocated data
+    delete actionState_;
+}
+
+void Character::initMslBindings() {
+    // Set up character script bindings
+    mslIntp->bindings_["NullVelocity"] = [=]() {
+        NullVelocityX();
+        NullVelocityY();
+    };
+    
+    mslIntp->bindings_["vector"] = [=]() {
+        Vector();
+    };
+    
+    mslIntp->bindings_["gravity"] = [=]() {
+        float f;
+        if (mslIntp->numParams() == 0) { f = 1.f; }
+        else { f = mslIntp->getIntParam(0); }
+        ApplyGravity(f);
+    };
+    
+    mslIntp->bindings_["quit"] = [=]() {
+        switch (actionState_->GetState()) {
+            case GROUNDED:
+                SetActionState(new NeutralState(this));
+                break;
+            case AIRBORNE:
+                SetActionState(new AirborneNeutralState(this));
+                break;
+        }
+    };
+    
+    mslIntp->bindings_["setState"] = [=]() {
+        std::string state = mslIntp->getStrParam(0);
+        if (state.compare("LandingLag") == 0) {
+            int f = mslIntp->getIntParam(1);
+            SetActionState(new LandingLagState(this, f));
+        } else if (state.compare("AirborneNeutralState") == 0) {
+            SetActionState(new AirborneNeutralState(this));
+        }
+    };
 }
 
 void Character::ProcessInput(const PlayerInput &input) {
-    if (data.freeze_) {
+    if (Entity::data.freeze_) {
         // Buffer ?
         return;
     }
@@ -52,10 +92,10 @@ void Character::ProcessInput(const PlayerInput &input) {
 }
 
 void Character::Tick() {
-    if (data.freeze_) {
-        data.freezeFr_--;
-        if (data.freezeFr_ <= 0) {
-            data.freeze_ = false;
+    if (Entity::data.freeze_) {
+        Entity::data.freezeFr_--;
+        if (Entity::data.freezeFr_ <= 0) {
+            Entity::data.freeze_ = false;
         }
         return;
     }
@@ -141,8 +181,9 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
     }
     
     if (actionState_->GetState() == AIRBORNE) {
+        float vy = Velocity().y;
         if (entity.Type() == STAGE) {            
-            if (pv.x == 0 && pv.y < 0 && data.velocity_.y > 0) {
+            if (pv.x == 0 && pv.y < 0 && vy > 0) {
                 // Land on the stage
                 NullVelocityY();
                 actionState_->SwitchState(GROUNDED);
@@ -156,9 +197,9 @@ void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
                 Rectangle b = BoundingBox();
                 Rectangle s = entity.BoundingBox();
                 
-                bool vert_check = (b.y + b.h) - data.velocity_.y * 1.1f < s.y;
+                bool vert_check = (b.y + b.h) - vy* 1.1f < s.y;
                 bool horiz_check = (b.x + b.w * 5.f / 8.f) > s.x && (b.x + b.w * 3.f / 8.f) < (s.x + s.w);
-                if (data.velocity_.y > 0 && vert_check && horiz_check) {
+                if (vy > 0 && vert_check && horiz_check) {
                     // Land on the platform
                     NullVelocityY();
                     // Apply the push vector to prevent overlap
