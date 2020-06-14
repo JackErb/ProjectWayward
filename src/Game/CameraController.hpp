@@ -51,8 +51,7 @@ public:
 
             if (e->Type() == EntityType::CHARACTER) {
                 e->Sprite()->setScale(0.1515 * scale, 0.1515 * scale);
-            }
-            else {
+            } else {
                 e->Sprite()->setScale(scale, scale);
             }
 
@@ -89,7 +88,7 @@ public:
                     DrawShape(p, pos, dir, sf::Color(50, 255, 50, 120), window);
                 }
                 
-                for (auto it = e->activeHitboxes.begin(); it != e->activeHitboxes.end(); it++) {
+                for (auto it = e->Hitboxes().begin(); it != e->Hitboxes().end(); it++) {
                     for (const HitboxData &h : it->second) {
                         DrawShape(h.hitbox, pos, dir, sf::Color(255, 50, 50, 120), window);
                     }

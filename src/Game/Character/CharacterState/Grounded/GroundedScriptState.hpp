@@ -18,6 +18,11 @@ public:
     GroundedScriptState(Character *ch, std::string move) : GroundedState(ch) {
         init(move);
     }
+    GroundedScriptState(Character *ch, const char* move) : GroundedState(ch) {
+        init(move);
+    }
+    
+    GroundedScriptState(Character *ch, bool rb) : GroundedState(ch) {}
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
@@ -26,7 +31,7 @@ public:
     
     void SwitchState(CharState state) override;
     CharStateType GetStateType() const override {
-        return Script;
+        return GroundedScript;
     }
     
 private:

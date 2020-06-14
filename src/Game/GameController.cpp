@@ -62,7 +62,7 @@ GameController::GameController(float w, float h) : player_(0, sf::Vector2f(-90.f
     sprites_.push_back(s1);
     stage->SetSprite(s1);
     
-    PlatformEntity *platform = new PlatformEntity(3, {0.f, 0.f});
+    PlatformEntity *platform = new PlatformEntity(3, {0.f, -60.f});
     platform->polygons = {{{-300.f, -10.f}, {300.f, -10.f}, {300.f, 10.f}, {-300.f, 10.f}}};
     platform->isStatic = true;
     sf::Texture *pltexture = new sf::Texture();

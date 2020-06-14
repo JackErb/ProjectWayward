@@ -19,6 +19,7 @@ public:
         data.frame_ = 0;
         data.b1 = true;
     }
+    JumpsquatState(Character *ch, bool rb) : GroundedState(ch) {}
     ~JumpsquatState() {}
     
     void HandleCollision(const Entity &entity, sf::Vector2f pv) override;

@@ -93,3 +93,8 @@ void Entity::initMslBindings() {
         SetVelocity(Direction() * mslIntp->getFloatParam(0), mslIntp->getFloatParam(1));
     };
 }
+
+void Entity::SetMoveScript(const std::string &move) {
+    data.move = move;
+    mslIntp->InitScript(move);
+}

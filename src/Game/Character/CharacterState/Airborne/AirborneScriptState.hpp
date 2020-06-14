@@ -19,6 +19,10 @@ public:
     AirborneScriptState(Character *ch, std::string move) : AirborneState(ch) {
         init(move);
     }
+    AirborneScriptState(Character *ch, const char* move) : AirborneState(ch) {
+        init(move);
+    }
+    AirborneScriptState(Character *ch, bool rb) : AirborneState(ch) {}
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
@@ -27,7 +31,7 @@ public:
     
     void SwitchState(CharState state) override;
     CharStateType GetStateType() const override {
-        return Script;
+        return AirborneScript;
     }
     
 private:

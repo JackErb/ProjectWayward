@@ -13,10 +13,6 @@
 #include "../../Character.hpp"
 #include "AirborneScriptState.hpp"
 
-AirborneNeutralState::AirborneNeutralState(Character* ch) : AirborneState(ch) {
-    
-}
-
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(3) && character_->Jumps() > 0) {
         character_->Jump(DJUMP, true);

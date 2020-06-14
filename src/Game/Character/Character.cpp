@@ -13,9 +13,14 @@
 #include "CharacterState/Grounded/DashState.hpp"
 #include "CharacterState/Grounded/TurnaroundState.hpp"
 #include "CharacterState/Grounded/JumpsquatState.hpp"
+#include "CharacterState/Grounded/GroundedScriptState.hpp"
+
 #include "CharacterState/Airborne/AirdodgeState.hpp"
 #include "CharacterState/Airborne/HitlagState.hpp"
 #include "CharacterState/Airborne/AirborneNeutralState.hpp"
+#include "CharacterState/Airborne/AirborneScriptState.hpp"
+#include "CharacterState/Airborne/HitlagState.hpp"
+#include "CharacterState/Airborne/HitstunState.hpp"
 
 #include "../Physics/PhysicsEngine.hpp"
 #include "../Entities/StageEntity.hpp"
@@ -145,22 +150,34 @@ void Character::Rollback() {
             actionState_ = new LandingLagState(this, true);
             break;
         case Neutral:
-            actionState_ = new NeutralState(this);
+            actionState_ = new NeutralState(this, true);
             break;
         case CharStateType::Dash:
             actionState_ = new DashState(this, true);
             break;
         case Jumpsquat:
-            actionState_ = new JumpsquatState(this);
+            actionState_ = new JumpsquatState(this, true);
             break;
         case CharStateType::Turnaround:
             actionState_ = new TurnaroundState(this, true);
             break;
         case AirborneNeutral:
-            actionState_ = new AirborneNeutralState(this);
+            actionState_ = new AirborneNeutralState(this, true);
             break;
         case CharStateType::Airdodge:
             actionState_ = new AirdodgeState(this, true);
+            break;
+        case AirborneScript:
+            actionState_ = new AirborneScriptState(this, true);
+            break;
+        case GroundedScript:
+            actionState_ = new GroundedScriptState(this, true);
+            break;
+        case Hitlag:
+            actionState_ = new HitlagState(this, true);
+            break;
+        case Hitstun:
+            actionState_ = new HitstunState(this, true);
             break;
     }
     actionState_->setData(data.actionStateData_);

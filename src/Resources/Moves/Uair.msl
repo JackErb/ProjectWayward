@@ -1,18 +1,17 @@
 script "UAIR";
 
 func Init() {
-    Hitbox_Circle(0, 0., -200., 140.);
+    Hitbox_Circle(0, 30., -200., 140.);
     Hitbox_Damage(0, 11.);
-    Hitbox_Knockback(0, 70, 50., 40.);
-    Hitbox_Reverse(0);
+    Hitbox_Knockback(0, 90, 50., 40.);
     
-    Hitbox_Circle(0, 130., -240., 90.);
+    Hitbox_Circle(0, 160., -240., 90.);
     Hitbox_Damage(0, 13.);
-    Hitbox_Knockback(0, 75, 60., 50.);
+    Hitbox_Knockback(0, 75, 60., 60.);
     
-    Hitbox_Circle(0, -130., -240., 90.);
+    Hitbox_Circle(0, -100., -240., 90.);
     Hitbox_Damage(0, 13.);
-    Hitbox_Knockback(0, 105, 60., 50.);
+    Hitbox_Knockback(0, 105, 60., 60.);
 }
 
 func ProcessInput() {

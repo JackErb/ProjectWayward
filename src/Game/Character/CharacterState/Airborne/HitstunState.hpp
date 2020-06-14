@@ -15,6 +15,7 @@ public:
     HitstunState(Character *ch, float angle, float kb) : AirborneState(ch) {
         init(angle, kb);
     }
+    HitstunState(Character *ch, bool rb) : AirborneState(ch) {}
     
     void ProcessInput(const PlayerInput& input) override;
     void Tick() override;

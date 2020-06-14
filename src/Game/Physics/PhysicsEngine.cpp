@@ -63,16 +63,16 @@ void PhysicsEngine::Update() {
     for (Entity *e : entities_) {
         if (e->Type() == CHARACTER) continue;
         for (Character *ch : characters_) {
+            if (e->id == ch->id) continue;
             checkHitboxCollision(e, ch);
         }
     }
 }
 
 void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
-    for (auto it = e1->activeHitboxes.begin(); it != e1->activeHitboxes.end(); it++) {
+    for (auto it = e1->Hitboxes().begin(); it != e1->Hitboxes().end(); it++) {
         for (const HitboxData &h1 : it->second) {
-            if (e1->ignoreHits.find(e2->id) != e1->ignoreHits.end()
-                && e1->ignoreHits[e2->id].count(h1.id) == 1) {
+            if (e1->IgnoreHit(e2->id, h1.id)) {
                 continue;
             }
             for (const PolygonV &p2 : e2->polygons) {
@@ -80,9 +80,9 @@ void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
                                           p2, e2->Position(), e2->Direction());
                 if (res.first) {
                     int f = h1.dmg * 0.4;
-                    bool r = e1->HandleHit(e1, f, h1);
+                    bool r = e2->HandleHit(e1, f, h1);
                     if (r) {
-                        e1->ignoreHits[e2->id].insert(h1.id);
+                        e1->AddIgnoreHit(e2->id, h1.id);
                         e1->Freeze(f);
                     }
                 }

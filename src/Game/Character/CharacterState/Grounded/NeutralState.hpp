@@ -16,6 +16,7 @@ public:
     NeutralState(Character *ch) : GroundedState(ch) {
         data.frame_ = 0;
     }
+    NeutralState(Character *ch, bool rb) : GroundedState(ch) {}
     ~NeutralState() {}
     
     void ProcessInput(const PlayerInput &input) override;

@@ -13,7 +13,8 @@
 
 class AirborneNeutralState : public AirborneState {
 public:
-    AirborneNeutralState(Character *ch);
+    AirborneNeutralState(Character *ch) : AirborneState(ch) {}
+    AirborneNeutralState(Character *ch, bool rb) : AirborneState(ch) {}
     ~AirborneNeutralState() {}
     
     void ProcessInput(const PlayerInput &input) override;

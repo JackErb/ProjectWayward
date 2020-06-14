@@ -100,17 +100,25 @@ int main(int, char const**) {
                 n->CheckForRemoteInput();
                 cout << "Waiting for remote input..." << endl;
             }
-        } else if (pause) {
+        } else if (!pause && n->dropFrames_ == 0) {
+            // Drop a frame
+            n->CheckForRemoteInput();
+            n->dropFrames_--;
+        } else {
             // Paused
             if (p1.IsPressed(1)) {
                 controller.PreTick();
                 controller.ProcessInput(p1, p2);
                 controller.Tick();
             }
-        } else {
-            // Drop a frame
-            n->CheckForRemoteInput();
-            n->dropFrames_--;
+            
+            if (p1.IsPressed(0)) {
+                controller.RollbackTick();
+            }
+            
+            if (p1.IsPressed(3)) {
+                controller.Rollback();
+            }
         }
         
         // Update the window
@@ -122,17 +130,15 @@ int main(int, char const**) {
         /*   STALL UNTIL NEXT FRAME   */
         /* ************************** */
         auto now = high_resolution_clock::now();
+        if (i % 50 == 0) {
+            cout << duration_cast<microseconds>(now - start).count() << endl;
+        }
         while (duration_cast<microseconds>(now - start).count() < 14000) {
             std::this_thread::sleep_for(microseconds(500));
             now = high_resolution_clock::now();
         }
         
 		now = high_resolution_clock::now();
-        while (duration_cast<microseconds>(now - start).count() < 16500) {
-            std::this_thread::sleep_for(microseconds(0));
-            now = high_resolution_clock::now();
-        }
-        
         while (duration_cast<microseconds>(now - start).count() < 16666) {
             now = high_resolution_clock::now();
         }

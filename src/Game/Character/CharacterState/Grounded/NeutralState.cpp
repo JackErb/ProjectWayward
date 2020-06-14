@@ -42,6 +42,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
             character_->SetActionState(new GroundedScriptState(character_, "DTILT"));
         } else {
             character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+            std::cout << "HERE" << std::endl;
         }
         return;
     }

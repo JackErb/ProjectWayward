@@ -3,7 +3,7 @@ script "ROCKET";
 func Init() {
     Hitbox_Circle(0, 0., 0., 90.);
     Hitbox_Damage(0, 5.);
-    Hitbox_Knockback(0, 45, 140., 100.);
+    Hitbox_Knockback(0, 45, 20., 30.);
 }
 
 func Tick() {

@@ -3,7 +3,7 @@ script "UTILT";
 func Init() {
     Hitbox_Circle(0, 0., - 200., 140.);
     Hitbox_Damage(0, 10.);
-    Hitbox_Knockback(0, 90, 60., 30.);
+    Hitbox_Knockback(0, 100, 30., 50.);
 }
 
 func ProcessInput() {

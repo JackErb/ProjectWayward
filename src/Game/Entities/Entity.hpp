@@ -113,44 +113,60 @@ public:
 	void SetDirection(int d) { data.dir_ = d; }
     
     void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
+    
+    void SetMoveScript(const std::string &move);
+    
+    const std::unordered_map<int, std::list<HitboxData> >& Hitboxes() const { return data.activeHitboxes; }
+    
+    bool IgnoreHit(int id, int pid) {
+        auto r = data.ignoreHits.find(id);
+        if (r != data.ignoreHits.end()) {
+            return data.ignoreHits[id].count(pid) != 0;
+        }
+        return false;
+    }
+    
+    void AddIgnoreHit(int id, int pid) {
+        data.ignoreHits[id].insert(pid);
+    }
 
-	void CreateHitbox(std::string move, HitboxData data) {
+	void CreateHitbox(const std::string &move, HitboxData data) {
         hitboxes[move][data.id].push_back(data);
 	}
     
     void SpawnHitbox(int id) {
-        for (auto it = hitboxes[move][id].begin(); it != hitboxes[move][id].end(); it++) {
-            activeHitboxes[id].push_back(*it);
+        for (auto it = hitboxes[data.move][id].begin(); it != hitboxes[data.move][id].end(); it++) {
+            data.activeHitboxes[id].push_back(*it);
         }
     }
 
 	void SpawnHitbox(int id, int pid) {
-        auto it = activeHitboxes[id].begin();
-        for ( ; it != activeHitboxes[id].end(); it++) {
+        auto it = data.activeHitboxes[id].begin();
+        for ( ; it != data.activeHitboxes[id].end(); it++) {
             if (it->pid > pid) break;
         }
-        activeHitboxes[id].insert(it, hitboxes[move][id][pid]);
+        data.activeHitboxes[id].insert(it, hitboxes[data.move][id][pid]);
 	}
     
     void RemoveHitbox(int id) {
-        activeHitboxes[id].clear();
+        data.activeHitboxes[id].clear();
     }
 
 	void RemoveHitbox(int id, int pid) {
-        auto it = activeHitboxes[id].begin();
-        for ( ; it != activeHitboxes[id].end(); it++) {
+        auto it = data.activeHitboxes[id].begin();
+        for ( ; it != data.activeHitboxes[id].end(); it++) {
             if (it->pid == pid) break;
         }
-        if (it == activeHitboxes[id].end()) {
+        if (it == data.activeHitboxes[id].end()) {
             std::cerr << "Invalid RemoveHitbox(), id: " << id << std::endl;
         } else {
-            activeHitboxes[id].erase(it);
-            if (activeHitboxes[id].size() == 0) activeHitboxes.erase(id);
+            data.activeHitboxes[id].erase(it);
+            if (data.activeHitboxes[id].size() == 0) data.activeHitboxes.erase(id);
         }
 	}
 
 	void ClearHitboxes() {
-		activeHitboxes.clear();
+        data.activeHitboxes.clear();
 	}
     
 private:
@@ -170,20 +186,19 @@ public:
 	std::vector<PolygonV> polygons; // i.e. hurtboxes
 	std::unordered_map<std::string, std::unordered_map<int, std::vector<HitboxData> > > hitboxes;
     // i.e. hitboxes
-
-	std::string move;
-	std::unordered_map<int, std::list<HitboxData> > activeHitboxes;
-    std::unordered_map<int, std::set<int> > ignoreHits;
     
     MslInterpreter *mslIntp;
     
 protected:
     struct GameData {
-        // The top left corner of this player's bounding box
         sf::Vector2f position_ = sf::Vector2f(0.f, 0.f);
         sf::Vector2f velocity_ = sf::Vector2f(0.f, 0.f);
         
         sf::Sprite* sprite_;
+        
+        std::string move;
+        std::unordered_map<int, std::list<HitboxData> > activeHitboxes;
+        std::unordered_map<int, std::set<int> > ignoreHits;
         
         int dir_ = 1;
         int frame_ = 0;

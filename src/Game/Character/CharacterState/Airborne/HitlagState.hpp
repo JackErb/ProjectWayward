@@ -15,6 +15,7 @@ public:
     HitlagState(Character *ch, int f, float angle, float basekb, float kbscale) : AirborneState(ch) {
         init(f, angle, basekb, kbscale);
     }
+    HitlagState(Character *ch, bool rb) : AirborneState(ch) {}
     
     void ProcessInput(const PlayerInput& input) override;
     void Tick() override;
