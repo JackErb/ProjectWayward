@@ -14,16 +14,16 @@
 #include "AirborneScriptState.hpp"
 
 void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3) && character_->Jumps() > 0) {
+    if (input.IsPressed(B) && character_->Jumps() > 0) {
         character_->Jump(DJUMP, true);
     }
     
-    if (input.IsPressed(7) && character_->HasAirdodge()) {
+    if (input.IsPressed(LB) && character_->HasAirdodge()) {
         character_->SetActionState(new AirdodgeState(character_, input.stick.angle()));
         return;
     }
     
-    if (input.IsPressed(1)) {
+    if (input.IsPressed(Y)) {
         if (input.stick.inDirection(DOWN_T)) {
             character_->SetActionState(new AirborneScriptState(character_, "DAIR"));
         } else if (input.stick.inDirection(LEFT_T) || input.stick.inDirection(RIGHT_T)) {
@@ -36,13 +36,8 @@ void AirborneNeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.IsPressed(0)) {
+    if (input.IsPressed(X)) {
         character_->SetActionState(new AirborneScriptState(character_, "FSPECIAL"));
-        return;
-    }
-    
-    if (input.IsPressed(0) && input.stick.inDirection(UP_T)) {
-        character_->UpB();
         return;
     }
     
@@ -54,15 +49,15 @@ void AirborneNeutralState::Tick() {
     character_->ApplyVelocity();
 }
 
-void AirborneNeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+void AirborneNeutralState::HandleCollision(const Entity &entity, VectorV pv) {
     if (entity.Type() == STAGE) {
         if (abs(pv.x) > 0 && pv.y == 0) {
             if (pv.x < 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)
-                && character_->input_->IsPressed(3)) {
+                && character_->input_->IsPressed(B)) {
                 character_->WallJump(-1);
                 character_->SetDirection(-1);
             } else if (pv.x > 0 && character_->input_->stick.inDirection(Direction::LEFT_T)
-                       && character_->input_->IsPressed(3)) {
+                       && character_->input_->IsPressed(B)) {
                 character_->WallJump(1);
                 character_->SetDirection(1);
             }

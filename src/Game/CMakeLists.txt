@@ -1,4 +1,4 @@
-target_sources(main PUBLIC "GameController.hpp" GameController.cpp
+target_sources(main PUBLIC GameController.hpp GameController.cpp CameraController.cpp
                  CameraController.hpp MathHelper.hpp MathHelper.cpp PlayerInput.hpp)
 
 add_subdirectory(Physics)

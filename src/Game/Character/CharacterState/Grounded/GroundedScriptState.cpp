@@ -25,7 +25,7 @@ void GroundedScriptState::Tick() {
     character_->mslIntp->Tick();
 }
 
-void GroundedScriptState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+void GroundedScriptState::HandleCollision(const Entity &entity, VectorV pv) {
 
 }
 

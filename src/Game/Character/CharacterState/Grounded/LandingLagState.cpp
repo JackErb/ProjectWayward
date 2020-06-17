@@ -25,7 +25,7 @@ void LandingLagState::Tick() {
     }
 }
 
-void LandingLagState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
+void LandingLagState::HandleCollision(const Entity &e1, VectorV pv) {
     
 }
 

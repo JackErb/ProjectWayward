@@ -27,7 +27,7 @@ void AirborneScriptState::Tick() {
     character_->ApplyVelocity();
 }
 
-void AirborneScriptState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+void AirborneScriptState::HandleCollision(const Entity &entity, VectorV pv) {
 
 }
 

@@ -13,28 +13,22 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
-#include <SFML/Graphics.hpp>
 
 using std::string;
 using std::vector;
 using std::unordered_map;
+using std::pair;
 
-typedef unordered_map< string, vector<sf::Sprite*> > AnimMap;
+class TextureV;
+struct SDL_Renderer;
+typedef unordered_map< string, vector<TextureV*> > AnimMap;
 
 class SpriteLoader {
 public:
-    typedef struct AnimationResult {
-        vector<sf::Texture*> textures_;
-        AnimMap anims;
-    } AnimationResult;
+    static AnimMap LoadAnimations(SDL_Renderer *rd, vector<pair<string, int> > names, float scale = 1.f);
+    static TextureV* LoadTexture(SDL_Renderer *rd, string name, float scale = 1.f);
     
-    typedef struct SpriteResult {
-        sf::Texture *text;
-        sf::Sprite *sprite;
-    } SpriteResult;
-    
-    static AnimationResult LoadAnimations(vector<string> names);
-    static SpriteResult LoadSprite(string name);
+    static AnimMap anims;
 };
 
 #endif /* SpriteLoader_hpp */

@@ -7,32 +7,33 @@
 //
 
 #include "SpriteLoader.hpp"
-#include "ResourcePath.hpp"
 
-SpriteLoader::AnimationResult SpriteLoader::LoadAnimations(vector<string> names) {
-    AnimMap anims;
-    vector<sf::Texture*> texts;
-    for (string s : names) {
-        anims[s] = vector<sf::Sprite*>();
+#include "ResourcePath.hpp"
+#include "../../TextureV.hpp"
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+
+AnimMap SpriteLoader::anims = AnimMap();
+
+AnimMap SpriteLoader::LoadAnimations(SDL_Renderer *rd, vector<pair<string, int> > names, float scale) {
+    AnimMap res;
+    for (auto p : names) {
+        string name = p.first;
+        int n = p.second;
         
-        sf::Texture *text = new sf::Texture();
-        int i = 0;
-        while (i <= 10 && text->loadFromFile(ResourcePath() + "Animations/" + s + "_" +
-                                  std::to_string(i) + ".png")) {
-            anims[s].push_back(new sf::Sprite(*text));
-            texts.push_back(text);
-            text = new sf::Texture();
-            i++;
+        for (int i = 0; i <= n; i++) {
+            res[name].push_back(LoadTexture(rd, "animations/" + name + "_" + std::to_string(i), scale));
         }
-        
-        delete text;
     }
-    
-    return {texts, anims};
+    return res;
 }
 
-SpriteLoader::SpriteResult SpriteLoader::LoadSprite(string name) {
-    sf::Texture *text = new sf::Texture();
-    text->loadFromFile(ResourcePath() + name + ".png");
-    return {text, new sf::Sprite(*text)};
+TextureV* SpriteLoader::LoadTexture(SDL_Renderer *rd, string name, float scale) {
+    if (anims[name].size() == 1) return anims[name][0];
+    
+    TextureV *t = new TextureV(rd, name + ".png", scale);
+    anims[name].push_back(t);
+    return t;
 }

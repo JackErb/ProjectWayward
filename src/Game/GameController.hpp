@@ -9,8 +9,6 @@
 #ifndef GameController_hpp
 #define GameController_hpp
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include <vector>
 
 #include "PlayerInput.hpp"
@@ -21,24 +19,18 @@
 #include "CameraController.hpp"
 #include "../Network/NetworkController.hpp"
 
+struct SDL_Renderer;
+
 class GameController {
 public:
-    GameController(float w, float h);
-    ~GameController() {
-        for (sf::Texture *t : textures_) {
-            delete t;
-        }
-        
-        for (sf::Sprite* s : sprites_) {
-            delete s;
-        }
-    }
+    GameController(SDL_Renderer *rd, float w, float h);
+    ~GameController() {}
     
     void PreTick(bool rb = false);
     
     void Tick();
     void ProcessInput(const PlayerInput &pin, const PlayerInput &rin, bool rb = false);
-    void Render(sf::RenderWindow *window);
+    void Render(SDL_Renderer *rd);
     
     void RollbackTick();
     void Rollback();
@@ -49,8 +41,6 @@ private:
     Character remotePlayer_;
     PhysicsEngine engine_;
     CameraController camera_;
-    std::vector<sf::Texture*> textures_;
-    std::vector<sf::Sprite*> sprites_;
     
     NetworkController network_;
 

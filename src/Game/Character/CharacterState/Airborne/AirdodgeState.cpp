@@ -35,7 +35,7 @@ void AirdodgeState::Tick() {
     }
 }
 
-void AirdodgeState::HandleCollision(const Entity &e, sf::Vector2f pv) {
+void AirdodgeState::HandleCollision(const Entity &e, VectorV pv) {
     if (e.Type() == STAGE) {
         // Apply the push vector to prevent overlap
         character_->Transform(pv);

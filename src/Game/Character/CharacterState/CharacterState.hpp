@@ -29,7 +29,7 @@ public:
     virtual void ProcessInput(const PlayerInput &input) = 0;
     virtual void Tick() = 0;
     
-    virtual void HandleCollision(const Entity &entity, sf::Vector2f pv) = 0;
+    virtual void HandleCollision(const Entity &entity, VectorV pv) = 0;
     
     virtual void SwitchState(CharState state) = 0;
     virtual CharState GetState() const = 0;

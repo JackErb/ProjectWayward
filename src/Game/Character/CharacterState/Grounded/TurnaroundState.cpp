@@ -18,7 +18,7 @@ void TurnaroundState::Turnaround() {
 }
 
 void TurnaroundState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3)) {
+    if (input.IsPressed(B)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }
@@ -32,7 +32,7 @@ void TurnaroundState::Tick() {
     }
 }
 
-void TurnaroundState::HandleCollision(const Entity &e, sf::Vector2f pv) {
+void TurnaroundState::HandleCollision(const Entity &e, VectorV pv) {
     
 }
 

@@ -14,7 +14,7 @@
 void ProjectileEntity::init(std::string move) {
     // TODO: Deal with texture
     SetMoveScript(move);
-    SetSprite(SpriteLoader::LoadSprite("rocket").sprite);
+    SetTexture(SpriteLoader::anims["rocket"][0]);
     mslIntp->setVal("dir", Direction());
     
     data.frame_ = 0;
@@ -27,7 +27,7 @@ void ProjectileEntity::Tick() {
     ApplyVelocity();
 }
 
-void ProjectileEntity::HandleCollision(const Entity &e1, sf::Vector2f pv) {
+void ProjectileEntity::HandleCollision(const Entity &e1, VectorV pv) {
     
 }
 

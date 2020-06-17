@@ -22,7 +22,7 @@ public:
     JumpsquatState(Character *ch, bool rb) : GroundedState(ch) {}
     ~JumpsquatState() {}
     
-    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void HandleCollision(const Entity &entity, VectorV pv) override;
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
     void SwitchState(CharState state) override;

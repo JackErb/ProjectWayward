@@ -10,9 +10,9 @@
 #define Entity_hpp
 
 #include "HitboxData.hpp"
+#include "../MathHelper.hpp"
 
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include <math.h>
 #include <iostream>
 #include <limits>
@@ -21,8 +21,9 @@
 #include <set>
 #include <unordered_map>
 
-typedef std::vector<sf::Vector2f> PolygonV;
+typedef std::vector<VectorV> PolygonV;
 class MslInterpreter;
+class TextureV;
 
 /* Represents a bounding box of an entity w/ top left corner (x,y) */
 typedef struct Rectangle {
@@ -38,11 +39,11 @@ class PhysicsEngine;
 
 class Entity {
 public:
-    Entity(int id, sf::Vector2f pos);
+    Entity(int id, VectorV pos);
     virtual ~Entity();
 
 	/* Game Processing Functions */
-	virtual void HandleCollision(const Entity& entity, sf::Vector2f pv) = 0;
+	virtual void HandleCollision(const Entity& entity, VectorV pv) = 0;
 	virtual bool HandleHit(const Entity* e, int f, const HitboxData& hd) = 0;
 	virtual void Tick() = 0;
 
@@ -73,14 +74,14 @@ public:
 			if (p.size() == 2) {
 				// p is a circle
 				float r = p[1].x + 0.1f;
-				sf::Vector2f corner = sf::Vector2f(d * p[0].x - r, p[0].y - r);
+				VectorV corner = VectorV(d * p[0].x - r, p[0].y - r);
 				min_x = fmin(min_x, fmin(corner.x, corner.x + r * 2));
 				max_x = fmax(max_x, fmax(corner.x, corner.x + r * 2));
 				min_y = fmin(min_y, fmin(corner.y, corner.y + r * 2));
 				max_y = fmax(max_y, fmax(corner.y, corner.y + r * 2));
 			}
 			else {
-				for (const sf::Vector2f& v : p) {
+				for (const VectorV& v : p) {
                     min_x = fmin(min_x, d * v.x);
 					max_x = fmax(max_x, d * v.x);
 					min_y = fmin(min_y, v.y);
@@ -91,23 +92,23 @@ public:
 		return Rectangle(px + min_x + .5f, py + min_y - .5f, max_x - min_x + .5f, max_y - min_y + .5f);
 	}
 
-	void Transform(sf::Vector2f v) {
+	void Transform(VectorV v) {
 		SetPosition(data.position_ + v);
 	}
 
-	void SetPosition(sf::Vector2f pos) { data.position_ = pos; }
-    sf::Vector2f Position() const { return data.position_; }
+	void SetPosition(VectorV pos) { data.position_ = pos; }
+    VectorV Position() const { return data.position_; }
     
     void SetVelocity(float x, float y) { SetVelocity({x,y}); }
-    void SetVelocity(sf::Vector2f v) { data.velocity_ = v; }
-    sf::Vector2f Velocity() { return data.velocity_; }
+    void SetVelocity(VectorV v) { data.velocity_ = v; }
+    VectorV Velocity() { return data.velocity_; }
     void NullVelocityX() { data.velocity_.x = 0; }
     void NullVelocityY() { data.velocity_.y = 0; }
     
     void ApplyVelocity() { Transform(data.velocity_); }
 
-	void SetSprite(sf::Sprite* s) { data.sprite_ = s; }
-	sf::Sprite* Sprite() const { return data.sprite_; }
+	void SetTexture(TextureV* t) { data.texture_ = t; }
+	TextureV* Texture() const { return data.texture_; }
 
 	int Direction() const { return data.dir_; }
 	void SetDirection(int d) { data.dir_ = d; }
@@ -191,10 +192,10 @@ public:
     
 protected:
     struct GameData {
-        sf::Vector2f position_ = sf::Vector2f(0.f, 0.f);
-        sf::Vector2f velocity_ = sf::Vector2f(0.f, 0.f);
+        VectorV position_ = VectorV(0.f, 0.f);
+        VectorV velocity_ = VectorV(0.f, 0.f);
         
-        sf::Sprite* sprite_;
+        TextureV* texture_;
         
         std::string move;
         std::unordered_map<int, std::list<HitboxData> > activeHitboxes;

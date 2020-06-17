@@ -28,9 +28,9 @@ public:
     typedef struct InputData {
         int frame = -1;
         bool isPlayerValid = false;
-        PlayerInput player = PlayerInput();
+        PlayerInput player = PlayerInput(-1);
         bool isRemoteValid = false;
-        PlayerInput remote = PlayerInput();
+        PlayerInput remote = PlayerInput(-1);
     } InputData;
     
 public:

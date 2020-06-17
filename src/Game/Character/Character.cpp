@@ -36,7 +36,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-Character::Character(int id, sf::Vector2f vec) : Entity(id, vec) {
+Character::Character(int id, VectorV vec) : Entity(id, vec) {
     initMslBindings();
     mslIntp->Init({"UTILT", "UAIR", "NAIR", "FTILT", "DAIR", "JAB", "FAIR", "DTILT"});
     SetActionState(new AirborneNeutralState(this));
@@ -183,7 +183,7 @@ void Character::Rollback() {
     actionState_->setData(data.actionStateData_);
 }
 
-void Character::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+void Character::HandleCollision(const Entity &entity, VectorV pv) {
     if (entity.id == data.fallthrough_) {
         return;
     }
@@ -239,9 +239,9 @@ bool Character::HandleHit(const Entity *e, int f, const HitboxData &hd) {
     // Calculate angle
     float angle = hd.angle;
     if (hd.reverse) {
-        sf::Vector2f center = geometric_center(hd.hitbox);
+        VectorV center = geometric_center(hd.hitbox);
         center.x *= e->Direction();
-        center += e->Position();
+        center = center + e->Position();
         
         if (Position().x < center.x) {
             angle -= PI / 2.f;

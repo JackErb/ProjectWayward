@@ -13,10 +13,10 @@
 
 class StageEntity : public Entity {
 public:
-    StageEntity(int id, sf::Vector2f pos) : Entity(id, pos) {}
+    StageEntity(int id, VectorV pos) : Entity(id, pos) {}
     
     void Tick() override {}
-    void HandleCollision(const Entity &e1, sf::Vector2f pv) override {}
+    void HandleCollision(const Entity &e1, VectorV pv) override {}
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override { return false; }
     void RollbackTick() override { Entity::RollbackTick(); }
     

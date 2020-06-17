@@ -65,8 +65,8 @@ public:
     void RollbackTick();
     
 private:
-    pair<bool, sf::Vector2f> checkCollision(const PolygonV &p1, const sf::Vector2f &pos1, int dir1,
-                                            const PolygonV &p2, const sf::Vector2f &pos2, int dir2);
+    pair<bool, VectorV> checkCollision(const PolygonV &p1, const VectorV &pos1, int dir1,
+                                            const PolygonV &p2, const VectorV &pos2, int dir2);
     void checkHitboxCollision(Entity *e1, Entity *e2);
     
 private:

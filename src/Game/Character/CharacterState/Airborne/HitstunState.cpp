@@ -30,7 +30,7 @@ void HitstunState::Tick() {
     }
 }
 
-void HitstunState::HandleCollision(const Entity &e, const sf::Vector2f pv) {
+void HitstunState::HandleCollision(const Entity &e, const VectorV pv) {
 
 }
 

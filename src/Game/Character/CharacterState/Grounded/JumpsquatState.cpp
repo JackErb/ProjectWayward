@@ -11,7 +11,7 @@
 #include "../../Character.hpp"
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
-    if (input.stick.hyp() > 40.f) {
+    if (input.stick.hyp() > 0.5f) {
         if (input.stick.inDirection(LEFT) && data.type_ == JUP) {
             data.type_ = JLEFT;
         } else if (input.stick.inDirection(RIGHT) && data.type_ == JUP) {
@@ -19,7 +19,7 @@ void JumpsquatState::ProcessInput(const PlayerInput &input) {
         }
     }
     
-    if (input.IsReleased(3)) {
+    if (input.IsReleased(B)) {
         data.b1 = false;
     }
 }
@@ -34,7 +34,7 @@ void JumpsquatState::Tick() {
     data.frame_++;
 }
 
-void JumpsquatState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
+void JumpsquatState::HandleCollision(const Entity &e1, VectorV pv) {
     // TODO: _
 }
 

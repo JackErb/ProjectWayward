@@ -10,7 +10,6 @@
 #define Character_hpp
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
 #include <math.h>
 #include <list>
 #include <vector>
@@ -65,7 +64,7 @@ public:
     } AirborneData;
     
 public:
-    Character(int id, sf::Vector2f position);
+    Character(int id, VectorV position);
     ~Character();
     
     /* Setup */
@@ -76,7 +75,7 @@ public:
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    sf::Sprite* GetSprite(string state, int frame) { return anims_[state][frame]; }
+    TextureV* GetTexture(string state, int frame) { return anims_[state][frame]; }
     const StageEntity *Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }
     bool IsFastFalling() const  { return data.airborneData.fastfall; }
@@ -87,7 +86,7 @@ public:
     /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
-    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void HandleCollision(const Entity &entity, VectorV pv) override;
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
     
     void RollbackTick() override;
@@ -113,9 +112,6 @@ public:
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
     void Respawn() { SetPosition({0.f, -800.f}); data.percent_ = 0.f; SetVelocity(0.f, 0.f); }
-    
-    
-    void IncRot(float n) { Sprite()->rotate(n); }
     
 private:
     void initAirborneData() {

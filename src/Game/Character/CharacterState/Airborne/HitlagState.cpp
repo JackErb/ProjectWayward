@@ -30,7 +30,7 @@ void HitlagState::Tick() {
     }
 }
 
-void HitlagState::HandleCollision(const Entity &e, const sf::Vector2f pv) {
+void HitlagState::HandleCollision(const Entity &e, const VectorV pv) {
 
 }
 

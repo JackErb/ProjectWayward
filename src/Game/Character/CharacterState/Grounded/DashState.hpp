@@ -25,7 +25,7 @@ public:
     
     void ProcessInput(const PlayerInput &input) override;
     void Tick() override;
-    void HandleCollision(const Entity &entity, sf::Vector2f pv) override;
+    void HandleCollision(const Entity &entity, VectorV pv) override;
     
     void SwitchState(CharState state) override;
     CharStateType GetStateType() const override { return Dash; }

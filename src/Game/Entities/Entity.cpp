@@ -15,7 +15,7 @@
 
 using std::string;
 
-Entity::Entity(int id, sf::Vector2f pos) : id(id) {
+Entity::Entity(int id, VectorV pos) : id(id) {
     data.position_ = pos;
     
     mslIntp = new MslInterpreter();

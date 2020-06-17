@@ -6,11 +6,12 @@
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
+#include "MathHelper.hpp"
+
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include <math.h>
 
-typedef std::vector<sf::Vector2f> PolygonV;
+typedef std::vector<VectorV> PolygonV;
 
 float clamp(float f, float l, float h) {
     if (f < l) return l;
@@ -18,15 +19,15 @@ float clamp(float f, float l, float h) {
     return f;
 }
 
-float dot(const sf::Vector2f &v1, const sf::Vector2f &v2) {
+float dot(const VectorV &v1, const VectorV &v2) {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
-sf::Vector2f geometric_center(const PolygonV &p) {
+VectorV geometric_center(const PolygonV &p) {
     // Special case for circles
     if (p.size() == 2) return p[0];
     
-    sf::Vector2f center;
+    VectorV center;
     for (auto it = p.begin(); it != p.end(); it++) {
         center.x += it->x;
         center.y += it->y;
@@ -37,7 +38,31 @@ sf::Vector2f geometric_center(const PolygonV &p) {
     return center;
 }
 
-sf::Vector2f unit_vec(sf::Vector2f v) {
+VectorV unit_vec(VectorV v) {
     float hyp = sqrt((v.x * v.x) + (v.y * v.y));
     return v / hyp;
+}
+
+VectorV operator+(const VectorV &v1, const VectorV &v2) {
+    return VectorV(v1.x + v2.x, v1.y + v2.y);
+}
+
+VectorV operator-(const Vector &v1, const Vector &v2) {
+    return VectorV(v1.x - v2.x, v1.y - v2.y);
+}
+
+VectorV operator/(const VectorV &v, float f) {
+    return VectorV(v.x / f, v.y / f);
+}
+
+VectorV operator*(const VectorV &v, float f) {
+    return VectorV(v.x * f, v.y * f);
+}
+
+VectorV operator+(const VectorV &v, float f) {
+    return VectorV(v.x + f, v.y + f);
+}
+
+VectorV operator-(const VectorV &v, float f) {
+    return VectorV(v.x - f, v.y - f);
 }

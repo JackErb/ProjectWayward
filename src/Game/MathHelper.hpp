@@ -9,17 +9,31 @@
 #ifndef MathHelper_hpp
 #define MathHelper_hpp
 
-#include <SFML/Graphics.hpp>
-
 #define PI 3.1415926535f
-typedef std::vector<sf::Vector2f> PolygonV;
+
+#include <vector>
+
+typedef struct Vector {
+    Vector() : x(0), y(0) {}
+    Vector(float x, float y) : x(x), y(y) {}
+    
+    float x, y;
+} VectorV;
+
+typedef std::vector<VectorV> PolygonV;
+
+VectorV operator+(const VectorV &v1, const VectorV &v2);
+VectorV operator-(const VectorV &v1, const VectorV &v2);
+VectorV operator/(const VectorV &v, float f);
+VectorV operator*(const VectorV &v, float f);
+VectorV operator+(const VectorV &v, float f);
+VectorV operator-(const VectorV &v, float f);
+
 
 float clamp(float f, float l, float h);
+float dot(const VectorV &v1, const VectorV &v2);
+VectorV geometric_center(const PolygonV &p);
+VectorV unit_vec(VectorV v);
 
-float dot(const sf::Vector2f &v1, const sf::Vector2f &v2);
-
-sf::Vector2f geometric_center(const PolygonV &p);
-
-sf::Vector2f unit_vec(sf::Vector2f v);
 
 #endif /* MathHelper_h */

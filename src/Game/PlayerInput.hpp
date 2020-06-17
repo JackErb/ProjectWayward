@@ -22,6 +22,14 @@ typedef enum Direction {
     UP_T, RIGHT_T, DOWN_T, LEFT_T
 } Direction;
 
+typedef enum ButtonV {
+    A, B, X, Y, BACK, GUIDE, START,
+    LSTICK, RSTICK, LB, RB, LS, RS,
+    DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT
+} ButtonV;
+
+typedef struct _SDL_GameController SDL_GameController;
+
 class PlayerInput {
 public:
     typedef enum ButtonState {
@@ -82,67 +90,29 @@ public:
         return a >= lo && a <= hi;
     }
     
-    constexpr const static float DEAD_ZONE = 10.f;
+    constexpr const static float DEAD_ZONE = 0.15f;
+    
+    const static ButtonV buttonNums[];
     
 public:
-    PlayerInput() : buttons() {
+    PlayerInput(int idx) : buttons(), idx(idx) {
         stick = StickState();
         cStick = StickState();
     }
 
-	void UpdateControllerState(unsigned int c) {
-		// Update all the button's state
-		for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
-			if (it->second == ButtonState::Pressed) {
-				it->second = ButtonState::Held;
-			}
-
-			// If this key has state Released, them remove it from the map
-			// And update the iterator
-			if (it->second == ButtonState::Released) {
-				it = buttons.erase(it);
-			}
-			else {
-				it++;
-			}
-		}
-
-		stick = StickState();
-		cStick = StickState();
-
-		if (sf::Joystick::isConnected(c)) {
-			// Check the controller's buttons
-			for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {
-				bool contains = buttons.find(i) != buttons.end();
-				if (sf::Joystick::isButtonPressed(c, i) && !contains) {
-					// This button was just pressed
-					buttons[i] = PlayerInput::Pressed;
-					std::cout << "Button: " << i << std::endl;
-				}
-				else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
-					buttons[i] = PlayerInput::Released;
-				}
-			}
-
-			// Check the controller's sticks
-			stick = StickState(sf::Joystick::getAxisPosition(c, sf::Joystick::X),
-                    sf::Joystick::getAxisPosition(c, sf::Joystick::Y));
-		} else {
-			std::cerr << "Controller not connected" << std::endl;
-		}
-	}
+    void UpdateControllerState();
     
-    bool IsPressed(unsigned int button) const {
+    bool IsPressed(ButtonV button) const {
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Pressed;
     }
     
-    bool IsHeld(unsigned int button) const {
+    bool IsHeld(ButtonV button) const {
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Held;
     }
     
-    bool IsReleased(unsigned int button) const {
+    bool IsReleased(ButtonV button) const {
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Released;
     }
@@ -153,10 +123,13 @@ public:
     
 public:
     // Contains all the buttons that are currently being pressed/held
-    std::map<int, ButtonState> buttons;
+    std::map<ButtonV, ButtonState> buttons;
     
     StickState stick;
     StickState cStick;
+    
+    int idx;
+    SDL_GameController *gc;
     
 };
 

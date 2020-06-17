@@ -27,7 +27,7 @@ bool DashState::setDirInfluence() {
     const PlayerInput *in = character_->input_;
     if (in->stickHyp() > PlayerInput::DEAD_ZONE) {
         float old = data.dirInfluence_;
-        data.dirInfluence_ = clamp(in->stickX() / 55.f, -1.f, 1.f);
+        data.dirInfluence_ = clamp(in->stickX() / 1.f, -1.f, 1.f);
         
         if (sign(old) != sign(data.dirInfluence_)) {
             return false;
@@ -40,12 +40,12 @@ bool DashState::setDirInfluence() {
 }
 
 void DashState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3)) {
+    if (input.IsPressed(B)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
-    if (input.IsPressed(1)) {
+    if (input.IsPressed(Y)) {
         if (input.stick.inDirection(UP_T)) {
             character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
         } else if (input.stick.inDirection(LEFT_T)) {
@@ -66,7 +66,7 @@ void DashState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.IsPressed(0)) {
+    if (input.IsPressed(X)) {
         character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
         return;
     }
@@ -85,7 +85,7 @@ void DashState::ProcessInput(const PlayerInput &input) {
 }
 
 void DashState::Tick() {
-    character_->SetSprite(character_->GetSprite("dash", (data.frame_ / 4) % 11));
+    character_->SetTexture(character_->GetTexture("dash", (data.frame_ / 4) % 11));
     data.frame_++;
                           
     if (abs(data.dirInfluence_) > 0.f) {
@@ -94,7 +94,7 @@ void DashState::Tick() {
     character_->ApplyVelocity();
 }
 
-void DashState::HandleCollision(const Entity &e1, sf::Vector2f pv) {
+void DashState::HandleCollision(const Entity &e1, VectorV pv) {
     
 }
 

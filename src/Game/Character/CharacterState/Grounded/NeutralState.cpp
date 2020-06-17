@@ -20,12 +20,12 @@ void NeutralState::NullVelocity() {
 }
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(3)) {
+    if (input.IsPressed(B)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
-    if (input.IsPressed(1)) {
+    if (input.IsPressed(Y)) {
         if (input.stick.inDirection(UP_T)) {
             character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
         } else if (input.stick.inDirection(LEFT_T)) {
@@ -47,7 +47,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.IsPressed(0)) {
+    if (input.IsPressed(X)) {
         character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
         return;
     }
@@ -73,7 +73,7 @@ void NeutralState::Tick() {
     //character_->SetSprite(character_->GetSprite("dash", data.frame_ % 11));
 }
 
-void NeutralState::HandleCollision(const Entity &entity, sf::Vector2f pv) {
+void NeutralState::HandleCollision(const Entity &entity, VectorV pv) {
 }
 
 void NeutralState::SwitchState(CharState state) {

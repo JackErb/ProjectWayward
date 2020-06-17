@@ -9,10 +9,9 @@
 #ifndef HitboxData_hpp
 #define HitboxData_hpp
 
-#include <vector>
-#include <SFML/Graphics.hpp>
+#include "../MathHelper.hpp"
 
-typedef std::vector<sf::Vector2f> PolygonV;
+#include <vector>
 
 struct HitboxData {
     int id;

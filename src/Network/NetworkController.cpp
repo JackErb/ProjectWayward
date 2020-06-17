@@ -63,9 +63,9 @@ void NetworkController::PreTick() {
             for (int i = 0; i < RollbackFrames * 2; i++) {
                 inputData_[i].frame = -1;
                 inputData_[i].isPlayerValid = false;
-                inputData_[i].player = PlayerInput();
+                inputData_[i].player = PlayerInput(-1);
                 inputData_[i].isRemoteValid = false;
-                inputData_[i].remote = PlayerInput();
+                inputData_[i].remote = PlayerInput(-1);
             }
         }
     }
@@ -80,7 +80,7 @@ void NetworkController::PreTick() {
     if (inputData_[localFrameIndex_].frame != frame_) {
         // It hasn't been set yet
         inputData_[localFrameIndex_].isRemoteValid = false;
-        inputData_[localFrameIndex_].remote = PlayerInput();
+        inputData_[localFrameIndex_].remote = PlayerInput(-1);
     }
     inputData_[localFrameIndex_].frame = frame_;
         
@@ -164,13 +164,13 @@ void NetworkController::CheckForRemoteInput() {
                 
         packet >> data.xaxis >> data.yaxis >> data.buttonlen;
         
-        PlayerInput input;
+        PlayerInput input(-1);
         input.stick.xAxis = data.xaxis;
         input.stick.yAxis = data.yaxis;
         for (int i = 0; i < data.buttonlen; i++) {
             int button, state;
             packet >> button >> state;
-            input.buttons[button] = PlayerInput::ButtonState(state);
+            input.buttons[ButtonV(button)] = PlayerInput::ButtonState(state);
         }
         
         // Insert the input into the inputData_ array

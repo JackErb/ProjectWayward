@@ -100,14 +100,15 @@ void Character::Vector(float v) {
         return;
     }
     
-    float m = (abs(input_->stick.xAxis) > 60.f ? 60.f : abs(input_->stick.xAxis)) / 60.f;
+    float x = abs(input_->stick.xAxis);
+    float m = x > 0.7f ? 1.f : x / 0.7f;
     if (input_->stick.xAxis < 0) m *= -1;
     
     Entity::data.velocity_.x += m * v * attr.AirAccel;
     int sign = Entity::data.velocity_.x < 0 ? -1 : 1;
     Entity::data.velocity_.x = sign * fmin(attr.MaxAirSpeed, abs(Entity::data.velocity_.x));
     
-    if (input_->stick.inDirection(DOWN_T) && hyp > 50.f && Entity::data.velocity_.y > 0.f) {
+    if (input_->stick.inDirection(DOWN_T) && hyp > 0.5f && Entity::data.velocity_.y > 0.f) {
         FastFall();
     }
 }
