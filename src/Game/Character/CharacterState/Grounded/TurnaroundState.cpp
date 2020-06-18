@@ -18,7 +18,7 @@ void TurnaroundState::Turnaround() {
 }
 
 void TurnaroundState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(B)) {
+    if (input.IsPressed(JUMP)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }

@@ -19,7 +19,7 @@ void JumpsquatState::ProcessInput(const PlayerInput &input) {
         }
     }
     
-    if (input.IsReleased(B)) {
+    if (input.IsReleased(JUMP)) {
         data.b1 = false;
     }
 }

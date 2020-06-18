@@ -20,12 +20,12 @@ void NeutralState::NullVelocity() {
 }
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
-    if (input.IsPressed(B)) {
+    if (input.IsPressed(JUMP)) {
         character_->SetActionState(new JumpsquatState(character_));
         return;
     }
     
-    if (input.IsPressed(Y)) {
+    if (input.IsPressed(ATTACK)) {
         if (input.stick.inDirection(UP_T)) {
             character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
         } else if (input.stick.inDirection(LEFT_T)) {
@@ -47,7 +47,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.IsPressed(X)) {
+    if (input.IsPressed(SPECIAL)) {
         character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
         return;
     }

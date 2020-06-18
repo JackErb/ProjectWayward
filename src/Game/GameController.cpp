@@ -47,9 +47,7 @@ GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, 
     
     StageEntity *stage = new StageEntity(1, {0.f, 800.f});
     stage->polygons = {
-        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}}/*,
-        {{-1200.f, -2000.f}, {-1200.f, 2000.f}, {-2000.f, 0.f}},
-        {{1200.f, -2000.f}, {1200.f, 2000.f}, {2000.f, 0.f}}*/
+        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}}
     };
     stage->isStatic = true;
     stage->SetTexture(SpriteLoader::LoadTexture(rd, "stage"));
@@ -69,8 +67,8 @@ void GameController::PreTick(bool rb) {
     if (!rb && network_.IsConnected()) {
         network_.PreTick();
         if (network_.frame_ == 0) {
-            player_.SetPosition({-90.f, 0});
-            remotePlayer_.SetPosition({-90.f,0});
+            player_.SetPosition({0.f, 0});
+            remotePlayer_.SetPosition({0.f,0});
             RollbackTick();
         } else {
             RollbackAndReplay();

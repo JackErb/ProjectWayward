@@ -24,7 +24,7 @@ AnimMap SpriteLoader::LoadAnimations(SDL_Renderer *rd, vector<pair<string, int> 
         int n = p.second;
         
         for (int i = 0; i <= n; i++) {
-            res[name].push_back(LoadTexture(rd, "animations/" + name + "_" + std::to_string(i), scale));
+            res[name].push_back(LoadTexture(rd, name + "_" + std::to_string(i), scale));
         }
     }
     return res;

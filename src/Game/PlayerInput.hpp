@@ -14,6 +14,7 @@
 #include <iostream>
 #include <map>
 #include <math.h>
+#include <vector>
 
 typedef enum Direction {
     /* UP: [pi/4, 3pi/4], RIGHT: [-pi/4, pi/4], etc. */
@@ -23,10 +24,11 @@ typedef enum Direction {
 } Direction;
 
 typedef enum ButtonV {
-    A, B, X, Y, BACK, GUIDE, START,
-    LSTICK, RSTICK, LB, RB, LS, RS,
-    DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT
+    ATTACK, SPECIAL, JUMP, SHIELD, START
 } ButtonV;
+
+
+static std::vector<int> sdlButton();
 
 typedef struct _SDL_GameController SDL_GameController;
 

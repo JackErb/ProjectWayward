@@ -13,7 +13,39 @@
 using std::cout;
 using std::endl;
 
-const ButtonV PlayerInput::buttonNums[] = {A,B,X,Y,BACK,GUIDE,START,LSTICK,RSTICK,LB,RB,LS,RS};
+const ButtonV PlayerInput::buttonNums[] = {ATTACK, SPECIAL, JUMP, SHIELD};
+
+std::vector<int> sdlButton(ButtonV b) {
+    switch (b) {
+        case ATTACK: {
+            std::vector<int> v;
+            v.push_back(SDL_CONTROLLER_BUTTON_B);
+            return v;
+        }
+        case SPECIAL: {
+            std::vector<int> v;
+            v.push_back(SDL_CONTROLLER_BUTTON_A);
+            return v;
+        }
+        case JUMP: {
+            std::vector<int> v;
+            v.push_back(SDL_CONTROLLER_BUTTON_X);
+            v.push_back(SDL_CONTROLLER_BUTTON_Y);
+            return v;
+        }
+        case SHIELD: {
+            std::vector<int> v;
+            v.push_back(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+            v.push_back(SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+            return v;
+        }
+        case START: {
+            std::vector<int> v;
+            v.push_back(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+            return v;
+        }
+    }
+}
 
 void PlayerInput::UpdateControllerState() {
     // Update all the button's state
@@ -44,36 +76,22 @@ void PlayerInput::UpdateControllerState() {
         stick.yAxis = (float)SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY) / 32767.f;
         
         for (ButtonV b : buttonNums) {
-            bool press = SDL_GameControllerGetButton(gc, (SDL_GameControllerButton)b) == 1;
+            std::vector<int> sdl_buttons = sdlButton(b);
+            
+            bool press = false;
+            for (int sdl_b : sdl_buttons) {
+                SDL_GameControllerButton sdl_b_ = (SDL_GameControllerButton)sdl_b;
+                press = SDL_GameControllerGetButton(gc, sdl_b_) == 1;
+                if (press) break;
+            }
             bool contains = buttons.find(b) != buttons.end();
             if (press && !contains) {
                 buttons[b] = PlayerInput::Pressed;
-            } else if (!press) {
+            } else if (!press && contains) {
                 buttons[b] = PlayerInput::Released;
             }
         }
     } else {
         cout << "Controller not connected" << endl;
     }
-    
-    /*if (sf::Joystick::isConnected(c)) {
-        // Check the controller's buttons
-        for (int i = 0; i < sf::Joystick::getButtonCount(c); i++) {
-            bool contains = buttons.find(i) != buttons.end();
-            if (sf::Joystick::isButtonPressed(c, i) && !contains) {
-                // This button was just pressed
-                buttons[i] = PlayerInput::Pressed;
-                std::cout << "Button: " << i << std::endl;
-            }
-            else if (!sf::Joystick::isButtonPressed(c, i) && contains) {
-                buttons[i] = PlayerInput::Released;
-            }
-        }
-
-        // Check the controller's sticks
-        stick = StickState(sf::Joystick::getAxisPosition(c, sf::Joystick::X),
-                sf::Joystick::getAxisPosition(c, sf::Joystick::Y));
-    } else {
-        std::cerr << "Controller not connected" << std::endl;
-    }*/
 }

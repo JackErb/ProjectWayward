@@ -1,6 +1,6 @@
 //
 //  Created by Jack Erb on 6/7/20.
-//  Copyright © 2020 Jack Erb. All rights reserved.
+//  Copyright ï¿½ 2020 Jack Erb. All rights reserved.
 //
 
 #ifndef ResourcePath_hpp
@@ -9,5 +9,7 @@
 #include <string>
 
 std::string ResourcePath();
+
+static std::string gResourcePath;
 
 #endif  /* ResourcePath_hpp */

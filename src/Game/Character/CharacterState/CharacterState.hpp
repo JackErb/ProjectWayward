@@ -14,7 +14,6 @@
 #include "../CharacterProperties.hpp"
 
 #include <list>
-#include <SFML/Graphics.hpp>
 
 using std::list;
 

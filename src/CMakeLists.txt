@@ -1,6 +1,10 @@
-add_executable(main main.cpp)
+file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/Resources/*")
 
-target_sources(main PUBLIC TextureV.hpp TextureV.cpp)
+message(${RES_SOURCES})
+
+add_executable(main MACOSX_BUNDLE main.cpp TextureV.hpp TextureV.cpp ${RES_SOURCES})
+
+set_source_files_properties(${RES_SOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/)
 
 add_subdirectory(Game)
 add_subdirectory(MSL)
@@ -8,12 +12,10 @@ add_subdirectory(Network)
 
 if (APPLE)
 	target_link_libraries(main
-		"/Library/Frameworks/sfml-window.framework"
-		"/Library/Frameworks/sfml-graphics.framework"
-		"/Library/Frameworks/sfml-network.framework"
-		"/Library/Frameworks/sfml-system.framework"
 		"/Library/Frameworks/SDL2.framework"
-		"/Library/Frameworks/SDL2_image.framework")
+		"/Library/Frameworks/SDL2_image.framework"
+		"/Library/Frameworks/sfml-network.framework"
+		"/Library/Frameworks/sfml-system.framework")
 else()
 	target_link_libraries(main
 		"C:/Users/Jack/Desktop/slibs/SFML-2.5.1/lib/sfml-graphics-s-d.lib"
@@ -50,4 +52,4 @@ target_include_directories(main PUBLIC
 	"${PROJECT_SOURCE_DIR}/MSL/AST/Expressions"
 	"${PROJECT_SOURCE_DIR}/MSL/AST/Statements"
 	"${PROJECT_SOURCE_DIR}/Network"
-	"${PROJECT_SOURCE_DIR}/Resources")
+)
