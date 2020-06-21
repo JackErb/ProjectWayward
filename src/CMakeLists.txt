@@ -9,13 +9,16 @@ set_source_files_properties(${RES_SOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Re
 add_subdirectory(Game)
 add_subdirectory(MSL)
 add_subdirectory(Network)
+add_subdirectory(imgui)
 
 if (APPLE)
 	target_link_libraries(main
 		"/Library/Frameworks/SDL2.framework"
 		"/Library/Frameworks/SDL2_image.framework"
 		"/Library/Frameworks/sfml-network.framework"
-		"/Library/Frameworks/sfml-system.framework")
+		"/Library/Frameworks/sfml-system.framework"
+		imgui
+		)
 else()
 	target_link_libraries(main
 		"C:/Users/Jack/Desktop/slibs/SFML-2.5.1/lib/sfml-graphics-s-d.lib"

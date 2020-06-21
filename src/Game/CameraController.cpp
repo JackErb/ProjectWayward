@@ -68,6 +68,7 @@ void CameraController::Render(SDL_Renderer* rd) {
 
         // TODO: Don't draw if the sprite is off the screen
     }
+    SDL_RenderSetScale(rd, 1.f, 1.f);
 }
 
 /*void CameraController::DrawShape(const PolygonV& p, const VectorV &pos, int dir,

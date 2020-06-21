@@ -92,6 +92,6 @@ void PlayerInput::UpdateControllerState() {
             }
         }
     } else {
-        cout << "Controller not connected" << endl;
+        //cout << "Controller not connected" << endl;
     }
 }

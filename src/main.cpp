@@ -3,6 +3,11 @@
 #include <SDL2_image/SDL_image.h>
 #include <SDL2/SDL.h>
 
+#include "imgui/imgui_impl_sdl.h"
+#include "imgui/imgui_sdl.h"
+#include "imgui/imgui.h"
+#include "imgui/libs/gl3w/GL/gl3w.h"
+
 #include <list>
 #include <map>
 #include <iostream>
@@ -20,43 +25,57 @@ using std::cerr;
 using std::endl;
 using namespace std::chrono;
 
-#define WIDTH 2800
-#define HEIGHT 1750
+#define WIDTH 1400
+#define HEIGHT 1100
 
-bool initSdl(SDL_Renderer **rd, SDL_Window **w) {
+bool initSdl(SDL_Window **w, SDL_Renderer **rd) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
         cerr << "Failed to initialize SDL." << endl;
         cerr << SDL_GetError() << endl;
-    } else {
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-        *w = SDL_CreateWindow("Wayward", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-        if (*w == NULL) {
-            cerr << "Window could not be created" << endl;
-            cerr << SDL_GetError() << endl;
-        } else {
-            *rd = SDL_CreateRenderer(*w, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-            if (*rd == NULL) {
-                cerr << "Renderer could not be created" << endl;
-                cerr << SDL_GetError() << endl;
-            } else {
-                SDL_SetRenderDrawColor(*rd, 0, 0, 0, 255);
-                int imgFlags = IMG_INIT_PNG;
-                if (!(IMG_Init(imgFlags) & imgFlags)) {
-                    cerr << "SDL_image could not be initialized" << endl;
-                    cerr << SDL_GetError() << endl;
-                } else {
-                    cout << "SDL succesfully initialized" << endl;
-                    return true;
-                }
-            }
-        }
+        return false;
     }
+    
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+    *w = SDL_CreateWindow("Wayward", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    
+    if (*w == NULL) {
+        cerr << "Window could not be created" << endl;
+        cerr << SDL_GetError() << endl;
+        return false;
+    }
+    
+    *rd = SDL_CreateRenderer(*w, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (*rd == NULL) {
+        cerr << "Renderer could not be created" << endl;
+        cerr << SDL_GetError() << endl;
+        return false;
+    }
+    
+    SDL_SetRenderDrawColor(*rd, 0, 0, 0, 255);
+    int imgFlags = IMG_INIT_PNG;
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
+        cerr << "SDL_image could not be initialized" << endl;
+        cerr << SDL_GetError() << endl;
+        return false;
+    }
+
+    cout << "SDL succesfully initialized" << endl;
+    return true;
+}
+
+bool initImgui(SDL_Window *w, SDL_Renderer *rd) {
+    ImGui::CreateContext();
+    ImGui_ImplSDL2_Init_(w);
+    ImGuiSDL::Initialize(rd, WIDTH, HEIGHT);
+    ImGui::StyleColorsDark();
+    return true;
 }
 
 int main(int, char const**) {
     bool pause = false;
     bool focus = true;
     bool quit = false;
+    
     
     int i = 0;
     long count = 0;
@@ -65,9 +84,14 @@ int main(int, char const**) {
     SDL_Renderer *rd;
     SDL_Window *window;
     
-    if (!initSdl(&rd, &window)) {
+    if (!initSdl(&window, &rd)) {
         return EXIT_FAILURE;
     }
+    
+    if (!initImgui(window, rd)) {
+        return EXIT_FAILURE;
+    }
+    ImGuiIO& io = ImGui::GetIO();
     
     MoveLoader::LoadMoves();
     
@@ -101,12 +125,17 @@ int main(int, char const**) {
         /* ************************** */
         // Poll window for events
         while (SDL_PollEvent(&e)) {
+            ImGui_ImplSDL2_ProcessEvent(&e);
+            
             if (e.type == SDL_QUIT) {
                 quit = true;
             }
         }
         if (quit) break;
         
+        ImGui_ImplSDL2_NewFrame(window);
+        ImGui::NewFrame();
+
         // Update the player input
         p1.UpdateControllerState();
         //p2.UpdateControllerState();
@@ -144,6 +173,11 @@ int main(int, char const**) {
         
         // Update the renderer and display
         controller.Render(rd);
+        
+        ImGui::ShowUserGuide();
+        ImGui::Render();
+        ImGuiSDL::Render(ImGui::GetDrawData());
+        
         SDL_RenderPresent(rd);
         
         /* ************************** */
@@ -175,5 +209,13 @@ int main(int, char const**) {
             count = subFrameCount = i = 0;
         }
     }
+    
+    ImGuiSDL::Deinitialize();
+
+    SDL_DestroyRenderer(rd);
+    SDL_DestroyWindow(window);
+
+    ImGui::DestroyContext();
+    
     return EXIT_SUCCESS;
 } 
