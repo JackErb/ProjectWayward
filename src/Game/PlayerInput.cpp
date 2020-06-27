@@ -7,7 +7,12 @@
 
 #include "PlayerInput.hpp"
 
+#if defined(__APPLE__)
 #include <SDL2/SDL_gamecontroller.h>
+#else
+#include "SDL_gamecontroller.h"
+#endif
+
 #include <iostream>
 
 using std::cout;
@@ -65,12 +70,14 @@ void PlayerInput::UpdateControllerState() {
     }
     
     if (SDL_IsGameController(idx)) {
-        if (gc == NULL) gc = SDL_GameControllerOpen(idx);
-        if (gc == NULL)  {
-            cout << "Failed to initialize game controller" << endl;
-            return;
-        }
-        
+		if (gc == NULL) {
+			gc = SDL_GameControllerOpen(idx);
+			cout << "Connected " << (gc == NULL) << endl;
+			if (gc == NULL) {
+				cout << "Failed to initialize game controller" << endl;
+			}
+			return;
+		}     
         
         stick.xAxis = (float)SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX) / 32767.f;
         stick.yAxis = (float)SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY) / 32767.f;

@@ -131,7 +131,7 @@ public:
     StickState cStick;
     
     int idx;
-    SDL_GameController *gc;
+    SDL_GameController *gc = NULL;
     
 };
 

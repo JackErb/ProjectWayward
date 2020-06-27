@@ -7,16 +7,19 @@
 
 #include <string>
 #include <iostream>
+
+#if defined(__APPLE__)
 #include <SDL2/SDL_filesystem.h>
+#else
+#include "SDL_filesystem.h"
+#endif
 
 std::string ResourcePath() {
     if (gResourcePath.length() == 0) {
-        char *path = SDL_GetBasePath();
-        gResourcePath = std::string(path);
-        free(path);
-        
-        std::cout << SDL_GetPrefPath("Jack", "Wayward") << std::endl;
-    }
+        char *path = SDL_GetPrefPath("Jack", "Wayward");
+        gResourcePath = std::string(path) + "Resources\\";
+        SDL_free(path);
+	}
 
     return gResourcePath;
 }

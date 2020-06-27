@@ -29,7 +29,7 @@ class TextureV;
 typedef struct Rectangle {
 	Rectangle(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
 	float x, y, w, h;
-} Rectangle;
+} RectangleV;
 
 typedef enum EntityType {
 	CHARACTER, STAGE, PLATFORM, DECORATION, PROJECTILE
@@ -58,16 +58,16 @@ public:
 	/* Getters, Setters, & Mutators */
 	virtual EntityType Type() const = 0;
 
-	Rectangle BoundingBox() const {
+	RectangleV BoundingBox() const {
 		float px = data.position_.x;
 		float py = data.position_.y;
 
-		if (polygons.size() == 0) return Rectangle(px, py, 0, 0);
+		if (polygons.size() == 0) return RectangleV(px, py, 0, 0);
 
-		float min_x = std::numeric_limits<float>::max(),
-			max_x = std::numeric_limits<float>::min(),
-			min_y = min_x,
-			max_y = max_x;
+		float min_x = (std::numeric_limits<float>::max)();
+		float max_x = (std::numeric_limits<float>::min)();
+		float min_y = min_x;
+		float max_y = max_x;
         
         int d = Direction();
 		for (const PolygonV& p : polygons) {
@@ -89,7 +89,7 @@ public:
 				}
 			}
 		}
-		return Rectangle(px + min_x + .5f, py + min_y - .5f, max_x - min_x + .5f, max_y - min_y + .5f);
+		return RectangleV(px + min_x + .5f, py + min_y - .5f, max_x - min_x + .5f, max_y - min_y + .5f);
 	}
 
 	void Transform(VectorV v) {

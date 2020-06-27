@@ -45,7 +45,7 @@ private:
     NetworkController network_;
 
     friend class NetworkController;
-    friend int main(int, char const**);
+    friend int main(int, char**);
 };
 
 #endif /* GameController_hpp */

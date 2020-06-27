@@ -48,10 +48,13 @@
 #include "imgui_impl_sdl.h"
 
 // SDL
+#if defined(__APPLE__)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
-#if defined(__APPLE__)
 #include "TargetConditionals.h"
+#else
+#include "SDL.h"
+#include "SDL_syswm.h"
 #endif
 
 #define SDL_HAS_CAPTURE_AND_GLOBAL_MOUSE    SDL_VERSION_ATLEAST(2,0,4)

@@ -11,7 +11,12 @@
 
 #include "../Game/PlayerInput.hpp"
 
+#if defined(__APPLE__)
 #include <SFML/Network.hpp>
+#else
+#include "SFML/Network.hpp"
+#endif
+
 #include <iostream>
 #include <map>
 #include <chrono>
@@ -135,7 +140,7 @@ private:
     int frame_ = -1;
  
     friend class GameController;
-    friend int main(int, char const**);
+    friend int main(int, char**);
     
     // The time the last remote input was received
     long lastRemoteInput;

@@ -11,9 +11,15 @@
 #include "ResourcePath.hpp"
 #include "../../TextureV.hpp"
 
+#if defined(__APPLE__)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
+#else
+#include "SDL.h"
+#include "SDL_render.h"
+#include "SDL_surface.h"
+#endif
 
 AnimMap SpriteLoader::anims = AnimMap();
 

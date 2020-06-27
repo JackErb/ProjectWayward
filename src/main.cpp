@@ -1,12 +1,20 @@
+#if defined(__APPLE__)
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_gamecontroller.h>
 #include <SDL2_image/SDL_image.h>
 #include <SDL2/SDL.h>
+#else
+#include "SDL_render.h"
+#include "SDL_gamecontroller.h"
+#include "SDL_image.h"
+#include "SDL.h"
+#endif
 
-#include "imgui/imgui_impl_sdl.h"
+/*#include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_sdl.h"
 #include "imgui/imgui.h"
-#include "imgui/libs/gl3w/GL/gl3w.h"
+#include "imgui/libs/gl3w/GL/gl3w.h"*/
 
 #include <list>
 #include <map>
@@ -29,7 +37,7 @@ using namespace std::chrono;
 #define HEIGHT 1100
 
 bool initSdl(SDL_Window **w, SDL_Renderer **rd) {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
         cerr << "Failed to initialize SDL." << endl;
         cerr << SDL_GetError() << endl;
         return false;
@@ -62,16 +70,16 @@ bool initSdl(SDL_Window **w, SDL_Renderer **rd) {
     cout << "SDL succesfully initialized" << endl;
     return true;
 }
-
+/*
 bool initImgui(SDL_Window *w, SDL_Renderer *rd) {
     ImGui::CreateContext();
     ImGui_ImplSDL2_Init_(w);
     ImGuiSDL::Initialize(rd, WIDTH, HEIGHT);
     ImGui::StyleColorsDark();
     return true;
-}
+}*/
 
-int main(int, char const**) {
+int main(int, char**) {
     bool pause = false;
     bool focus = true;
     bool quit = false;
@@ -88,10 +96,10 @@ int main(int, char const**) {
         return EXIT_FAILURE;
     }
     
-    if (!initImgui(window, rd)) {
+    /*if (!initImgui(window, rd)) {
         return EXIT_FAILURE;
     }
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();*/
     
     MoveLoader::LoadMoves();
     
@@ -99,7 +107,7 @@ int main(int, char const**) {
     NetworkController *n = &controller.network_;
     
     // Contains the state of the controller
-    PlayerInput p1(0);
+    PlayerInput p1(1);
     PlayerInput p2(1);
     
     SDL_Event e;
@@ -125,7 +133,7 @@ int main(int, char const**) {
         /* ************************** */
         // Poll window for events
         while (SDL_PollEvent(&e)) {
-            ImGui_ImplSDL2_ProcessEvent(&e);
+            //ImGui_ImplSDL2_ProcessEvent(&e);
             
             if (e.type == SDL_QUIT) {
                 quit = true;
@@ -133,8 +141,8 @@ int main(int, char const**) {
         }
         if (quit) break;
         
-        ImGui_ImplSDL2_NewFrame(window);
-        ImGui::NewFrame();
+        //ImGui_ImplSDL2_NewFrame(window);
+        //ImGui::NewFrame();
 
         // Update the player input
         p1.UpdateControllerState();
@@ -143,9 +151,7 @@ int main(int, char const**) {
         if (p1.IsPressed(START)) {
             pause = !pause;
         }
-        
-        
-        
+                
         /* ************************** */
         /* GAME CONTROLLER PROCESSING */
         /* ************************** */
@@ -174,9 +180,9 @@ int main(int, char const**) {
         // Update the renderer and display
         controller.Render(rd);
         
-        ImGui::ShowUserGuide();
-        ImGui::Render();
-        ImGuiSDL::Render(ImGui::GetDrawData());
+        //ImGui::ShowUserGuide();
+        //ImGui::Render();
+        //ImGuiSDL::Render(ImGui::GetDrawData());
         
         SDL_RenderPresent(rd);
         
@@ -210,12 +216,12 @@ int main(int, char const**) {
         }
     }
     
-    ImGuiSDL::Deinitialize();
+    //ImGuiSDL::Deinitialize();
 
     SDL_DestroyRenderer(rd);
     SDL_DestroyWindow(window);
 
-    ImGui::DestroyContext();
+    //ImGui::DestroyContext();
     
     return EXIT_SUCCESS;
 } 

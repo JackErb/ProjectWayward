@@ -12,10 +12,17 @@
 #include <string>
 #include <iostream>
 
+#if defined(__APPLE__)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2_image/SDL_image.h>
+#else
+#include "SDL.h"
+#include "SDL_render.h"
+#include "SDL_surface.h"
+#include "SDL_image.h"
+#endif
 
 using std::cerr;
 using std::endl;
@@ -38,6 +45,7 @@ TextureV::TextureV(SDL_Renderer *rd, std::string path, float scale) {
         } else {
             width_ = img->w * scale;
             height_ = img->h * scale;
+			std::cout << "Loaded image " << path << std::endl;
         }
         SDL_FreeSurface(img);
     }

@@ -10,9 +10,15 @@
 #include <list>
 #include <math.h>
 
+#if defined(__APPLE)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2_image/SDL_image.h>
+#else
+#include "SDL.h"
+#include "SDL_render.h"
+#include "SDL_image.h"
+#endif
 
 #include "GameController.hpp"
 #include "PlayerInput.hpp"
