@@ -170,7 +170,7 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
         float dist = std::numeric_limits<float>::max();
         int i = 0;
         for (const VectorV &v : p2) {
-            float d = pow((dir2 * v.x)- (p1[0].x * dir1), 2) + pow(v.y - p1[0].y, 2);
+            float d = pow((dir2 * v.x) - (p1[0].x * dir1), 2) + pow(v.y - p1[0].y, 2);
             if (d < dist) {
                 dist = d;
                 vec = v;

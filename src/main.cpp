@@ -25,6 +25,7 @@
 #include "Game/GameController.hpp"
 #include "Game/PlayerInput.hpp"
 #include "Game/Loaders/ResourcePath.hpp"
+#include "Game/MathHelper.hpp"
 
 using std::list;
 using std::map;
@@ -109,7 +110,7 @@ int main(int, char**) {
     // Contains the state of the controller
     PlayerInput p1(1);
     PlayerInput p2(1);
-    
+        
     SDL_Event e;
 
     // Start the game loop
