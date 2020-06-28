@@ -12,7 +12,6 @@
 #include "Msl.hpp"
 #include "../Game/Loaders/MoveLoader.hpp"
 
-#include <unordered_map>
 #include <string>
 #include <vector>
 #include <utility>

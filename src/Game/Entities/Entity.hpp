@@ -19,7 +19,9 @@
 #include <string>
 #include <list>
 #include <set>
+#include <map>
 #include <unordered_map>
+#include <unordered_set>
 
 typedef std::vector<VectorV> PolygonV;
 class MslInterpreter;
@@ -117,7 +119,7 @@ public:
     
     void SetMoveScript(const std::string &move);
     
-    const std::unordered_map<int, std::list<HitboxData> >& Hitboxes() const { return data.activeHitboxes; }
+    const std::map<int, std::list<HitboxData> >& Hitboxes() const { return data.activeHitboxes; }
     
     bool IgnoreHit(int id, int pid) {
         auto r = data.ignoreHits.find(id);
@@ -198,8 +200,8 @@ protected:
         TextureV* texture_;
         
         std::string move;
-        std::unordered_map<int, std::list<HitboxData> > activeHitboxes;
-        std::unordered_map<int, std::set<int> > ignoreHits;
+        std::map<int, std::list<HitboxData> > activeHitboxes;
+        std::unordered_map<int, std::unordered_set<int> > ignoreHits;
         
         int dir_ = 1;
         int frame_ = 0;
