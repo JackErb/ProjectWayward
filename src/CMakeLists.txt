@@ -19,7 +19,7 @@ if (APPLE)
 		"/Library/Frameworks/SDL2_image.framework"
 		"/Library/Frameworks/sfml-network.framework"
 		"/Library/Frameworks/sfml-system.framework"
-		imgui
+	#	imgui
 	)
 else()
 	#find_library(SDL SDL2 PATHS "C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/")

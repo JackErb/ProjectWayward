@@ -10,7 +10,7 @@
 #include <list>
 #include <math.h>
 
-#if defined(__APPLE)
+#if defined(__APPLE__)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2_image/SDL_image.h>
