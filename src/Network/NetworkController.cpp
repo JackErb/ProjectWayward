@@ -165,8 +165,8 @@ void NetworkController::CheckForRemoteInput() {
         packet >> data.xaxis >> data.yaxis >> data.buttonlen;
         
         PlayerInput input(-1);
-        input.stick.xAxis = data.xaxis;
-        input.stick.yAxis = data.yaxis;
+        input.stick.x = data.xaxis;
+        input.stick.y = data.yaxis;
         for (int i = 0; i < data.buttonlen; i++) {
             int button, state;
             packet >> button >> state;
@@ -221,7 +221,7 @@ void NetworkController::SendPlayerInput(const PlayerInput &input) {
         InputData data = inputData_[j];
         
         // Build and send the input data
-        InputPacket idata = {data.frame, nextRemoteFrame_, data.player.stick.xAxis, data.player.stick.yAxis, static_cast<int>(data.player.buttons.size())};
+        InputPacket idata = {data.frame, nextRemoteFrame_, data.player.stick.x.f(), data.player.stick.y.f(), static_cast<int>(data.player.buttons.size())};
         
         sf::Packet packet;
         packet << "Packet" << idata.frame << idata.nframe << idata.xaxis << idata.yaxis << idata.buttonlen;

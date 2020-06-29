@@ -26,6 +26,7 @@
 #include "Game/PlayerInput.hpp"
 #include "Game/Loaders/ResourcePath.hpp"
 #include "Game/MathHelper.hpp"
+#include "test/Tests.hpp"
 
 using std::list;
 using std::map;
@@ -34,8 +35,8 @@ using std::cerr;
 using std::endl;
 using namespace std::chrono;
 
-#define WIDTH 1400
-#define HEIGHT 1100
+#define WIDTH 1200
+#define HEIGHT 1000
 
 bool initSdl(SDL_Window **w, SDL_Renderer **rd) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) {
@@ -92,6 +93,8 @@ int main(int, char**) {
     
     SDL_Renderer *rd;
     SDL_Window *window;
+
+	cout << "Starting SDL" << endl;
     
     if (!initSdl(&window, &rd)) {
         return EXIT_FAILURE;
@@ -101,10 +104,14 @@ int main(int, char**) {
         return EXIT_FAILURE;
     }
     ImGuiIO& io = ImGui::GetIO();*/
+
+	TestFpoats();
     
     MoveLoader::LoadMoves();
     
+	cout << "Game controlller start" << endl;
     GameController controller(rd, WIDTH, HEIGHT);
+	cout << "Game controller end" << endl;
     NetworkController *n = &controller.network_;
     
     // Contains the state of the controller
@@ -112,6 +119,8 @@ int main(int, char**) {
     PlayerInput p2(1);
         
     SDL_Event e;
+
+	cout << "Starting loop" << endl;
 
     // Start the game loop
     while (!quit) {
@@ -158,9 +167,9 @@ int main(int, char**) {
         /* ************************** */
         if (!pause && n->dropFrames_ == 0) {
             if (!n->PauseAndWait) {
-                controller.PreTick();
-                controller.ProcessInput(p1, p2);
-                controller.Tick();
+                //controller.PreTick();
+                //controller.ProcessInput(p1, p2);
+                //controller.Tick();
             } else {
                 n->CheckForRemoteInput();
                 cout << "Waiting for remote input..." << endl;
@@ -197,12 +206,6 @@ int main(int, char**) {
             now = high_resolution_clock::now();
         }
         
-		now = high_resolution_clock::now();
-        while (duration_cast<microseconds>(now - start).count() < 16500) {
-            std::this_thread::sleep_for(microseconds(0));
-            now = high_resolution_clock::now();
-        }
-        
         while (duration_cast<microseconds>(now - start).count() < 16666) {
             now = high_resolution_clock::now();
         }
@@ -211,8 +214,8 @@ int main(int, char**) {
         i++;
         
         if (i == 100) {
-            cout << "Avg frame time: " << count / i << endl;
-            cout << "Avg subframe time: " << subFrameCount / i << endl;
+            //cout << "Avg frame time: " << count / i << endl;
+            //cout << "Avg subframe time: " << subFrameCount / i << endl;
             count = subFrameCount = i = 0;
         }
     }

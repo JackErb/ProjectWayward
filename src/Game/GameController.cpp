@@ -34,32 +34,40 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, {0.f, -500.f}), remotePlayer_(5, {0.f, -500.f}), camera_(&engine_.entities_, w, h) {
-    player_.polygons = {
-        {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
-        {{40.f, -75.f}, {57.f, 0.f}}
+GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, { fpoat(0), fpoat(500,0,true) }),
+		remotePlayer_(5, { fpoat(0), fpoat(500,0,true) }), camera_(&engine_.entities_, w, h) {
+	cout << "HERE!!!!" << endl;
+	player_.polygons = {
+        {{fpoat(40,0,true), fpoat(120,0)}, {fpoat(75,0), fpoat(120,0)},
+		 {fpoat(75,0), fpoat(60,0,true)}, {fpoat(40,0,true), fpoat(60,0,true)}},
+        {{fpoat(40,0), fpoat(75,0,true)}, {fpoat(57,0), fpoat(0)}}
     };
     AnimMap res = SpriteLoader::LoadAnimations(rd, {{"dash", 10}}, 0.1515);
     player_.SetAnimMap(res);
     player_.SetTexture(res["dash"][0]);
 
     remotePlayer_.polygons = {
-        {{-40.f, 120.f}, {75.f, 120.f}, {75.f, -60.f}, {-40.f, -60.f}},
-        {{40.f, -75.f}, {57.f, 0.f}}
-    };
+		{{fpoat(40,0,true), fpoat(120,0)}, {fpoat(75,0), fpoat(120,0)},
+		 {fpoat(75,0), fpoat(60,0,true)}, {fpoat(40,0,true), fpoat(60,0,true)}},
+		{{fpoat(40,0), fpoat(75,0,true)}, {fpoat(57,0), fpoat(0)}}
+	};
     AnimMap res2 = SpriteLoader::LoadAnimations(rd, {{"dash", 10}}, 0.1515);
     remotePlayer_.SetAnimMap(res2);
     remotePlayer_.SetTexture(res2["dash"][0]);
     
-    StageEntity *stage = new StageEntity(1, {0.f, 800.f});
+    StageEntity *stage = new StageEntity(1, {fpoat(0), fpoat(800,0)});
     stage->polygons = {
-        {{-1200.f, -500.f}, {1200.f, -500.f}, {1200.f, 500.f}, {-1200.f, 500.f}}
+		{{fpoat(1200,0,true),fpoat(500,0,true)}, {fpoat(1200,0),fpoat(500,0,true)},
+		 {fpoat(1200,0),fpoat(500,0)}, {fpoat(1200,0,true),fpoat(500,0)}}
     };
     stage->isStatic = true;
     stage->SetTexture(SpriteLoader::LoadTexture(rd, "stage"));
     
-    PlatformEntity *platform = new PlatformEntity(3, {0.f, -60.f});
-    platform->polygons = {{{-300.f, -10.f}, {300.f, -10.f}, {300.f, 10.f}, {-300.f, 10.f}}};
+    PlatformEntity *platform = new PlatformEntity(3, {fpoat(0), fpoat(60,0,true)});
+	platform->polygons = {
+		{{fpoat(300,0,true),fpoat(10,0,true)}, {fpoat(300,0),fpoat(10,0,true)},
+		 {fpoat(300,0),fpoat(10,0)}, {fpoat(-300,0,true),fpoat(10,0)}}
+	};
     platform->isStatic = true;
     platform->SetTexture(SpriteLoader::LoadTexture(rd, "platform"));
                   
@@ -73,8 +81,8 @@ void GameController::PreTick(bool rb) {
     if (!rb && network_.IsConnected()) {
         network_.PreTick();
         if (network_.frame_ == 0) {
-            player_.SetPosition({0.f, 0});
-            remotePlayer_.SetPosition({0.f,0});
+            player_.SetPosition({fpoat(0), fpoat(0)});
+            remotePlayer_.SetPosition({fpoat(0),fpoat(0)});
             RollbackTick();
         } else {
             RollbackAndReplay();

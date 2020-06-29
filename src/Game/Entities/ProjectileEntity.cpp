@@ -11,7 +11,7 @@
 
 #include <string>
 
-void ProjectileEntity::init(std::string move) {
+void ProjectileEntity::init(const std::string& move) {
     // TODO: Deal with texture
     SetMoveScript(move);
     SetTexture(SpriteLoader::anims["rocket"][0]);
@@ -27,7 +27,7 @@ void ProjectileEntity::Tick() {
     ApplyVelocity();
 }
 
-void ProjectileEntity::HandleCollision(const Entity &e1, VectorV pv) {
+void ProjectileEntity::HandleCollision(const Entity &e1, const VectorV &pv) {
     
 }
 

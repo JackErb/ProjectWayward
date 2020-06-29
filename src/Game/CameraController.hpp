@@ -19,6 +19,10 @@ using std::vector;
 class Entity;
 struct SDL_Renderer;
 
+typedef struct VectorFloat {
+	float x, y;
+} VectorFloat;
+
 class CameraController {
 public:
 	bool drawHitboxes = true;
@@ -44,9 +48,9 @@ public:
     float scale = 0.6f;
 
 private:
-    VectorV windowOffset_;
-    VectorV cameraOffset_;
-    VectorV cameraOffsetFinal_;
+	VectorFloat windowOffset_;
+	VectorFloat cameraOffset_;
+	VectorFloat cameraOffsetFinal_;
     const float cameraOffsetSpeed = 40;
     vector<Entity*>* entities_;
 };

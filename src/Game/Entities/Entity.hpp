@@ -29,8 +29,8 @@ class TextureV;
 
 /* Represents a bounding box of an entity w/ top left corner (x,y) */
 typedef struct Rectangle {
-	Rectangle(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
-	float x, y, w, h;
+	Rectangle(fpoat x, fpoat y, fpoat w, fpoat h) : x(x), y(y), w(w), h(h) {}
+	fpoat x, y, w, h;
 } RectangleV;
 
 typedef enum EntityType {
@@ -41,11 +41,11 @@ class PhysicsEngine;
 
 class Entity {
 public:
-    Entity(int id, VectorV pos);
+    Entity(int id, const VectorV& pos);
     virtual ~Entity();
 
 	/* Game Processing Functions */
-	virtual void HandleCollision(const Entity& entity, VectorV pv) = 0;
+	virtual void HandleCollision(const Entity& entity, const VectorV& pv) = 0;
 	virtual bool HandleHit(const Entity* e, int f, const HitboxData& hd) = 0;
 	virtual void Tick() = 0;
 
@@ -61,33 +61,33 @@ public:
 	virtual EntityType Type() const = 0;
 
 	RectangleV BoundingBox() const {
-		float px = data.position_.x;
-		float py = data.position_.y;
+		fpoat px = data.position_.x;
+		fpoat py = data.position_.y;
 
 		if (polygons.size() == 0) return RectangleV(px, py, 0, 0);
 
-		float min_x = (std::numeric_limits<float>::max)();
-		float max_x = (std::numeric_limits<float>::min)();
-		float min_y = min_x;
-		float max_y = max_x;
+		fpoat min_x = FixedPoint::MAX;
+		fpoat max_x = FixedPoint::MIN;
+		fpoat min_y = min_x;
+		fpoat max_y = max_x;
         
         int d = Direction();
 		for (const PolygonV& p : polygons) {
 			if (p.size() == 2) {
 				// p is a circle
-				float r = p[1].x + 0.1f;
+				fpoat r = p[1].x;
 				VectorV corner = VectorV(d * p[0].x - r, p[0].y - r);
-				min_x = fmin(min_x, fmin(corner.x, corner.x + r * 2));
-				max_x = fmax(max_x, fmax(corner.x, corner.x + r * 2));
-				min_y = fmin(min_y, fmin(corner.y, corner.y + r * 2));
-				max_y = fmax(max_y, fmax(corner.y, corner.y + r * 2));
+				min_x = fpmin(min_x, fpmin(corner.x, corner.x + r * 2));
+				max_x = fpmax(max_x, fpmax(corner.x, corner.x + r * 2));
+				min_y = fpmin(min_y, fpmin(corner.y, corner.y + r * 2));
+				max_y = fpmax(max_y, fpmax(corner.y, corner.y + r * 2));
 			}
 			else {
 				for (const VectorV& v : p) {
-                    min_x = fmin(min_x, d * v.x);
-					max_x = fmax(max_x, d * v.x);
-					min_y = fmin(min_y, v.y);
-					max_y = fmax(max_y, v.y);
+                    min_x = fpmin(min_x, d * v.x);
+					max_x = fpmax(max_x, d * v.x);
+					min_y = fpmin(min_y, v.y);
+					max_y = fpmax(max_y, v.y);
 				}
 			}
 		}
@@ -101,7 +101,7 @@ public:
 	void SetPosition(VectorV pos) { data.position_ = pos; }
     VectorV Position() const { return data.position_; }
     
-    void SetVelocity(float x, float y) { SetVelocity({x,y}); }
+    void SetVelocity(fpoat x, fpoat y) { SetVelocity({x,y}); }
     void SetVelocity(VectorV v) { data.velocity_ = v; }
     VectorV Velocity() { return data.velocity_; }
     void NullVelocityX() { data.velocity_.x = 0; }

@@ -12,7 +12,7 @@
 
 class HitstunState: public AirborneState {
 public:
-    HitstunState(Character *ch, float angle, float kb) : AirborneState(ch) {
+    HitstunState(Character *ch, fpoat angle, fpoat kb) : AirborneState(ch) {
         init(angle, kb);
     }
     HitstunState(Character *ch, bool rb) : AirborneState(ch) {}
@@ -27,7 +27,7 @@ public:
     }
     
 private:
-    void init(float angle, float kb);
+    void init(fpoat angle, fpoat kb);
     
 };
 

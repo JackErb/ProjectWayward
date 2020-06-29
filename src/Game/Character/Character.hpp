@@ -32,24 +32,24 @@ class MslInterpreter;
 class Character : public Entity {
 public:
     typedef struct CharacterAttributes {
-        float GroundAccel = 2.5f;
-        float MaxGroundSpeed = 30.f;
-        float GroundFriction = 0.87f;
+        fpoat GroundAccel = fpoat(0,2500);
+		fpoat MaxGroundSpeed = fpoat(30,0);
+		fpoat GroundFriction = fpoat(0,8700);
            
-        float AirAccel = 3.5f;
-        float MaxAirSpeed = 38.f;
-        float AirFriction = 0.91f;
+		fpoat AirAccel = fpoat(3,5000);
+		fpoat MaxAirSpeed = fpoat(38,0);
+		fpoat AirFriction = fpoat(0,9100);
            
-        float Gravity = 3.4f;
-        float MaxFallSpeed = 40.f;
-        float FastFallSpeed = 70.f;
+		fpoat Gravity = fpoat(3,4000);
+		fpoat MaxFallSpeed = fpoat(40,0);
+		fpoat FastFallSpeed = fpoat(70,0);
         
-        float DoubleJump = -65.f;
-        float WallJump = -60.f;
-        float FullhopJump = -63.f;
-        float ShorthopJump = -50.f;
+		fpoat DoubleJump = fpoat(65,0,true);
+		fpoat WallJump = fpoat(60,0,true);
+		fpoat FullhopJump = fpoat(63,0,true);
+		fpoat ShorthopJump = fpoat(40,0,true);
         
-        float AirdodgeVelocity = 60.f;
+		fpoat AirdodgeVelocity = fpoat(60,0);
     } Attributes;
     
     typedef struct GroundedData {
@@ -64,7 +64,7 @@ public:
     } AirborneData;
     
 public:
-    Character(int id, VectorV position);
+    Character(int id, const VectorV &position);
     ~Character();
     
     /* Setup */
@@ -80,13 +80,13 @@ public:
     int Jumps() const { return data.airborneData.jumps; }
     bool IsFastFalling() const  { return data.airborneData.fastfall; }
     bool HasAirdodge() const { return data.airborneData.airdodge; }
-    float Percent() const { return data.percent_; }
+    fpoat Percent() const { return data.percent_; }
     
     
     /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
-    void HandleCollision(const Entity &entity, VectorV pv) override;
+    void HandleCollision(const Entity &entity, const VectorV &pv) override;
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
     
     void RollbackTick() override;
@@ -97,21 +97,23 @@ public:
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
     void FastFall();
-    void Knockback(float angle, float kb) {
-        SetVelocity(cos(angle) * kb, sin(angle) * kb);
+    void Knockback(fpoat angle, fpoat kb) {
+        SetVelocity(fpcos(angle) * kb, fpsin(angle) * kb);
     }
-    void Dash(float m);
-    void Vector(float v = 1.f);
-    void ApplyGravity(float m = 1.f);
+    void Dash(fpoat m);
+    void Vector(fpoat v = 1.f);
+    void ApplyGravity(fpoat m = fpoat(1,0));
     void ApplyFriction();
     void FallthroughPlatform();
     void WallJump(int dir);
     void Airdodge();
-    void UpB() { SetVelocity(Velocity().x, -120.f); }
     void Turnaround() { SetDirection(Direction() * -1); }
     void SetStage(const StageEntity *s) { data.groundedData.stage = s; }
     void Airborne() { initAirborneData(); }
-    void Respawn() { SetPosition({0.f, -800.f}); data.percent_ = 0.f; SetVelocity(0.f, 0.f); }
+    void Respawn() { 
+		SetPosition({FixedPoint::ZERO, fpoat(800,0,true)});
+		data.percent_ = 0.f; SetVelocity(FixedPoint::ZERO, FixedPoint::ZERO);
+	}
     
 private:
     void initAirborneData() {
@@ -137,7 +139,7 @@ private:
         int fallthrough_ = -1;
         int ftCount_ = 0;
         
-        float percent_ = 0.f;
+        fpoat percent_ = fpoat(0);
         
         union {
             GroundedData groundedData;
@@ -145,7 +147,7 @@ private:
         };
     } GameData;
     
-    // Pointer to the current game data state.
+    // Current game data state.
     GameData data;
     GameData rollback_;
     

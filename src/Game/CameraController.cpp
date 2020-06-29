@@ -34,10 +34,6 @@ void CameraController::Tick() {
     TransformCamera(0, 0);
 
     for (Entity* e : *entities_) {
-        // Calculate the sprite's absolute position in the window
-        VectorV pos = e->Position();
-        pos = (pos + cameraOffset_) * scale + windowOffset_;
-
         if (e->Type() == CHARACTER) {
             if (e->Position().x > windowOffset_.x * 0.75f) {
                 TransformCamera(-500, 0);
@@ -53,7 +49,11 @@ void CameraController::Tick() {
 void CameraController::Render(SDL_Renderer* rd) {
     SDL_RenderSetScale(rd, scale, scale);
     for (Entity* e : *entities_) {
-        VectorV pos = ((e->Position() + cameraOffset_) * scale + windowOffset_) / scale;
+		VectorFloat pos = { ((e->Position().x.f() + cameraOffset_.x) * scale + windowOffset_.x),
+							((e->Position().y.f() + cameraOffset_.y) * scale + windowOffset_.y)};
+		pos.x /= scale;
+		pos.y /= scale;
+
         bool flip = e->Direction() == -1;
         e->Texture()->render(rd, pos.x, pos.y, flip);
 

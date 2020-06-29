@@ -16,19 +16,19 @@ class MslInterpreter;
 
 class ProjectileEntity: public Entity {
 public:
-    ProjectileEntity(std::string script, int id, VectorV pos) : Entity(id, pos) {
+    ProjectileEntity(const std::string &script, int id, const VectorV &pos) : Entity(id, pos) {
         init(script);
     }
     
     void Tick() override;
-    void HandleCollision(const Entity &e1, VectorV pv) override;
+    void HandleCollision(const Entity &e1, const VectorV& pv) override;
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
     
     void RollbackTick() override { Entity::RollbackTick(); }
     EntityType Type() const override { return PROJECTILE; }
     
 private:
-    void init(std::string script);
+    void init(const std::string &script);
 };
 
 #endif /* ProjectileEntity_hpp */

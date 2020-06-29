@@ -9,10 +9,10 @@
 #include "HitstunState.hpp"
 #include "../../Character.hpp"
 
-void HitlagState::init(int f, float angle, float basekb, float kbscale) {
+void HitlagState::init(int f, fpoat angle, fpoat basekb, fpoat kbscale) {
     // Save knockback & angle
     data.angle_ = angle;
-    data.kb_ = basekb + kbscale * (character_->Percent() / 100.f);
+    data.kb_ = basekb + kbscale * (character_->Percent() * fpoat(0,1000));
     
     // Calculate hitlag length
     data.frame_ = f;

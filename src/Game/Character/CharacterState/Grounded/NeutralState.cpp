@@ -52,8 +52,8 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    float hyp = input.stick.hyp();
-    if (hyp >= PlayerInput::DEAD_ZONE) {
+    fpoat hyp = input.stick.hyp();
+    if (hyp >= StickDZ::DEADZONE) {
         if (input.stick.inDirection(DOWN_T) &&
             character_->Stage()->Type() == EntityType::PLATFORM) {
             // Fall through platform

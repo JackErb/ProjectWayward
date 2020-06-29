@@ -15,7 +15,7 @@
 
 using std::string;
 
-Entity::Entity(int id, VectorV pos) : id(id) {
+Entity::Entity(int id, const VectorV &pos) : id(id) {
     data.position_ = pos;
     
     mslIntp = new MslInterpreter();
@@ -42,10 +42,10 @@ void Entity::initMslBindings() {
     
     mslIntp->bindings_["Hitbox_Knockback"] = [=]() {
         int id = mslIntp->getIntParam(0);
-        float angle = mslIntp->getIntParam(1);
+        int angle = mslIntp->getIntParam(1);
         string script = mslIntp->script;
         
-        hitboxes[script][id].back().angle = (360 - (float)angle) * PI / 180.f;
+        hitboxes[script][id].back().angle = (360 - angle) * FixedPoint::PI / fpoat(180,0);
         hitboxes[script][id].back().basekb = mslIntp->getFloatParam(2);
         hitboxes[script][id].back().kbscale = mslIntp->getFloatParam(3);
     };

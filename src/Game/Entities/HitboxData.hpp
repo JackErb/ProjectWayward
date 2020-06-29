@@ -20,11 +20,11 @@ struct HitboxData {
     // The polygons of the hitbox, relative to to the player
     PolygonV hitbox;
     
-    float dmg;
-    float angle; // [0, 2pi]
-    float basekb;
-    float kbscale;
-    bool reverse = false;
+    fpoat dmg;
+	fpoat angle; // [0, 2pi]
+	fpoat basekb;
+	fpoat kbscale;
+	bool reverse = false;
     
     friend bool operator== (const HitboxData& p1, const HitboxData& p2);
     friend bool operator< (const HitboxData& p1, const HitboxData& p2);

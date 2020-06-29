@@ -9,9 +9,9 @@
 #include "AirborneNeutralState.hpp"
 #include "../../Character.hpp"
 
-void HitstunState::init(float angle, float kb) {
+void HitstunState::init(fpoat angle, fpoat kb) {
     character_->Knockback(angle, kb);
-    data.frame_ = kb * 0.4;
+    data.frame_ = (kb * fpoat(0,4000)).i();
 }
 
 void HitstunState::ProcessInput(const PlayerInput& input) {

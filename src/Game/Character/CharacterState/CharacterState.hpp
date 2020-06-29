@@ -41,9 +41,9 @@ protected:
     typedef struct CharacterStateData {
         int frame_;
         int type_;
-        float dirInfluence_;
+        fpoat dirInfluence_;
         bool b1;
-        float angle_, kb_;
+		fpoat angle_, kb_;
         
     } GameData;
     CharacterStateData data;

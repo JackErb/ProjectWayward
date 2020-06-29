@@ -29,8 +29,8 @@ pair<bool, VectorV>
 
 bool PhysicsEngine::Intersects(const Entity &e1, const Entity &e2) {
     Rectangle b1 = e1.BoundingBox(), b2 = e2.BoundingBox();
-    if (b1.x >= b2.x + b2.w || b2.x >= b1.x + b1.w) return false;
-    if (b1.y >= b2.y + b2.h || b2.y >= b1.y + b1.h) return false;
+    if (b1.x > b2.x + b2.w || b2.x > b1.x + b1.w) return false;
+    if (b1.y > b2.y + b2.h || b2.y > b1.y + b1.h) return false;
     return true;
 }
 
@@ -78,7 +78,7 @@ void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
                 auto res = checkCollision(h1.hitbox, e1->Position(), e1->Direction(),
                                           p2, e2->Position(), e2->Direction());
                 if (res.first) {
-                    int f = h1.dmg * 0.4;
+                    int f = (h1.dmg * fpoat(0,4000)).i();
                     bool r = e2->HandleHit(e1, f, h1);
                     if (r) {
                         e1->AddIgnoreHit(e2->id, h1.id);
@@ -113,8 +113,11 @@ pair<bool, VectorV>
         // They are both circles
         VectorV c1 = VectorV(dir1 * p1[0].x, p1[0].y) + pos1;
         VectorV c2 = VectorV(dir2 * p2[0].x, p2[0].y) + pos2;
-        float dist = pow(c2.x - c1.x, 2) + pow(c2.y - c1.y, 2);
-        float rad = p1[1].x + p2[1].x;
+
+		fpoat xx = c2.x - c1.x;
+		fpoat yy = c2.y - c1.y;
+		fpoat dist = xx * xx + yy * yy;
+		fpoat rad = p1[1].x + p2[1].x;
         // TODO: Calculate push vec
         if (dist < rad * rad) {
             return {true, {0,0}};
@@ -150,8 +153,8 @@ pair<bool, VectorV>
     VectorV displacement = (geometric_center(p2) + pos2) -
       (geometric_center(p1) + pos1);
     if (dot(displacement, min_pv) > 0) {
-        min_pv.x *= -1;
-        min_pv.y *= -1;
+		min_pv.x.sign = !min_pv.x.sign;
+        min_pv.y.sign = !min_pv.y.sign;
     }
     
     return make_pair(true, min_pv);
@@ -167,10 +170,12 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
         
         // The closest point in p2 to p1
         VectorV vec;
-        float dist = std::numeric_limits<float>::max();
+		fpoat dist = fpoat::MAX;
         int i = 0;
         for (const VectorV &v : p2) {
-            float d = pow((dir2 * v.x) - (p1[0].x * dir1), 2) + pow(v.y - p1[0].y, 2);
+			fpoat xx = dir2 * v.x - dir1 * p1[0].x;
+			fpoat yy = v.y - p1[0].y;
+			fpoat d = xx * xx + yy * yy;
             if (d < dist) {
                 dist = d;
                 vec = v;
@@ -184,9 +189,9 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
         // Get the edge vectors
         for (int i = 0; i < n; i++) {
             VectorV pp1 = p1[(i+1) % n];
-            pp1.x *= dir1;
+            pp1.x = pp1.x * dir1;
             VectorV pp2 = p1[i];
-            pp2.x *= dir1;
+            pp2.x = pp2.x * dir1;
             res.push_back(pp1 - pp2);
         }
     }
@@ -195,15 +200,15 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
     long n2 = p2.size();
     for (int i = 0; i < n2; i++) {
         VectorV pp1 = p2[(i+1) % n];
-        pp1.x *= dir2;
+        pp1.x = pp1.x * dir2;
         VectorV pp2 = p2[i];
-        pp2.x *= dir2;
+        pp2.x = pp2.x * dir2;
         res.push_back(pp1 - pp2);
     }
     
     // Calculate their orthogonal
     for (int i = 0; i < res.size(); i++) {
-        float x = res[i].x, y = res[i].y;
+        fpoat x = res[i].x, y = res[i].y;
         res[i].x = -y;
         res[i].y = x;
     }
@@ -218,33 +223,33 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
 pair<bool, VectorV> is_separating_axis(const VectorV &axis,
                                             const PolygonV &p1, const VectorV &pos1, int dir1,
                                             const PolygonV &p2, const VectorV &pos2, int dir2) {
-    float min1 = std::numeric_limits<float>::max(),
-          max1 = std::numeric_limits<float>::min(),
+    fpoat min1 = FixedPoint::MAX,
+          max1 = FixedPoint::MIN,
           min2 = min1,
           max2 = max1;
         
     if (p1.size() == 2) {
         // p1 is a circle
-        float proj = dot(axis, VectorV(dir1 * p1[0].x, p1[0].y) + pos1);
+        fpoat proj = dot(axis, VectorV(dir1 * p1[0].x, p1[0].y) + pos1);
         min1 = proj - p1[1].x;
         max1 = proj + p1[1].x;
     } else {
         for (const VectorV &vert : p1) {
-            float proj = dot(axis, VectorV(dir1 * vert.x, vert.y) + pos1);
+            fpoat proj = dot(axis, VectorV(dir1 * vert.x, vert.y) + pos1);
             min1 = min(proj, min1);
             max1 = max(proj, max1);
         }
     }
 
     for (const VectorV &vert : p2) {
-        float proj = dot(axis, VectorV(dir2 * vert.x, vert.y) + pos2);
-        min2 = min(proj, min2);
-        max2 = max(proj, max2);
+        fpoat proj = dot(axis, VectorV(dir2 * vert.x, vert.y) + pos2);
+        min2 = fpmin(proj, min2);
+        max2 = fpmax(proj, max2);
     }
     
     if (max1 >= min2 && max2 >= min1) {
         // Calculate push vector
-        float d = min(max2 - min1, max1 - min2);
+        fpoat d = fpmin(max2 - min1, max1 - min2);
         VectorV push_vector(axis * (d / dot(axis, axis) + 1e-4f));
         return make_pair(false, push_vector);
     } else {

@@ -36,9 +36,9 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-Character::Character(int id, VectorV vec) : Entity(id, vec) {
+Character::Character(int id, const VectorV &vec) : Entity(id, vec) {
     initMslBindings();
-    mslIntp->Init({"UTILT", "UAIR", "NAIR", "FTILT", "DAIR", "JAB", "FAIR", "DTILT"});
+	mslIntp->Init({ "NAIR" });// {"UTILT", "UAIR", "NAIR", "FTILT", "DAIR", "JAB", "FAIR", "DTILT"});
     SetActionState(new AirborneNeutralState(this));
 }
 
@@ -107,7 +107,7 @@ void Character::Tick() {
     
     fill = false;
     // Teleport back above stage
-    if (Position().y > 1900 || Position().y < -2600 || abs(Position().x) > 3200) {
+    if (Position().y > 1900 || Position().y < -2600 || fpabs(Position().x) > 3200) {
         Respawn();
     }
     
@@ -183,7 +183,7 @@ void Character::Rollback() {
     actionState_->setData(data.actionStateData_);
 }
 
-void Character::HandleCollision(const Entity &entity, VectorV pv) {
+void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
     if (entity.id == data.fallthrough_) {
         return;
     }
@@ -198,9 +198,9 @@ void Character::HandleCollision(const Entity &entity, VectorV pv) {
     }
     
     if (actionState_->GetState() == AIRBORNE) {
-        float vy = Velocity().y;
+        fpoat vy = Velocity().y;
         if (entity.Type() == STAGE) {            
-            if (pv.x == 0 && pv.y < 0 && vy > 0) {
+            if (pv.x.n == 0 && pv.y < 0 && vy > 0) {
                 // Land on the stage
                 NullVelocityY();
                 actionState_->SwitchState(GROUNDED);
@@ -208,15 +208,15 @@ void Character::HandleCollision(const Entity &entity, VectorV pv) {
                 return;
             }
         } else if (entity.Type() == PLATFORM && !input_->stick.inDirection(DOWN)) {
-            if (pv.y <= 0) {
+            if (!pv.y.sign) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
                 Rectangle b = BoundingBox();
                 Rectangle s = entity.BoundingBox();
                 
                 bool vert_check = (b.y + b.h) - vy* 1.1f < s.y;
-                bool horiz_check = (b.x + b.w * 5.f / 8.f) > s.x && (b.x + b.w * 3.f / 8.f) < (s.x + s.w);
-                if (vy > 0 && vert_check && horiz_check) {
+                bool horiz_check = (b.x + b.w * fpoat(0,7000)) > s.x && (b.x + b.w * fpoat(0,3000)) < (s.x + s.w);
+				if (vy.sign && vert_check&& horiz_check) {
                     // Land on the platform
                     NullVelocityY();
                     // Apply the push vector to prevent overlap
@@ -234,20 +234,20 @@ void Character::HandleCollision(const Entity &entity, VectorV pv) {
 }
 
 bool Character::HandleHit(const Entity *e, int f, const HitboxData &hd) {
-    data.percent_ += hd.dmg;
+    data.percent_ = data.percent_ + hd.dmg;
     
     // Calculate angle
-    float angle = hd.angle;
+    fpoat angle = hd.angle;
     if (hd.reverse) {
         VectorV center = geometric_center(hd.hitbox);
-        center.x *= e->Direction();
+        center.x = center.x * e->Direction();
         center = center + e->Position();
         
         if (Position().x < center.x) {
-            angle -= PI / 2.f;
+            angle = angle - FixedPoint::PI * fpoat(0,5000);
         }
     } else {
-        if (e->Direction() == -1) angle = PI - angle;
+        if (e->Direction() == -1) angle = FixedPoint::PI - angle;
     }
     
     SetActionState(new HitlagState(this, f, angle, hd.basekb, hd.kbscale));

@@ -51,7 +51,7 @@ void AirborneNeutralState::Tick() {
 
 void AirborneNeutralState::HandleCollision(const Entity &entity, VectorV pv) {
     if (entity.Type() == STAGE) {
-        if (abs(pv.x) > 0 && pv.y == 0) {
+        if (pv.x.n != 0 && pv.y.n == 0) {
             if (pv.x < 0 && character_->input_->stick.inDirection(Direction::RIGHT_T)
                 && character_->input_->IsPressed(JUMP)) {
                 character_->WallJump(-1);

@@ -25,15 +25,15 @@ void DashState::init() {
 
 bool DashState::setDirInfluence() {
     const PlayerInput *in = character_->input_;
-    if (in->stickHyp() > PlayerInput::DEAD_ZONE) {
-        float old = data.dirInfluence_;
-        data.dirInfluence_ = clamp(in->stickX() / 1.f, -1.f, 1.f);
+    if (in->stick.hyp() > StickDZ::DEADZONE) {
+        fpoat old = data.dirInfluence_;
+		data.dirInfluence_ = in->stick.x;
         
-        if (sign(old) != sign(data.dirInfluence_)) {
+        if (old.sign != data.dirInfluence_.sign) {
             return false;
         }
     } else {
-        data.dirInfluence_ = 0.f;
+        data.dirInfluence_ = FixedPoint::ZERO;
     }
             
     return true;
@@ -71,7 +71,7 @@ void DashState::ProcessInput(const PlayerInput &input) {
         return;
     }
     
-    if (input.stick.hyp() < PlayerInput::DEAD_ZONE) {
+    if (input.stick.hyp() < StickDZ::DEADZONE) {
         character_->SetActionState(new NeutralState(character_));
         return;
     }
@@ -88,7 +88,7 @@ void DashState::Tick() {
     character_->SetTexture(character_->GetTexture("dash", (data.frame_ / 4) % 11));
     data.frame_++;
                           
-    if (abs(data.dirInfluence_) > 0.f) {
+    if (data.dirInfluence_.n == 0) {
         character_->Dash(data.dirInfluence_);
     }
     character_->ApplyVelocity();

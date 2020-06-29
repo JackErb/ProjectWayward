@@ -12,7 +12,7 @@
 
 class HitlagState: public AirborneState {
 public:
-    HitlagState(Character *ch, int f, float angle, float basekb, float kbscale) : AirborneState(ch) {
+    HitlagState(Character *ch, int f, fpoat angle, fpoat basekb, fpoat kbscale) : AirborneState(ch) {
         init(f, angle, basekb, kbscale);
     }
     HitlagState(Character *ch, bool rb) : AirborneState(ch) {}
@@ -27,7 +27,7 @@ public:
     }
     
 private:
-    void init(int f, float angle, float basekb, float kbscale);
+    void init(int f, fpoat angle, fpoat basekb, fpoat kbscale);
     
 };
 

@@ -11,6 +11,7 @@ endif()
 add_subdirectory(Game)
 add_subdirectory(MSL)
 add_subdirectory(Network)
+add_subdirectory(test)
 #add_subdirectory(imgui)
 
 if (APPLE)

@@ -27,6 +27,12 @@ typedef enum ButtonV {
     ATTACK, SPECIAL, JUMP, SHIELD, START
 } ButtonV;
 
+typedef struct StickDeadzones {
+public:
+	static fpoat DEADZONE;
+	static fpoat HIGHRING;
+} StickDZ;
+
 
 static std::vector<int> sdlButton();
 
@@ -39,22 +45,22 @@ public:
     } ButtonState;
     
     typedef struct StickState {
-        StickState() : xAxis(0), yAxis(0) {}
-        StickState(float x, float y) : xAxis(x), yAxis(y) {}
-        float xAxis;
-        float yAxis;
+        StickState() : x(0), y(0) {}
+        StickState(fpoat x, fpoat y) : x(x), y(y) {}
+        fpoat x;
+		fpoat y;
         
-        float hyp() const {
-            return sqrt(xAxis * xAxis + yAxis * yAxis);
+		fpoat hyp() const {
+            return fpsqrt(x * x + y * y);
         }
         
         /* In range [-pi, pi] */
-        float angle() const {
-            return atan2(-yAxis, xAxis);
+		fpoat angle() const {
+            return fpatan2(-y, x);
         }
         
-        bool inDirection(Direction dir, float deadZone = DEAD_ZONE) const {
-            if (hyp() < DEAD_ZONE) return false;
+        bool inDirection(Direction dir) const {
+            if (hyp() < StickDZ::DEADZONE) return false;
             return InDir(angle(), dir);
         }
     } StickState;
@@ -63,37 +69,38 @@ public:
         return a >= l && a <= h;
     }
     
-    static bool InDir(float a, Direction dir) {
-        float lo, hi;
+    static bool InDir(fpoat a, Direction dir) {
+        fpoat lo, hi;
+		fpoat PI = FixedPoint::PI;
+		fpoat PI_4TH = PI * fpoat(0, 2500);
+		fpoat THREE_PI_4TH = PI * fpoat(0, 7500);
+		fpoat PI_6TH = PI * fpoat(0, 1667);
         switch(dir) {
             case UP:
-                lo = PI / 4.f; hi = PI * 3.f / 4.f;
+                lo = PI_4TH; hi = THREE_PI_4TH;
                 break;
             case RIGHT:
-                lo = - PI / 4.f; hi = PI / 4.f;
+                lo = - PI_4TH; hi = PI_4TH;
                 break;
             case DOWN:
-                lo = - PI * 3.f / 4.f; hi = - PI / 4.f;
+                lo = - THREE_PI_4TH; hi = - PI_4TH;
                 break;
             case LEFT:
-                return a >= PI * 3.f / 4.f || a <= - PI * 3.f / 4.f;
+                return a >= THREE_PI_4TH || a <= - THREE_PI_4TH;
             case UP_T:
-                lo = PI / 3.f; hi = PI * 2.f / 3.f;
+                lo = fpoat(2,0) * PI_6TH; hi = fpoat(4,0) * PI_6TH;
                 break;
             case RIGHT_T:
-                lo = - PI / 6.f; hi = PI / 6.f;
+                lo = - PI_6TH; hi = PI_6TH;
                 break;
             case DOWN_T:
-                lo = - PI * 2.f / 3.f; hi = - PI * 1.f / 3.f;
+                lo = - fpoat(4,0) * PI_6TH; hi = - fpoat(2,0) * PI_6TH;
                 break;
             case LEFT_T:
-                return a >= PI * 5.f / 6.f || a <= - PI * 5.f / 6.f;
+				return a >= fpoat(5, 0) * PI_6TH || a <= -fpoat(5, 0) * PI_6TH;
         }
         return a >= lo && a <= hi;
-    }
-    
-    constexpr const static float DEAD_ZONE = 0.15f;
-    
+    }    
     const static ButtonV buttonNums[];
     
 public:
@@ -118,10 +125,6 @@ public:
         auto res = buttons.find(button);
         return res != buttons.end() && res->second == Released;
     }
-    
-    float stickHyp() const { return stick.hyp(); }
-    float stickX() const { return stick.xAxis; }
-    float stickY() const { return stick.yAxis; }
     
 public:
     // Contains all the buttons that are currently being pressed/held

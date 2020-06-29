@@ -20,6 +20,9 @@ using std::endl;
 
 const ButtonV PlayerInput::buttonNums[] = {ATTACK, SPECIAL, JUMP, SHIELD};
 
+fpoat StickDZ::DEADZONE = fpoat(0, 1500);
+fpoat StickDZ::HIGHRING = fpoat(50, 0);
+
 std::vector<int> sdlButton(ButtonV b) {
     switch (b) {
         case ATTACK: {
@@ -79,8 +82,10 @@ void PlayerInput::UpdateControllerState() {
 			return;
 		}     
         
-        stick.xAxis = (float)SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX) / 32767.f;
-        stick.yAxis = (float)SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY) / 32767.f;
+		int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
+		int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
+        stick.x = fpoat(abs(x) / 32767, 0, x < 0);
+        stick.y = fpoat(abs(y) / 32767, 0, y < 0);
         
         for (ButtonV b : buttonNums) {
             std::vector<int> sdl_buttons = sdlButton(b);
