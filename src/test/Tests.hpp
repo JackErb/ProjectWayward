@@ -2,6 +2,6 @@
 #ifndef Tests_h
 #define Tests_h
 
-bool TestFpoats();
+void TestFpoats();
 
 #endif  /* Tests_h */

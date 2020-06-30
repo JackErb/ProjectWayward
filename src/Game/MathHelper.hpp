@@ -21,10 +21,7 @@ public:
     static int BASE;
 	FixedPoint() : n(0), sign(false) {}
     FixedPoint(int fpint, int fpdec, bool s = false);
-    FixedPoint(int n, bool s = false) : n(n), sign(s) {
-		if (n != 0)
-		std::cout << "BUG " << n << std::endl;
-	}
+    FixedPoint(int n, bool s = false) : n(n), sign(s) {}
     
     long long n;
     bool sign;
