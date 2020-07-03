@@ -20,8 +20,8 @@ using std::endl;
 
 const ButtonV PlayerInput::buttonNums[] = {ATTACK, SPECIAL, JUMP, SHIELD};
 
-fpoat StickDZ::DEADZONE = fpoat(0, 1500);
-fpoat StickDZ::HIGHRING = fpoat(50, 0);
+fpoat StickDZ::DEADZONE = fpoat(0, 15);
+fpoat StickDZ::HIGHRING = fpoat(0, 7);
 
 std::vector<int> sdlButton(ButtonV b) {
     switch (b) {
@@ -83,9 +83,9 @@ void PlayerInput::UpdateControllerState() {
 		}     
         
 		int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
-		int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
-        stick.x = fpoat(abs(x) / 32767, 0, x < 0);
-        stick.y = fpoat(abs(y) / 32767, 0, y < 0);
+		int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
+		stick.x = FixedPoint::FromFloat((double)x / 32767.0);
+        stick.y = FixedPoint::FromFloat((double)y / 32767.0);
         
         for (ButtonV b : buttonNums) {
             std::vector<int> sdl_buttons = sdlButton(b);
@@ -104,6 +104,6 @@ void PlayerInput::UpdateControllerState() {
             }
         }
     } else {
-        //cout << "Controller not connected" << endl;
+        cout << "Controller not connected" << endl;
     }
 }

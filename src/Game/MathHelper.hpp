@@ -19,6 +19,10 @@ public:
 	static FixedPoint MIN;
 	static FixedPoint ZERO;
     static int BASE;
+	static int MULT;
+
+	static FixedPoint FromFloat(float f);
+
 	FixedPoint() : n(0), sign(false) {}
     FixedPoint(int fpint, int fpdec, bool s = false);
     FixedPoint(int n, bool s = false) : n(n), sign(s) {}
@@ -58,7 +62,7 @@ VectorV unit_vec(VectorV v);
 
 fpoat dot(const VectorV &v1, const VectorV &v2);
 
-VectorV geometric_center(const PolygonV &p);
+VectorV geometric_center(const PolygonV &p, int dir = 1);
 
 VectorV operator+(const VectorV &v1, const VectorV &v2);
 VectorV operator-(const VectorV &v1, const VectorV &v2);

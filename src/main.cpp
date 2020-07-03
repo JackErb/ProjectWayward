@@ -115,7 +115,7 @@ int main(int, char**) {
     NetworkController *n = &controller.network_;
     
     // Contains the state of the controller
-    PlayerInput p1(1);
+    PlayerInput p1(0);
     PlayerInput p2(1);
         
     SDL_Event e;
@@ -167,9 +167,9 @@ int main(int, char**) {
         /* ************************** */
         if (!pause && n->dropFrames_ == 0) {
             if (!n->PauseAndWait) {
-                //controller.PreTick();
-                //controller.ProcessInput(p1, p2);
-                //controller.Tick();
+                controller.PreTick();
+                controller.ProcessInput(p1, p2);
+                controller.Tick();
             } else {
                 n->CheckForRemoteInput();
                 cout << "Waiting for remote input..." << endl;
@@ -214,8 +214,8 @@ int main(int, char**) {
         i++;
         
         if (i == 100) {
-            //cout << "Avg frame time: " << count / i << endl;
-            //cout << "Avg subframe time: " << subFrameCount / i << endl;
+            cout << "Avg frame time: " << count / i << endl;
+            cout << "Avg subframe time: " << subFrameCount / i << endl;
             count = subFrameCount = i = 0;
         }
     }

@@ -111,8 +111,13 @@ pair<bool, VectorV>
     // Separating Axis Theorem
     if (p1.size() == 2 && p2.size() == 2) {
         // They are both circles
-        VectorV c1 = VectorV(dir1 * p1[0].x, p1[0].y) + pos1;
-        VectorV c2 = VectorV(dir2 * p2[0].x, p2[0].y) + pos2;
+		fpoat x1 = p1[0].x;
+		if (dir1 == -1) x1.sign = !x1.sign;
+		fpoat x2 = p2[0].x;
+		if (dir2 == -1) x2.sign = !x2.sign;
+
+        VectorV c1 = VectorV(x1, p1[0].y) + pos1;
+        VectorV c2 = VectorV(x2, p2[0].y) + pos2;
 
 		fpoat xx = c2.x - c1.x;
 		fpoat yy = c2.y - c1.y;
@@ -142,7 +147,8 @@ pair<bool, VectorV>
             push_vectors.push_back(res.second);
         }
     }
-    
+	cout << "Collision!" << endl;
+
     VectorV min_pv = push_vectors[0];
     for (int i = 1; i < push_vectors.size(); i++) {
         VectorV pv = push_vectors[i];
@@ -150,8 +156,8 @@ pair<bool, VectorV>
     }
     
     // Check that the push vector is pointing the right direction
-    VectorV displacement = (geometric_center(p2) + pos2) -
-      (geometric_center(p1) + pos1);
+    VectorV displacement = (geometric_center(p2, dir2) + pos2) -
+      (geometric_center(p1, dir1) + pos1);
     if (dot(displacement, min_pv) > 0) {
 		min_pv.x.sign = !min_pv.x.sign;
         min_pv.y.sign = !min_pv.y.sign;
@@ -164,16 +170,21 @@ pair<bool, VectorV>
 vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2, int dir2) {
     vector<VectorV> res;
     
-    size_t n = p1.size();
+    int n = p1.size();
     if (n == 2) {
         // p1 is a circle
         
         // The closest point in p2 to p1
+		fpoat x1 = p1[0].x;
+		if (dir1 == -1) x1.sign = !x1.sign;
+
         VectorV vec;
 		fpoat dist = fpoat::MAX;
         int i = 0;
-        for (const VectorV &v : p2) {
-			fpoat xx = dir2 * v.x - dir1 * p1[0].x;
+        for (VectorV v : p2) {
+			if (dir2 == -1) v.x.sign = !v.x.sign;
+
+			fpoat xx = v.x - x1;
 			fpoat yy = v.y - p1[0].y;
 			fpoat d = xx * xx + yy * yy;
             if (d < dist) {
@@ -182,16 +193,17 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
             }
             i++;
         }
-        
-        res.push_back(VectorV(dir2 * vec.x, vec.y) - VectorV(dir1 * p1[0].x, p1[0].y));
+        res.push_back(VectorV(vec.x, vec.y) - VectorV(x1, p1[0].y));
         res.push_back({-res[0].y,res[0].x});
     } else {
         // Get the edge vectors
         for (int i = 0; i < n; i++) {
             VectorV pp1 = p1[(i+1) % n];
-            pp1.x = pp1.x * dir1;
             VectorV pp2 = p1[i];
-            pp2.x = pp2.x * dir1;
+			if (dir1 == -1) {
+				pp1.x.sign = !pp1.x.sign;
+				pp2.x.sign = !pp2.x.sign;
+			}
             res.push_back(pp1 - pp2);
         }
     }
@@ -200,9 +212,11 @@ vector<VectorV> get_orthogonals(const PolygonV &p1, int dir1, const PolygonV &p2
     long n2 = p2.size();
     for (int i = 0; i < n2; i++) {
         VectorV pp1 = p2[(i+1) % n];
-        pp1.x = pp1.x * dir2;
         VectorV pp2 = p2[i];
-        pp2.x = pp2.x * dir2;
+		if (dir2 == -1) {
+			pp1.x.sign = !pp1.x.sign;
+			pp2.x.sign = !pp2.x.sign;
+		}
         res.push_back(pp1 - pp2);
     }
     
@@ -230,19 +244,28 @@ pair<bool, VectorV> is_separating_axis(const VectorV &axis,
         
     if (p1.size() == 2) {
         // p1 is a circle
-        fpoat proj = dot(axis, VectorV(dir1 * p1[0].x, p1[0].y) + pos1);
+		fpoat x = p1[0].x;
+		if (dir1 == -1) x.sign = !x.sign;
+
+        fpoat proj = dot(axis, VectorV(x, p1[0].y) + pos1);
         min1 = proj - p1[1].x;
         max1 = proj + p1[1].x;
     } else {
         for (const VectorV &vert : p1) {
-            fpoat proj = dot(axis, VectorV(dir1 * vert.x, vert.y) + pos1);
-            min1 = min(proj, min1);
-            max1 = max(proj, max1);
+			fpoat x = vert.x;
+			if (dir1 == -1) x.sign = !x.sign;
+
+            fpoat proj = dot(axis, VectorV(x, vert.y) + pos1);
+            min1 = fpmin(proj, min1);
+            max1 = fpmax(proj, max1);
         }
     }
 
     for (const VectorV &vert : p2) {
-        fpoat proj = dot(axis, VectorV(dir2 * vert.x, vert.y) + pos2);
+		fpoat x = vert.x;
+		if (dir2 == -1) x.sign = !x.sign;
+
+        fpoat proj = dot(axis, VectorV(x, vert.y) + pos2);
         min2 = fpmin(proj, min2);
         max2 = fpmax(proj, max2);
     }
@@ -250,9 +273,9 @@ pair<bool, VectorV> is_separating_axis(const VectorV &axis,
     if (max1 >= min2 && max2 >= min1) {
         // Calculate push vector
         fpoat d = fpmin(max2 - min1, max1 - min2);
-        VectorV push_vector(axis * (d / dot(axis, axis) + 1e-4f));
+        VectorV push_vector(axis * (d / dot(axis, axis) + fpoat(1)));
         return make_pair(false, push_vector);
     } else {
-        return make_pair(true, VectorV(0.f,0.f));
+        return make_pair(true, VectorV(fpoat(0),fpoat(0)));
     }
 }

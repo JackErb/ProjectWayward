@@ -11,7 +11,7 @@
 #include "../../Character.hpp"
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
-    if (input.stick.hyp() > 0.5f) {
+    if (input.stick.hyp() > 0.3f) {
         if (input.stick.inDirection(LEFT) && data.type_ == JUP) {
             data.type_ = JLEFT;
         } else if (input.stick.inDirection(RIGHT) && data.type_ == JUP) {

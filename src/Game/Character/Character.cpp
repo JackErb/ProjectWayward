@@ -58,8 +58,8 @@ void Character::initMslBindings() {
     };
     
     mslIntp->bindings_["gravity"] = [=]() {
-        float f;
-        if (mslIntp->numParams() == 0) { f = 1.f; }
+        fpoat f;
+        if (mslIntp->numParams() == 0) { f = fpoat(1,0); }
         else { f = mslIntp->getIntParam(0); }
         ApplyGravity(f);
     };
@@ -97,6 +97,12 @@ void Character::ProcessInput(const PlayerInput &input) {
 }
 
 void Character::Tick() {
+	/*fpoat hyp = input_->stick.hyp();
+	if (hyp > StickDZ::DEADZONE) {
+		fpoat x = fpcos(hyp) * input_->stick.x / fpoat(1,0);
+		fpoat y = fpsin(hyp) * input_->stick.y / fpoat(1,0);
+		Transform(VectorV(x * attr.MaxAirSpeed, y * attr.MaxAirSpeed));
+	}*/
     if (Entity::data.freeze_) {
         Entity::data.freezeFr_--;
         if (Entity::data.freezeFr_ <= 0) {
@@ -200,7 +206,7 @@ void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
     if (actionState_->GetState() == AIRBORNE) {
         fpoat vy = Velocity().y;
         if (entity.Type() == STAGE) {            
-            if (pv.x.n == 0 && pv.y < 0 && vy > 0) {
+            if (pv.x.n == 0 && pv.y.sign && !vy.sign) {
                 // Land on the stage
                 NullVelocityY();
                 actionState_->SwitchState(GROUNDED);
@@ -208,15 +214,15 @@ void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
                 return;
             }
         } else if (entity.Type() == PLATFORM && !input_->stick.inDirection(DOWN)) {
-            if (!pv.y.sign) {
+            if (pv.y.sign) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
                 Rectangle b = BoundingBox();
                 Rectangle s = entity.BoundingBox();
                 
-                bool vert_check = (b.y + b.h) - vy* 1.1f < s.y;
-                bool horiz_check = (b.x + b.w * fpoat(0,7000)) > s.x && (b.x + b.w * fpoat(0,3000)) < (s.x + s.w);
-				if (vy.sign && vert_check&& horiz_check) {
+                bool vert_check = (b.y + b.h) - vy * fpoat(1,1) < s.y;
+                bool horiz_check = (b.x + b.w * fpoat(0,7)) > s.x && (b.x + b.w * fpoat(0,3)) < (s.x + s.w);
+				if (!vy.sign && vert_check && horiz_check) {
                     // Land on the platform
                     NullVelocityY();
                     // Apply the push vector to prevent overlap
@@ -225,8 +231,8 @@ void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
                     actionState_->SwitchState(GROUNDED);
                     data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                     return;
-                }
-            }
+				}
+			}
         }
     }
     

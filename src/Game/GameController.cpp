@@ -36,7 +36,6 @@ using std::endl;
 
 GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, { fpoat(0), fpoat(500,0,true) }),
 		remotePlayer_(5, { fpoat(0), fpoat(500,0,true) }), camera_(&engine_.entities_, w, h) {
-	cout << "HERE!!!!" << endl;
 	player_.polygons = {
         {{fpoat(40,0,true), fpoat(120,0)}, {fpoat(75,0), fpoat(120,0)},
 		 {fpoat(75,0), fpoat(60,0,true)}, {fpoat(40,0,true), fpoat(60,0,true)}},
@@ -66,13 +65,13 @@ GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, 
     PlatformEntity *platform = new PlatformEntity(3, {fpoat(0), fpoat(60,0,true)});
 	platform->polygons = {
 		{{fpoat(300,0,true),fpoat(10,0,true)}, {fpoat(300,0),fpoat(10,0,true)},
-		 {fpoat(300,0),fpoat(10,0)}, {fpoat(-300,0,true),fpoat(10,0)}}
+		 {fpoat(300,0),fpoat(10,0)}, {fpoat(300,0,true),fpoat(10,0)}}
 	};
     platform->isStatic = true;
     platform->SetTexture(SpriteLoader::LoadTexture(rd, "platform"));
                   
     engine_.AddCharacter(&player_);
-    engine_.AddCharacter(&remotePlayer_);
+    //engine_.AddCharacter(&remotePlayer_);
     engine_.AddStage(stage);
     engine_.AddStage(platform);
 }

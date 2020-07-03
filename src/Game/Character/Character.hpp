@@ -40,7 +40,7 @@ public:
 		fpoat MaxAirSpeed = fpoat(38,0);
 		fpoat AirFriction = fpoat(0,9100);
            
-		fpoat Gravity = fpoat(3,4000);
+		fpoat Gravity = fpoat(3, 4000);
 		fpoat MaxFallSpeed = fpoat(40,0);
 		fpoat FastFallSpeed = fpoat(70,0);
         
@@ -75,7 +75,7 @@ public:
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    TextureV* GetTexture(string state, int frame) { return anims_[state][frame]; }
+    TextureV* GetTexture(const string& state, int frame) { return anims_[state][frame]; }
     const StageEntity *Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }
     bool IsFastFalling() const  { return data.airborneData.fastfall; }
@@ -97,12 +97,12 @@ public:
     void SetActionState(CharacterState *s);
     void Jump(JumpType type, bool fullhop);
     void FastFall();
-    void Knockback(fpoat angle, fpoat kb) {
+    void Knockback(const fpoat& angle, const fpoat& kb) {
         SetVelocity(fpcos(angle) * kb, fpsin(angle) * kb);
     }
-    void Dash(fpoat m);
-    void Vector(fpoat v = 1.f);
-    void ApplyGravity(fpoat m = fpoat(1,0));
+    void Dash(const fpoat& m);
+    void Vector();
+    void ApplyGravity(const fpoat& m = fpoat(1,0));
     void ApplyFriction();
     void FallthroughPlatform();
     void WallJump(int dir);
@@ -112,7 +112,7 @@ public:
     void Airborne() { initAirborneData(); }
     void Respawn() { 
 		SetPosition({FixedPoint::ZERO, fpoat(800,0,true)});
-		data.percent_ = 0.f; SetVelocity(FixedPoint::ZERO, FixedPoint::ZERO);
+		data.percent_ = fpoat(0); SetVelocity(FixedPoint::ZERO, FixedPoint::ZERO);
 	}
     
 private:

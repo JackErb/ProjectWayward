@@ -56,7 +56,7 @@ public:
         
         /* In range [-pi, pi] */
 		fpoat angle() const {
-            return fpatan2(-y, x);
+            return fpatan2(y, x);
         }
         
         bool inDirection(Direction dir) const {

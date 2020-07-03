@@ -31,4 +31,14 @@ void TestFpoats() {
     cout << (f3 / f4).f() << " = 118.2352" << endl;
     cout << (f4 / f3).f() << " = 0.0084" << endl;
     cout << (f3 / f5).f() << " = 1005" << endl;
+
+	cout << fpsqrt(fpoat(4, 0)).f() << " = 2" << endl;
+
+	fpoat e1(0, 843);
+	fpoat e2(0, 2351);
+	cout << fpsqrt(e1 * e1 + e2 * e2).f() << " = .8751" << endl;
+
+	cout << (-fpoat(2, 4215)).f() << " = -2.4215" << endl;
+
+	cout << "Max: " << FixedPoint::MAX.f() << ", Min: " << FixedPoint::MIN.f() << endl;
 }

@@ -20,7 +20,7 @@
 #include "../Entities/PlatformEntity.hpp"
 #include "../Loaders/MoveLoader.hpp"
 
-void Character::ApplyGravity(fpoat m) {
+void Character::ApplyGravity(const fpoat& m) {
     if (data.airborneData.fastfall) {
         FastFall();
         return;
@@ -51,7 +51,7 @@ void Character::Jump(JumpType type, bool fullhop) {
             xv = - attr.MaxGroundSpeed;
             break;
         case JUP:
-            xv = 0.f;
+            xv = fpoat(0);
             break;
         case JRIGHT:
             xv = attr.MaxGroundSpeed;
@@ -59,7 +59,7 @@ void Character::Jump(JumpType type, bool fullhop) {
         case DJUMP:
             if (data.airborneData.jumps > 0) {
                 data.airborneData.jumps--;
-                xv = 0.f;
+                xv = fpoat(0);
                 yv = attr.DoubleJump;
             } else {
                 // No jumps left
@@ -72,23 +72,21 @@ void Character::Jump(JumpType type, bool fullhop) {
     Entity::data.velocity_.x = xv;
 }
 
-void Character::Dash(fpoat m) {
+void Character::Dash(const fpoat &m) {
     if (actionState_->GetState() != GROUNDED) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
     
-    if (fpabs(m) > 1.f) {
+    if (fpabs(m) > fpoat(1,0)) {
         std::cerr << "INVALID DASH MODIFIER" << std::endl;
         return;
     }
     
-    SetDirection(m < 0 ? -1 : 1);
-        
-    Entity::data.velocity_.x = m * attr.MaxGroundSpeed;
+	Entity::data.velocity_.x = m * attr.MaxGroundSpeed;
 }
 
-void Character::Vector(fpoat v) {
+void Character::Vector() {
     if (actionState_->GetState() != AIRBORNE) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
         return;
@@ -101,14 +99,17 @@ void Character::Vector(fpoat v) {
     }
     
     fpoat x = fpabs(input_->stick.x);
-    fpoat m = x > 0.7f ? 1.f : x * fpoat(1,4286); // This arbitrary fpoat is 1 / 0.7
-    if (input_->stick.x < 0) m = m * -1;
+    fpoat m = x > fpoat(0,7) ? fpoat(1,0) : x * fpoat(1,4286); // This arbitrary fpoat is 1 / 0.7
+	m.sign = input_->stick.x.sign;
     
-    Entity::data.velocity_.x = Entity::data.velocity_.x + m * v * attr.AirAccel;
-    int sign = Entity::data.velocity_.x < 0 ? -1 : 1;
-    Entity::data.velocity_.x = sign * fpmin(attr.MaxAirSpeed, fpabs(Entity::data.velocity_.x));
+    Entity::data.velocity_.x = Entity::data.velocity_.x + m * attr.AirAccel;
+	bool sign = Entity::data.velocity_.x.sign;
+
+	// Cap air speed
+    Entity::data.velocity_.x = fpmin(attr.MaxAirSpeed, fpabs(Entity::data.velocity_.x));
+	Entity::data.velocity_.x.sign = sign;
     
-    if (input_->stick.inDirection(DOWN_T) && hyp > StickDZ::HIGHRING && Entity::data.velocity_.y > 0.f) {
+    if (input_->stick.inDirection(DOWN_T) && hyp > StickDZ::HIGHRING && !Entity::data.velocity_.y.sign) {
         FastFall();
     }
 }

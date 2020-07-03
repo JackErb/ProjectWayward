@@ -71,16 +71,17 @@ public:
 		fpoat min_y = min_x;
 		fpoat max_y = max_x;
         
-        int d = Direction();
+		fpoat d = fpoat(1, 0);
+		if (Direction() == -1) d.sign = !d.sign;
 		for (const PolygonV& p : polygons) {
 			if (p.size() == 2) {
 				// p is a circle
 				fpoat r = p[1].x;
 				VectorV corner = VectorV(d * p[0].x - r, p[0].y - r);
-				min_x = fpmin(min_x, fpmin(corner.x, corner.x + r * 2));
-				max_x = fpmax(max_x, fpmax(corner.x, corner.x + r * 2));
-				min_y = fpmin(min_y, fpmin(corner.y, corner.y + r * 2));
-				max_y = fpmax(max_y, fpmax(corner.y, corner.y + r * 2));
+				min_x = fpmin(min_x, corner.x);
+				max_x = fpmax(max_x, corner.x + r * 2);
+				min_y = fpmin(min_y, corner.y);
+				max_y = fpmax(max_y, corner.y + r * 2);
 			}
 			else {
 				for (const VectorV& v : p) {
@@ -91,18 +92,20 @@ public:
 				}
 			}
 		}
-		return RectangleV(px + min_x + .5f, py + min_y - .5f, max_x - min_x + .5f, max_y - min_y + .5f);
+
+		fpoat f = fpoat(1);
+		return RectangleV(px + min_x - f, py + min_y - f, max_x - min_x + fpoat(2,0) * f, max_y - min_y + fpoat(2,0) * f);
 	}
 
-	void Transform(VectorV v) {
+	void Transform(const VectorV& v) {
 		SetPosition(data.position_ + v);
 	}
 
-	void SetPosition(VectorV pos) { data.position_ = pos; }
+	void SetPosition(const VectorV& pos) { data.position_ = pos; }
     VectorV Position() const { return data.position_; }
     
-    void SetVelocity(fpoat x, fpoat y) { SetVelocity({x,y}); }
-    void SetVelocity(VectorV v) { data.velocity_ = v; }
+    void SetVelocity(const fpoat& x, const fpoat& y) { SetVelocity({x,y}); }
+    void SetVelocity(const VectorV& v) { data.velocity_ = v; }
     VectorV Velocity() { return data.velocity_; }
     void NullVelocityX() { data.velocity_.x = 0; }
     void NullVelocityY() { data.velocity_.y = 0; }
@@ -194,8 +197,8 @@ public:
     
 protected:
     struct GameData {
-        VectorV position_ = VectorV(0.f, 0.f);
-        VectorV velocity_ = VectorV(0.f, 0.f);
+        VectorV position_ = VectorV(fpoat(0), fpoat(0));
+        VectorV velocity_ = VectorV(fpoat(0), fpoat(0));
         
         TextureV* texture_;
         

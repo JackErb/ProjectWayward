@@ -21,6 +21,7 @@ int sign(float f) {
 
 void DashState::init() {
     setDirInfluence();
+	character_->SetDirection(data.dirInfluence_.sign ? -1 : 1);
 }
 
 bool DashState::setDirInfluence() {
@@ -28,7 +29,6 @@ bool DashState::setDirInfluence() {
     if (in->stick.hyp() > StickDZ::DEADZONE) {
         fpoat old = data.dirInfluence_;
 		data.dirInfluence_ = in->stick.x;
-        
         if (old.sign != data.dirInfluence_.sign) {
             return false;
         }
@@ -88,9 +88,7 @@ void DashState::Tick() {
     character_->SetTexture(character_->GetTexture("dash", (data.frame_ / 4) % 11));
     data.frame_++;
                           
-    if (data.dirInfluence_.n == 0) {
-        character_->Dash(data.dirInfluence_);
-    }
+    character_->Dash(data.dirInfluence_);
     character_->ApplyVelocity();
 }
 

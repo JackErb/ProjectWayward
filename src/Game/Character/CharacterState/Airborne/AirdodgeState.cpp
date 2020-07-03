@@ -24,9 +24,9 @@ void AirdodgeState::Tick() {
     character_->ApplyVelocity();
     character_->ApplyFriction();
     if (PlayerInput::InDir(data.dirInfluence_, UP)) {
-        character_->ApplyGravity(0.85f);
+        character_->ApplyGravity(fpoat(0,85));
     } else if (!PlayerInput::InDir(data.dirInfluence_, DOWN)){
-        character_->ApplyGravity(0.2f);
+        character_->ApplyGravity(fpoat(0,2));
     }
     
     if (data.frame_ == 25) {
