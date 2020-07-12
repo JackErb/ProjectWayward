@@ -68,26 +68,26 @@ public:
     ~Character();
     
     /* Setup */
-    void SetAnimMap(AnimMap anims) {
-        anims_ = anims;
+    void SetAnimMap(AnimMap am) {
+        anims = am;
     }
     
     
     /* Get Methods */
     EntityType Type() const override { return CHARACTER; }
-    TextureV* GetTexture(const string& state, int frame) { return anims_[state][frame]; }
-    const StageEntity *Stage() const { return data.groundedData.stage; }
+    TextureV* GetTexture(const string& state, int frame) { return anims[state][frame]; }
+    const StageEntity* Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }
     bool IsFastFalling() const  { return data.airborneData.fastfall; }
     bool HasAirdodge() const { return data.airborneData.airdodge; }
-    fpoat Percent() const { return data.percent_; }
+    fpoat Percent() const { return data.percent; }
     
     
     /* Game Processing */
     void ProcessInput(const PlayerInput &input);
     void Tick() override;
-    void HandleCollision(const Entity &entity, const VectorV &pv) override;
-    bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
+    void HandleCollision(const Entity &entity, const VectorV& pv) override;
+    bool HandleHit(const Entity *e, int f, const HitboxData& hd) override;
     
     void RollbackTick() override;
     void Rollback() override;
@@ -112,7 +112,7 @@ public:
     void Airborne() { initAirborneData(); }
     void Respawn() { 
 		SetPosition({FixedPoint::ZERO, fpoat(800,0,true)});
-		data.percent_ = fpoat(0); SetVelocity(FixedPoint::ZERO, FixedPoint::ZERO);
+		data.percent = fpoat(0); SetVelocity(FixedPoint::ZERO, FixedPoint::ZERO);
 	}
     
 private:
@@ -127,34 +127,34 @@ private:
     
 public:
     // The input for this frame
-    const PlayerInput* input_;
+    const PlayerInput* input;
     
     bool fill = false;
     
 private:
     typedef struct CharacterData {
-        CharStateType actionStateT_;
-        CharacterState::GameData actionStateData_;
+        CharStateType stateType;
+        CharacterState::GameData stateData;
         
-        int fallthrough_ = -1;
-        int ftCount_ = 0;
+        int ft = -1;
+        int ftCount = 0;
         
-        fpoat percent_ = fpoat(0);
-        
+        fpoat percent = fpoat(0);
+                
         union {
             GroundedData groundedData;
             AirborneData airborneData;
         };
     } GameData;
     
+    CharacterState *state;
+    
     // Current game data state.
     GameData data;
-    GameData rollback_;
-    
-    CharacterState *actionState_;
+    GameData rollback;
     
     const Attributes attr;
-    AnimMap anims_;
+    AnimMap anims;
     
     friend class PhysicsEngine;
 };

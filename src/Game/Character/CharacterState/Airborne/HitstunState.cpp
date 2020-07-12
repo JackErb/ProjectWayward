@@ -10,8 +10,8 @@
 #include "../../Character.hpp"
 
 void HitstunState::init(fpoat angle, fpoat kb) {
-    character_->Knockback(angle, kb);
-    data.frame_ = (kb * fpoat(0,4000)).i();
+    character->Knockback(angle, kb);
+    data.frame = (kb * fpoat(0,4000)).i();
 }
 
 void HitstunState::ProcessInput(const PlayerInput& input) {
@@ -19,13 +19,13 @@ void HitstunState::ProcessInput(const PlayerInput& input) {
 }
 
 void HitstunState::Tick() {
-    character_->ApplyGravity();
-    character_->ApplyFriction();
-    character_->ApplyVelocity();
+    character->ApplyGravity();
+    character->ApplyFriction();
+    character->ApplyVelocity();
     
-    data.frame_--;
-    if (data.frame_ == 0) {
-        character_->SetActionState(new AirborneNeutralState(character_));
+    data.frame--;
+    if (data.frame == 0) {
+        character->SetActionState(new AirborneNeutralState(character));
         return;
     }
 }

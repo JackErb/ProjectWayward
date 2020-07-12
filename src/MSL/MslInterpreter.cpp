@@ -13,7 +13,7 @@
 #include "../Game/Loaders/MoveLoader.hpp"
 #include "MslScanner.hpp"
 #include "../Game/Character/Character.hpp"
-#include "../Game/MathHelper.hpp"
+#include "../MathHelper/MathHelper.h"
 #include "../Game/Character/CharacterState/Airborne/AirborneNeutralState.hpp"
 #include "../Game/Character/CharacterState/Grounded/NeutralState.hpp"
 #include "../Game/Character/CharacterState/Grounded/LandingLagState.hpp"

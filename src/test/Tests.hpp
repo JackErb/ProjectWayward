@@ -4,4 +4,6 @@
 
 void TestFpoats();
 
+void TestRand();
+
 #endif  /* Tests_h */

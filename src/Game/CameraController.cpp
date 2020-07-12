@@ -7,6 +7,7 @@
 
 #include "CameraController.hpp"
 
+#include "../Generator/LevelData.hpp"
 #include "Entities/Entity.hpp"
 #include "../TextureV.hpp"
 
@@ -18,20 +19,37 @@
 #include "SDL_render.h"
 #endif
 
-void CameraController::Tick() {
-    if (cameraOffsetFinal_.x != cameraOffset_.x) {
-        float a = atan2(-cameraOffset_.y + cameraOffsetFinal_.y,
-            cameraOffsetFinal_.x - cameraOffset_.x);
-        cameraOffset_.x += cos(a) * cameraOffsetSpeed;
-        cameraOffset_.y += sin(a) * cameraOffsetSpeed;
+#include <algorithm>
 
-        if (abs(cameraOffsetFinal_.x - cameraOffset_.x) < cameraOffsetSpeed + 1.f) {
-            cameraOffset_.x = cameraOffsetFinal_.x;
-            cameraOffset_.y = cameraOffsetFinal_.y;
+using std::min;
+using std::max;
+
+void CameraController::Tick() {
+    for (Entity* e : *entities_) {
+        if (e->Type() == CHARACTER) {
+            TransformCamera(-e->Position().x.f(), -e->Position().y.f());
         }
     }
+    
+    
+    float dist = (cameraOffsetFinal_.x * cameraOffsetFinal_.x)
+                 + (cameraOffsetFinal_.y * cameraOffsetFinal_.y);
+    
+    if (dist > 80.f) {
+        dist = 80.f;
+    }
+    
+    float a = atan2(-cameraOffset_.y + cameraOffsetFinal_.y,
+        cameraOffsetFinal_.x - cameraOffset_.x);
+    cameraOffset_.x += cos(a) * dist / 60.f * cameraOffsetSpeed;
+    cameraOffset_.y += sin(a) * dist / 60.f * cameraOffsetSpeed;
 
-    TransformCamera(0, 0);
+    if (sqrt(dist) < cameraOffsetSpeed) {
+        cameraOffset_.x = cameraOffsetFinal_.x;
+        cameraOffset_.y = cameraOffsetFinal_.y;
+    }
+
+    /*TransformCamera(0, 0);
 
     for (Entity* e : *entities_) {
         if (e->Type() == CHARACTER) {
@@ -42,7 +60,7 @@ void CameraController::Tick() {
                 TransformCamera(500, 0);
             }
         }
-    }
+    }*/
 }
 
 
@@ -54,8 +72,13 @@ void CameraController::Render(SDL_Renderer* rd) {
 		pos.x /= scale;
 		pos.y /= scale;
 
-        bool flip = e->Direction() == -1;
-        e->Texture()->render(rd, pos.x, pos.y, flip);
+        if (e->drawPolygons) {
+            for (const PolygonV& poly : e->polygons) {
+                DrawShape(poly, pos, e->Direction(), rd);
+            }
+        } else {
+             e->Texture()->render(rd, pos.x, pos.y, e->Direction() == -1);
+        }
 
         if (drawHitboxes && (e->Type() == CHARACTER || e->Type() == PROJECTILE)) {
             const VectorV& pos = e->Position();
@@ -73,31 +96,29 @@ void CameraController::Render(SDL_Renderer* rd) {
 
         // TODO: Don't draw if the sprite is off the screen
     }
+    
     SDL_RenderSetScale(rd, 1.f, 1.f);
 }
 
-/*void CameraController::DrawShape(const PolygonV& p, const VectorV &pos, int dir,
-               sf::Color col, SDL_Renderer* rd) {
-    if (p.size() == 2) {
-        sf::CircleShape c(p[1].x * scale);
-        VectorV ps = VectorV(dir * p[0].x, p[0].y) + pos;
-        ps.x -= p[1].x;
-        ps.y -= p[1].x;
-        c.setPosition((ps + cameraOffset_) * scale + windowOffset_);
-
-        c.setFillColor(col);
-        window->draw(c);
-        return;
+void CameraController::DrawShape(const PolygonV& p, const VectorFloat& pos, int dir,
+                                SDL_Renderer* rd) {
+    SDL_SetRenderDrawColor(rd, 153, 38, 17, 255);
+    int min_x = 10000000;
+    int max_x = -10000000;
+    int min_y = min_x, max_y = max_x;
+    
+    for (const auto& vert : p) {
+        min_x = min(vert.x.i(), min_x);
+        max_x = max(vert.x.i(), max_x);
+        min_y = min(vert.y.i(), min_y);
+        max_y = max(vert.y.i(), max_y);
     }
-
-    sf::ConvexShape shape;
-    shape.setPointCount(p.size());
-    int i = 0;
-    for (const VectorV& vert : p) {
-        VectorV vp = VectorV(dir * vert.x, vert.y) + pos;
-        shape.setPoint(i, (vp + cameraOffset_) * scale + windowOffset_);
-        i++;
-    }
-    shape.setFillColor(col);
-    window->draw(shape);
-}*/
+    
+    SDL_Rect rect;
+    rect.x = min_x + pos.x;
+    rect.y = min_y + pos.y;
+    rect.w = max_x - min_x;
+    rect.h = max_y - min_y;
+                
+    SDL_RenderFillRect(rd, &rect);
+}

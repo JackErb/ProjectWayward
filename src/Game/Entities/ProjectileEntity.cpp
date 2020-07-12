@@ -17,12 +17,12 @@ void ProjectileEntity::init(const std::string& move) {
     SetTexture(SpriteLoader::anims["rocket"][0]);
     mslIntp->setVal("dir", Direction());
     
-    data.frame_ = 0;
+    data.frame = 0;
     mslIntp->Init({move});
 }
 
 void ProjectileEntity::Tick() {
-    mslIntp->PreTick(++data.frame_);
+    mslIntp->PreTick(++data.frame);
     mslIntp->CallFunction("Tick");
     ApplyVelocity();
 }

@@ -14,7 +14,7 @@
 class LandingLagState : public GroundedState {
 public:
     LandingLagState(Character *ch, int frames) : GroundedState(ch) {
-        data.frame_ = frames;
+        data.frame = frames;
     }
     LandingLagState(Character *ch, bool rb) : GroundedState(ch) {}
     

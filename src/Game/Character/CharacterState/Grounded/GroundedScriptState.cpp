@@ -11,18 +11,18 @@
 #include "./../../../../MSL/MslInterpreter.hpp"
 
 void GroundedScriptState::init(std::string m) {
-    data.frame_ = 0;
-    character_->SetMoveScript(m);
+    data.frame = 0;
+    character->SetMoveScript(m);
 }
 
 void GroundedScriptState::ProcessInput(const PlayerInput &input) {
-    data.frame_++;
-    character_->mslIntp->PreTick(data.frame_);
-    character_->mslIntp->ProcessInput();
+    data.frame++;
+    character->mslIntp->PreTick(data.frame);
+    character->mslIntp->ProcessInput();
 }
 
 void GroundedScriptState::Tick() {
-    character_->mslIntp->Tick();
+    character->mslIntp->Tick();
 }
 
 void GroundedScriptState::HandleCollision(const Entity &entity, VectorV pv) {
@@ -31,6 +31,6 @@ void GroundedScriptState::HandleCollision(const Entity &entity, VectorV pv) {
 
 void GroundedScriptState::SwitchState(CharState state) {
     if (state == AIRBORNE) {
-        character_->mslIntp->CallFunction("Airborne");
+        character->mslIntp->CallFunction("Airborne");
     }
 }

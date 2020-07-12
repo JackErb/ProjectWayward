@@ -9,7 +9,7 @@
 #ifndef PlayerInput_hpp
 #define PlayerInput_hpp
 
-#include "MathHelper.hpp"
+#include "../MathHelper/MathHelper.h"
 
 #include <iostream>
 #include <map>

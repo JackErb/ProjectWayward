@@ -21,19 +21,19 @@ int sign(float f) {
 
 void DashState::init() {
     setDirInfluence();
-	character_->SetDirection(data.dirInfluence_.sign ? -1 : 1);
+	character->SetDirection(data.dirInfluence.sign ? -1 : 1);
 }
 
 bool DashState::setDirInfluence() {
-    const PlayerInput *in = character_->input_;
+    const PlayerInput *in = character->input;
     if (in->stick.hyp() > StickDZ::DEADZONE) {
-        fpoat old = data.dirInfluence_;
-		data.dirInfluence_ = in->stick.x;
-        if (old.sign != data.dirInfluence_.sign) {
+        fpoat old = data.dirInfluence;
+		data.dirInfluence = in->stick.x;
+        if (old.sign != data.dirInfluence.sign) {
             return false;
         }
     } else {
-        data.dirInfluence_ = FixedPoint::ZERO;
+        data.dirInfluence = FixedPoint::ZERO;
     }
             
     return true;
@@ -41,38 +41,38 @@ bool DashState::setDirInfluence() {
 
 void DashState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(JUMP)) {
-        character_->SetActionState(new JumpsquatState(character_));
+        character->SetActionState(new JumpsquatState(character));
         return;
     }
     
     if (input.IsPressed(ATTACK)) {
         if (input.stick.inDirection(UP_T)) {
-            character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
+            character->SetActionState(new GroundedScriptState(character, "UTILT"));
         } else if (input.stick.inDirection(LEFT_T)) {
-            if (character_->Direction() == 1) {
-                character_->Turnaround();
+            if (character->Direction() == 1) {
+                character->Turnaround();
             }
-            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+            character->SetActionState(new GroundedScriptState(character, "FTILT"));
         } else if (input.stick.inDirection(RIGHT_T)) {
-            if (character_->Direction() == -1) {
-                character_->Turnaround();
+            if (character->Direction() == -1) {
+                character->Turnaround();
             }
-            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+            character->SetActionState(new GroundedScriptState(character, "FTILT"));
         } else if (input.stick.inDirection(DOWN_T)) {
-            character_->SetActionState(new GroundedScriptState(character_, "DTILT"));
+            character->SetActionState(new GroundedScriptState(character, "DTILT"));
         } else {
-            character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+            character->SetActionState(new GroundedScriptState(character, "JAB"));
         }
         return;
     }
     
     if (input.IsPressed(SPECIAL)) {
-        character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
+        character->SetActionState(new GroundedScriptState(character, "FSPECIAL"));
         return;
     }
     
     if (input.stick.hyp() < StickDZ::DEADZONE) {
-        character_->SetActionState(new NeutralState(character_));
+        character->SetActionState(new NeutralState(character));
         return;
     }
     
@@ -80,16 +80,16 @@ void DashState::ProcessInput(const PlayerInput &input) {
     if (!res) {
         // The player inputted the opposite direction. Only turnaround
         // If the hyp is not super small
-        character_->SetActionState(new TurnaroundState(character_));
+        character->SetActionState(new TurnaroundState(character));
     }
 }
 
 void DashState::Tick() {
-    character_->SetTexture(character_->GetTexture("dash", (data.frame_ / 4) % 11));
-    data.frame_++;
+    character->SetTexture(character->GetTexture("dash", (data.frame / 4) % 11));
+    data.frame++;
                           
-    character_->Dash(data.dirInfluence_);
-    character_->ApplyVelocity();
+    character->Dash(data.dirInfluence);
+    character->ApplyVelocity();
 }
 
 void DashState::HandleCollision(const Entity &e1, VectorV pv) {
@@ -102,7 +102,7 @@ void DashState::SwitchState(CharState state) {
             std::cerr << "Switch to grounded state while actionState=Dash" << std::endl;
             return;
         case AIRBORNE:
-            character_->SetActionState(new AirborneNeutralState(character_));
+            character->SetActionState(new AirborneNeutralState(character));
             return;
     }
 }

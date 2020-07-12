@@ -15,6 +15,8 @@
 #include "../Entities/Entity.hpp"
 #include "../Character/Character.hpp"
 
+struct LevelData;
+
 using std::vector;
 using std::pair;
 using std::cout;
@@ -32,6 +34,8 @@ public:
 public:
     PhysicsEngine() {}
     void Update();
+    
+    void SetLevel(LevelData *level);
         
     void AddEntity(Entity *e) {
         entities_.push_back(e);
@@ -57,9 +61,7 @@ public:
         }
     }
     
-    bool CheckBoundingBoxCollision(const Entity *e1, const Entity *e2) {
-        return Intersects(*e1, *e2);
-    }
+    bool CheckBoundingBoxAgainstPolys(const Entity *e1, const Entity *e2);
     
     void Rollback();
     void RollbackTick();
@@ -73,8 +75,11 @@ private:
     vector<Entity*> entities_;
     vector<Entity*> stage_;
     vector<Character*> characters_;
+    LevelData *level_;
     
     friend class GameController;
+    friend class RogueController;
+    int chunkId_ = 100000;
 };
 
 #endif /* PhysicsEngine_hpp */

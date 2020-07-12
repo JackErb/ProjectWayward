@@ -15,8 +15,8 @@
 class JumpsquatState : public GroundedState {
 public:
     JumpsquatState(Character *ch) : GroundedState(ch) {
-        data.type_ = JUP;
-        data.frame_ = 0;
+        data.type = JUP;
+        data.frame = 0;
         data.b1 = true;
     }
     JumpsquatState(Character *ch, bool rb) : GroundedState(ch) {}

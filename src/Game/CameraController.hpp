@@ -9,7 +9,7 @@
 #ifndef CameraController_hpp
 #define CameraController_hpp
 
-#include "MathHelper.hpp"
+#include "../MathHelper/MathHelper.h"
 
 #include <vector>
 #include <list>
@@ -18,6 +18,7 @@ using std::vector;
 
 class Entity;
 struct SDL_Renderer;
+struct LevelData;
 
 typedef struct VectorFloat {
 	float x, y;
@@ -37,21 +38,22 @@ public:
 
     void Render(SDL_Renderer* window);
 
-    //void DrawShape(const PolygonV& p, const VectorV &pos, int dir,
-     //              sf::Color col, SDL_Renderer* window);
+    void DrawShape(const PolygonV& p, const VectorFloat& pos, int dir,
+                   SDL_Renderer* window);
 
     void TransformCamera(float x, float y) { cameraOffsetFinal_ = {x,y}; }
     void SetCameraOffset(float x, float y) { cameraOffset_ = {x,y}; }
     void SetScale(float s) { scale = s; }
 
 public:
-    float scale = 0.6f;
+    float scale = 0.65f;
+    LevelData *level;
 
 private:
 	VectorFloat windowOffset_;
 	VectorFloat cameraOffset_;
 	VectorFloat cameraOffsetFinal_;
-    const float cameraOffsetSpeed = 40;
+    const float cameraOffsetSpeed = 30;
     vector<Entity*>* entities_;
 };
 

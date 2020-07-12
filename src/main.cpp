@@ -23,9 +23,10 @@
 #include <thread>
 
 #include "Game/GameController.hpp"
+#include "Game/RogueController.hpp"
 #include "Game/PlayerInput.hpp"
 #include "Game/Loaders/ResourcePath.hpp"
-#include "Game/MathHelper.hpp"
+#include "MathHelper/MathHelper.h"
 #include "test/Tests.hpp"
 
 using std::list;
@@ -85,8 +86,7 @@ int main(int, char**) {
     bool pause = false;
     bool focus = true;
     bool quit = false;
-    
-    
+
     int i = 0;
     long count = 0;
     long subFrameCount = 0;
@@ -105,14 +105,13 @@ int main(int, char**) {
     }
     ImGuiIO& io = ImGui::GetIO();*/
 
-	TestFpoats();
-    
     MoveLoader::LoadMoves();
     
 	cout << "Game controlller start" << endl;
-    GameController controller(rd, WIDTH, HEIGHT);
+    RogueController controller = RogueController(rd, WIDTH, HEIGHT);
 	cout << "Game controller end" << endl;
-    NetworkController *n = &controller.network_;
+    NetworkController net;
+    NetworkController *n = &net;// &controller.network_;
     
     // Contains the state of the controller
     PlayerInput p1(0);
@@ -121,12 +120,13 @@ int main(int, char**) {
     SDL_Event e;
 
 	cout << "Starting loop" << endl;
-
+    
     // Start the game loop
     while (!quit) {
         auto start = high_resolution_clock::now();
         
         // Clear screen
+        SDL_SetRenderDrawColor(rd, 0, 0, 0, 255);
         SDL_RenderClear(rd);
         
 		if (n->IsConnected() && n->rlCount_ >= n->dropFramesPeriod_) {

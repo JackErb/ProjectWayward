@@ -13,7 +13,6 @@
 #include <iostream>
 
 typedef struct FixedPoint {
-public:
 	static FixedPoint PI;
 	static FixedPoint MAX;
 	static FixedPoint MIN;
@@ -22,6 +21,7 @@ public:
 	static int MULT;
 
 	static FixedPoint FromFloat(float f);
+    static FixedPoint FromInt(int n);
 
 	FixedPoint() : n(0), sign(false) {}
     FixedPoint(int fpint, int fpdec, bool s = false);

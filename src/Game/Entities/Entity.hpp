@@ -10,7 +10,7 @@
 #define Entity_hpp
 
 #include "HitboxData.hpp"
-#include "../MathHelper.hpp"
+#include "../../MathHelper/MathHelper.h"
 
 #include <vector>
 #include <math.h>
@@ -50,136 +50,60 @@ public:
 	virtual void Tick() = 0;
 
 	virtual void RollbackTick() {
-		rollback_ = data;
+		rollback = data;
 	}
 
 	virtual void Rollback() {
-		data = rollback_;
+		data = rollback;
 	}
 
 	/* Getters, Setters, & Mutators */
 	virtual EntityType Type() const = 0;
 
-	RectangleV BoundingBox() const {
-		fpoat px = data.position_.x;
-		fpoat py = data.position_.y;
+    RectangleV BoundingBox() const;
 
-		if (polygons.size() == 0) return RectangleV(px, py, 0, 0);
+    void Transform(const VectorV& v);
 
-		fpoat min_x = FixedPoint::MAX;
-		fpoat max_x = FixedPoint::MIN;
-		fpoat min_y = min_x;
-		fpoat max_y = max_x;
-        
-		fpoat d = fpoat(1, 0);
-		if (Direction() == -1) d.sign = !d.sign;
-		for (const PolygonV& p : polygons) {
-			if (p.size() == 2) {
-				// p is a circle
-				fpoat r = p[1].x;
-				VectorV corner = VectorV(d * p[0].x - r, p[0].y - r);
-				min_x = fpmin(min_x, corner.x);
-				max_x = fpmax(max_x, corner.x + r * 2);
-				min_y = fpmin(min_y, corner.y);
-				max_y = fpmax(max_y, corner.y + r * 2);
-			}
-			else {
-				for (const VectorV& v : p) {
-                    min_x = fpmin(min_x, d * v.x);
-					max_x = fpmax(max_x, d * v.x);
-					min_y = fpmin(min_y, v.y);
-					max_y = fpmax(max_y, v.y);
-				}
-			}
-		}
-
-		fpoat f = fpoat(1);
-		return RectangleV(px + min_x - f, py + min_y - f, max_x - min_x + fpoat(2,0) * f, max_y - min_y + fpoat(2,0) * f);
-	}
-
-	void Transform(const VectorV& v) {
-		SetPosition(data.position_ + v);
-	}
-
-	void SetPosition(const VectorV& pos) { data.position_ = pos; }
-    VectorV Position() const { return data.position_; }
+    void SetPosition(const VectorV& pos);
+    VectorV Position() const;
     
-    void SetVelocity(const fpoat& x, const fpoat& y) { SetVelocity({x,y}); }
-    void SetVelocity(const VectorV& v) { data.velocity_ = v; }
-    VectorV Velocity() { return data.velocity_; }
-    void NullVelocityX() { data.velocity_.x = 0; }
-    void NullVelocityY() { data.velocity_.y = 0; }
+    void SetVelocity(const fpoat& x, const fpoat& y);
+    void SetVelocity(const VectorV& v);
+    VectorV Velocity();
+    void NullVelocityX();
+    void NullVelocityY();
     
-    void ApplyVelocity() { Transform(data.velocity_); }
+    void ApplyVelocity();
 
-	void SetTexture(TextureV* t) { data.texture_ = t; }
-	TextureV* Texture() const { return data.texture_; }
+    void SetTexture(TextureV* t);
+    TextureV* Texture() const;
 
-	int Direction() const { return data.dir_; }
-	void SetDirection(int d) { data.dir_ = d; }
+    int Direction() const;
+    void SetDirection(int d);
     
-    void Freeze(int f) { data.freeze_ = true; data.freezeFr_ = f; }
+    void Freeze(int f);
     
     void SetMoveScript(const std::string &move);
     
-    const std::map<int, std::list<HitboxData> >& Hitboxes() const { return data.activeHitboxes; }
+    const std::map<int, std::list<HitboxData> >& Hitboxes() const;
     
-    bool IgnoreHit(int id, int pid) {
-        auto r = data.ignoreHits.find(id);
-        if (r != data.ignoreHits.end()) {
-            return data.ignoreHits[id].count(pid) != 0;
-        }
-        return false;
-    }
-    
-    void AddIgnoreHit(int id, int pid) {
-        data.ignoreHits[id].insert(pid);
-    }
+    bool IgnoreHit(int id, int pid);
+    void AddIgnoreHit(int id, int pid);
 
-	void CreateHitbox(const std::string &move, HitboxData data) {
-        hitboxes[move][data.id].push_back(data);
-	}
-    
-    void SpawnHitbox(int id) {
-        for (auto it = hitboxes[data.move][id].begin(); it != hitboxes[data.move][id].end(); it++) {
-            data.activeHitboxes[id].push_back(*it);
-        }
-    }
-
-	void SpawnHitbox(int id, int pid) {
-        auto it = data.activeHitboxes[id].begin();
-        for ( ; it != data.activeHitboxes[id].end(); it++) {
-            if (it->pid > pid) break;
-        }
-        data.activeHitboxes[id].insert(it, hitboxes[data.move][id][pid]);
-	}
-    
-    void RemoveHitbox(int id) {
-        data.activeHitboxes[id].clear();
-    }
-
-	void RemoveHitbox(int id, int pid) {
-        auto it = data.activeHitboxes[id].begin();
-        for ( ; it != data.activeHitboxes[id].end(); it++) {
-            if (it->pid == pid) break;
-        }
-        if (it == data.activeHitboxes[id].end()) {
-            std::cerr << "Invalid RemoveHitbox(), id: " << id << std::endl;
-        } else {
-            data.activeHitboxes[id].erase(it);
-            if (data.activeHitboxes[id].size() == 0) data.activeHitboxes.erase(id);
-        }
-	}
-
-	void ClearHitboxes() {
-        data.activeHitboxes.clear();
-	}
+    void CreateHitbox(const std::string &move, HitboxData data);
+    void SpawnHitbox(int id);
+    void SpawnHitbox(int id, int pid);
+    void RemoveHitbox(int id);
+    void RemoveHitbox(int id, int pid);
+    void ClearHitboxes();
     
 private:
     void initMslBindings();
 
 public:
 	int id;
+    
+    bool drawPolygons = false;
 
 	// If this object is static, it can be collided with but otherwise is not
 	// affected by physics (gravity, etc.)
@@ -197,25 +121,25 @@ public:
     
 protected:
     struct GameData {
-        VectorV position_ = VectorV(fpoat(0), fpoat(0));
-        VectorV velocity_ = VectorV(fpoat(0), fpoat(0));
+        VectorV position = VectorV(fpoat(0), fpoat(0));
+        VectorV velocity = VectorV(fpoat(0), fpoat(0));
         
-        TextureV* texture_;
+        TextureV* texture;
         
         std::string move;
         std::map<int, std::list<HitboxData> > activeHitboxes;
         std::unordered_map<int, std::unordered_set<int> > ignoreHits;
         
-        int dir_ = 1;
-        int frame_ = 0;
+        int dir = 1;
+        int frame = 0;
         
-        bool freeze_ = false;
-        int freezeFr_ = 0;
+        bool freeze = false;
+        int freezeFr = 0;
     };
     GameData data;
 
 private:
-	GameData rollback_;
+	GameData rollback;
 };
 
 #endif /* Entity_hpp */

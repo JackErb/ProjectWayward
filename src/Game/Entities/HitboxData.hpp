@@ -9,7 +9,7 @@
 #ifndef HitboxData_hpp
 #define HitboxData_hpp
 
-#include "../MathHelper.hpp"
+#include "../../MathHelper/MathHelper.h"
 
 #include <vector>
 

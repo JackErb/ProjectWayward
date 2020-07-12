@@ -9,7 +9,7 @@
 #ifndef CharacterState_hpp
 #define CharacterState_hpp
 
-#include "../../MathHelper.hpp"
+#include "../../../MathHelper/MathHelper.h"
 #include "../../PlayerInput.hpp"
 #include "../CharacterProperties.hpp"
 
@@ -22,7 +22,7 @@ class Character;
 
 class CharacterState {    
 public:
-    CharacterState(Character *ch) : character_(ch) {}
+    CharacterState(Character *ch) : character(ch) {}
     virtual ~CharacterState() {}
     
     virtual void ProcessInput(const PlayerInput &input) = 0;
@@ -34,21 +34,21 @@ public:
     virtual CharState GetState() const = 0;
     virtual CharStateType GetStateType() const = 0;
 
-    void SetFrame(int f) { data.frame_ = f; }
-    int Frame() const { return data.frame_; }
+    void SetFrame(int f) { data.frame = f; }
+    int Frame() const { return data.frame; }
     
 protected:
     typedef struct CharacterStateData {
-        int frame_;
-        int type_;
-        fpoat dirInfluence_;
+        int frame;
+        int type;
+        fpoat dirInfluence;
         bool b1;
-		fpoat angle_, kb_;
+		fpoat angle, kb;
         
     } GameData;
     CharacterStateData data;
     
-    Character *character_;
+    Character *character;
     
     void setData(GameData d) {
         data = d;

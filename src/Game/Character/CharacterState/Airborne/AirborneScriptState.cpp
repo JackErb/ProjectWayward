@@ -11,20 +11,20 @@
 #include "../../../../MSL/MslInterpreter.hpp"
 
 void AirborneScriptState::init(std::string m) {
-    data.frame_ = 0;
-    character_->SetMoveScript(m);
-    character_->mslIntp->InitScript(m);
+    data.frame = 0;
+    character->SetMoveScript(m);
+    character->mslIntp->InitScript(m);
 }
 
 void AirborneScriptState::ProcessInput(const PlayerInput &input) {
-    data.frame_++;
-    character_->mslIntp->PreTick(data.frame_);
-    character_->mslIntp->ProcessInput();
+    data.frame++;
+    character->mslIntp->PreTick(data.frame);
+    character->mslIntp->ProcessInput();
 }
 
 void AirborneScriptState::Tick() {
-    character_->mslIntp->Tick();
-    character_->ApplyVelocity();
+    character->mslIntp->Tick();
+    character->ApplyVelocity();
 }
 
 void AirborneScriptState::HandleCollision(const Entity &entity, VectorV pv) {
@@ -33,6 +33,6 @@ void AirborneScriptState::HandleCollision(const Entity &entity, VectorV pv) {
 
 void AirborneScriptState::SwitchState(CharState state) {
     if (state == GROUNDED) {
-        character_->mslIntp->CallFunction("Land");
+        character->mslIntp->CallFunction("Land");
     }
 }

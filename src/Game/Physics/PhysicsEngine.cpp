@@ -7,6 +7,8 @@
 //
 
 #include "PhysicsEngine.hpp"
+#include "../../Generator/LevelData.hpp"
+#include "../Entities/StageEntity.hpp"
 
 #include <iostream>
 #include <vector>
@@ -45,7 +47,6 @@ void PhysicsEngine::Update() {
     for (Character *character : characters_) {
         for (Entity *e : entities_) {
             if (character == e) continue;
-            
             for (const PolygonV &p1 : character->polygons) {
                 for (const PolygonV &p2 : e->polygons) {
                     auto res = checkCollision(p1, character->Position(), character->Direction(),
@@ -55,17 +56,26 @@ void PhysicsEngine::Update() {
                 }
             }
             
-            checkHitboxCollision(character, e);
+            if (!e->isStatic) {
+                checkHitboxCollision(character, e);
+            }
         }
     }
+}
+
+bool PhysicsEngine::CheckBoundingBoxAgainstPolys(const Entity *e1, const Entity *e2) {
+    RectangleV box = e1->BoundingBox();
+    PolygonV p1 = {{box.x, box.y}, {box.x + box.w, box.y},
+        {box.x + box.w, box.y + box.h}, {box.x, box.y + box.h}};
     
-    for (Entity *e : entities_) {
-        if (e->Type() == CHARACTER) continue;
-        for (Character *ch : characters_) {
-            if (e->id == ch->id) continue;
-            checkHitboxCollision(e, ch);
-        }
+    VectorV pos1 = e1->Position(), pos2 = e2->Position();
+    int dir1 = e1->Direction(), dir2 = e2->Direction();
+    for (const PolygonV& p2 : e2->polygons) {
+        if (checkCollision(p1, pos1, dir1,
+                           p2, pos2, dir2).first)
+            return true;
     }
+    return false;
 }
 
 void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
@@ -78,7 +88,7 @@ void PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2) {
                 auto res = checkCollision(h1.hitbox, e1->Position(), e1->Direction(),
                                           p2, e2->Position(), e2->Direction());
                 if (res.first) {
-                    int f = (h1.dmg * fpoat(0,4000)).i();
+                    int f = (h1.dmg * fpoat(0,4)).i();
                     bool r = e2->HandleHit(e1, f, h1);
                     if (r) {
                         e1->AddIgnoreHit(e2->id, h1.id);
@@ -147,7 +157,6 @@ pair<bool, VectorV>
             push_vectors.push_back(res.second);
         }
     }
-	cout << "Collision!" << endl;
 
     VectorV min_pv = push_vectors[0];
     for (int i = 1; i < push_vectors.size(); i++) {
@@ -277,5 +286,19 @@ pair<bool, VectorV> is_separating_axis(const VectorV &axis,
         return make_pair(false, push_vector);
     } else {
         return make_pair(true, VectorV(fpoat(0),fpoat(0)));
+    }
+}
+
+void PhysicsEngine::SetLevel(LevelData *level) {
+    // Generate StageEntity for each chunk in the level
+    for (const auto& row : level->chunks) {
+        for (const ChunkData chk : row) {
+            VectorV pos = {FixedPoint::FromInt(chk.x), FixedPoint::FromInt(chk.y)};
+            StageEntity *chunk = new StageEntity(chunkId_++, pos);
+            chunk->isStatic = true;
+            chunk->polygons = chk.mesh;
+            chunk->drawPolygons = true;
+            AddStage(chunk);
+        }
     }
 }

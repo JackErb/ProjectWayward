@@ -30,15 +30,3 @@ std::unordered_map<std::string, Msl::MoveScript*> MoveLoader::LoadMoves() {
     }
     return res;
 }
-
-/*Msl::Token t = s.NextToken();
-while (t != Msl::EOF_) {
-    if (t == Msl::IDENTIFIER) {
-        std::cerr << s.getId() << std::endl;
-    } else if (t == Msl::INT) {
-        std::cerr << s.getIntLiteral() << std::endl;
-    } else {
-        std::cerr << Msl::toString(t) << " " << std::endl;
-    }
-    t = s.NextToken();
-}*/

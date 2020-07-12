@@ -1,1 +1,1 @@
-target_sources(main PUBLIC PhysicsEngine.hpp PhysicsEngine.cpp)
+target_sources(GameLib PUBLIC PhysicsEngine.hpp PhysicsEngine.cpp)

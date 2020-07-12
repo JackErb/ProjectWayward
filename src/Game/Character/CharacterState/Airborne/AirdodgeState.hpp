@@ -16,8 +16,8 @@ public:
     AirdodgeState(Character *ch, fpoat angle) : AirborneState(ch) {
         // character_->airborneData.fastfall = false;
         Airdodge();
-        data.frame_ = 0;
-        data.dirInfluence_ = angle;
+        data.frame = 0;
+        data.dirInfluence = angle;
     }
     
     AirdodgeState(Character *ch, bool rb) : AirborneState(ch) {}

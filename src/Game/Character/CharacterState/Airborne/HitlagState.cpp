@@ -11,11 +11,11 @@
 
 void HitlagState::init(int f, fpoat angle, fpoat basekb, fpoat kbscale) {
     // Save knockback & angle
-    data.angle_ = angle;
-    data.kb_ = basekb + kbscale * (character_->Percent() * fpoat(0,1000));
+    data.angle = angle;
+    data.kb = basekb + kbscale * (character->Percent() * fpoat(0,1000));
     
     // Calculate hitlag length
-    data.frame_ = f;
+    data.frame = f;
 }
 
 void HitlagState::ProcessInput(const PlayerInput& input) {
@@ -23,9 +23,9 @@ void HitlagState::ProcessInput(const PlayerInput& input) {
 }
 
 void HitlagState::Tick() {
-    data.frame_--;
-    if (data.frame_ == 0) {
-        character_->SetActionState(new HitstunState(character_, data.angle_, data.kb_));
+    data.frame--;
+    if (data.frame == 0) {
+        character->SetActionState(new HitstunState(character, data.angle, data.kb));
         return;
     }
 }

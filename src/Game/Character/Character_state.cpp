@@ -25,14 +25,14 @@ void Character::ApplyGravity(const fpoat& m) {
         FastFall();
         return;
     }
-    Entity::data.velocity_.y = Entity::data.velocity_.y + m * attr.Gravity;
-    if (actionState_->GetStateType() != Hitstun) {
-        Entity::data.velocity_.y = fpmin(attr.MaxFallSpeed, Entity::data.velocity_.y);
+    Entity::data.velocity.y = Entity::data.velocity.y + m * attr.Gravity;
+    if (state->GetStateType() != Hitstun) {
+        Entity::data.velocity.y = fpmin(attr.MaxFallSpeed, Entity::data.velocity.y);
     }
 }
 
 void Character::Jump(JumpType type, bool fullhop) {
-    if (actionState_->GetState() != AIRBORNE) {
+    if (state->GetState() != AIRBORNE) {
         std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
         return;
     }
@@ -68,12 +68,12 @@ void Character::Jump(JumpType type, bool fullhop) {
             break;
     }
     SetActionState(new AirborneNeutralState(this));
-    Entity::data.velocity_.y = yv;
-    Entity::data.velocity_.x = xv;
+    Entity::data.velocity.y = yv;
+    Entity::data.velocity.x = xv;
 }
 
 void Character::Dash(const fpoat &m) {
-    if (actionState_->GetState() != GROUNDED) {
+    if (state->GetState() != GROUNDED) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
@@ -83,69 +83,69 @@ void Character::Dash(const fpoat &m) {
         return;
     }
     
-	Entity::data.velocity_.x = m * attr.MaxGroundSpeed;
+	Entity::data.velocity.x = m * attr.MaxGroundSpeed;
 }
 
 void Character::Vector() {
-    if (actionState_->GetState() != AIRBORNE) {
+    if (state->GetState() != AIRBORNE) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
         return;
     }
     
-    fpoat hyp = input_->stick.hyp();
+    fpoat hyp = input->stick.hyp();
     if (hyp <= StickDZ::DEADZONE) {
         ApplyFriction();
         return;
     }
     
-    fpoat x = fpabs(input_->stick.x);
+    fpoat x = fpabs(input->stick.x);
     fpoat m = x > fpoat(0,7) ? fpoat(1,0) : x * fpoat(1,4286); // This arbitrary fpoat is 1 / 0.7
-	m.sign = input_->stick.x.sign;
+	m.sign = input->stick.x.sign;
     
-    Entity::data.velocity_.x = Entity::data.velocity_.x + m * attr.AirAccel;
-	bool sign = Entity::data.velocity_.x.sign;
+    Entity::data.velocity.x = Entity::data.velocity.x + m * attr.AirAccel;
+	bool sign = Entity::data.velocity.x.sign;
 
 	// Cap air speed
-    Entity::data.velocity_.x = fpmin(attr.MaxAirSpeed, fpabs(Entity::data.velocity_.x));
-	Entity::data.velocity_.x.sign = sign;
+    Entity::data.velocity.x = fpmin(attr.MaxAirSpeed, fpabs(Entity::data.velocity.x));
+	Entity::data.velocity.x.sign = sign;
     
-    if (input_->stick.inDirection(DOWN_T) && hyp > StickDZ::HIGHRING && !Entity::data.velocity_.y.sign) {
+    if (input->stick.inDirection(DOWN_T) && hyp > StickDZ::HIGHRING && !Entity::data.velocity.y.sign) {
         FastFall();
     }
 }
 
 void Character::FastFall() {
-    Entity::data.velocity_.y = attr.FastFallSpeed;
+    Entity::data.velocity.y = attr.FastFallSpeed;
     data.airborneData.fastfall = true;
 }
 
 void Character::ApplyFriction() {
-	fpoat m = (actionState_->GetState() == GROUNDED) ? attr.GroundFriction : attr.AirFriction;
-    Entity::data.velocity_.x = Entity::data.velocity_.x * m;
+	fpoat m = (state->GetState() == GROUNDED) ? attr.GroundFriction : attr.AirFriction;
+    Entity::data.velocity.x = Entity::data.velocity.x * m;
 }
 
 void Character::SetActionState(CharacterState *s) {
     Entity::data.ignoreHits.clear();
-    data.actionStateT_ = s->GetStateType();
-    actionState_ = s;
+    data.stateType = s->GetStateType();
+    state = s;
 }
 
 void Character::FallthroughPlatform() {
-    if (actionState_->GetState() == AIRBORNE ||
+    if (state->GetState() == AIRBORNE ||
         data.groundedData.stage->Type() != EntityType::PLATFORM) {
         std::cerr << "ERROR Attempt to fall through " << data.groundedData.stage->Type();
-        std::cerr << ", WITH STATE " << actionState_->GetState() << std::endl;
+        std::cerr << ", WITH STATE " << state->GetState() << std::endl;
         return;
     }
     
-    data.fallthrough_ = data.groundedData.stage->id;
-    data.ftCount_ = 4;
+    data.ft = data.groundedData.stage->id;
+    data.ftCount = 4;
     initAirborneData();
 }
 
 void Character::WallJump(int dir) {
-    if (actionState_->GetState() != AIRBORNE) {
-        std::cerr << "ERROR Attempt to walljump, state: " << actionState_->GetState() << std::endl;
+    if (state->GetState() != AIRBORNE) {
+        std::cerr << "ERROR Attempt to walljump, state: " << state->GetState() << std::endl;
         return;
     }
     
@@ -156,14 +156,13 @@ void Character::WallJump(int dir) {
 }
 
 void Character::Airdodge() {
-    if (actionState_->GetState() != AIRBORNE
-        || !data.airborneData.airdodge) {
-        std::cerr << "ERROR Attempt to airdodge, state: " << actionState_->GetState();
+    if (state->GetState() != AIRBORNE || !data.airborneData.airdodge) {
+        std::cerr << "ERROR Attempt to airdodge, state: " << state->GetState();
         std::cerr << ", airdodge: " << data.airborneData.airdodge << std::endl;
         return;
     }
     
-	fpoat a = input_->stick.angle();
+	fpoat a = input->stick.angle();
     SetVelocity(fpcos(a) * attr.AirdodgeVelocity, - fpsin(a) * attr.AirdodgeVelocity);
     data.airborneData.airdodge = false;
 }

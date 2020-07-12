@@ -1,5 +1,6 @@
 #include "Tests.hpp"
-#include "../Game/MathHelper.hpp"
+#include "../MathHelper/MathHelper.h"
+#include "../MathHelper/Random.h"
 
 #include <iostream>
 
@@ -41,4 +42,16 @@ void TestFpoats() {
 	cout << (-fpoat(2, 4215)).f() << " = -2.4215" << endl;
 
 	cout << "Max: " << FixedPoint::MAX.f() << ", Min: " << FixedPoint::MIN.f() << endl;
+}
+
+void TestRand() {
+    Random r = Random(64);
+    
+    for (int i = 0; i < 10; i++) {
+        cout << r.rand() << endl;
+    }
+    
+    for (int i = 0; i < 100; i++) {
+        cout << r.rand(0, 10) << endl;
+    }
 }

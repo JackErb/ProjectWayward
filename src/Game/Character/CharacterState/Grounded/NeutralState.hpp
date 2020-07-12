@@ -14,7 +14,7 @@
 class NeutralState : public GroundedState {
 public:
     NeutralState(Character *ch) : GroundedState(ch) {
-        data.frame_ = 0;
+        data.frame = 0;
     }
     NeutralState(Character *ch, bool rb) : GroundedState(ch) {}
     ~NeutralState() {}

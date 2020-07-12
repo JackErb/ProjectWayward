@@ -16,61 +16,61 @@
 
 
 void NeutralState::NullVelocity() {
-    character_->NullVelocityY();
+    character->NullVelocityY();
 }
 
 void NeutralState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(JUMP)) {
-        character_->SetActionState(new JumpsquatState(character_));
+        character->SetActionState(new JumpsquatState(character));
         return;
     }
     
     if (input.IsPressed(ATTACK)) {
         if (input.stick.inDirection(UP_T)) {
-            character_->SetActionState(new GroundedScriptState(character_, "UTILT"));
+            character->SetActionState(new GroundedScriptState(character, "UTILT"));
         } else if (input.stick.inDirection(LEFT_T)) {
-            if (character_->Direction() == 1) {
-                character_->Turnaround();
+            if (character->Direction() == 1) {
+                character->Turnaround();
             }
-            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+            character->SetActionState(new GroundedScriptState(character, "FTILT"));
         } else if (input.stick.inDirection(RIGHT_T)) {
-            if (character_->Direction() == -1) {
-                character_->Turnaround();
+            if (character->Direction() == -1) {
+                character->Turnaround();
             }
-            character_->SetActionState(new GroundedScriptState(character_, "FTILT"));
+            character->SetActionState(new GroundedScriptState(character, "FTILT"));
         } else if (input.stick.inDirection(DOWN_T)) {
-            character_->SetActionState(new GroundedScriptState(character_, "DTILT"));
+            character->SetActionState(new GroundedScriptState(character, "DTILT"));
         } else {
-            character_->SetActionState(new GroundedScriptState(character_, "JAB"));
+            character->SetActionState(new GroundedScriptState(character, "JAB"));
             std::cout << "HERE" << std::endl;
         }
         return;
     }
     
     if (input.IsPressed(SPECIAL)) {
-        character_->SetActionState(new GroundedScriptState(character_, "FSPECIAL"));
+        character->SetActionState(new GroundedScriptState(character, "FSPECIAL"));
         return;
     }
     
     fpoat hyp = input.stick.hyp();
     if (hyp >= StickDZ::DEADZONE) {
         if (input.stick.inDirection(DOWN_T) &&
-            character_->Stage()->Type() == EntityType::PLATFORM) {
+            character->Stage()->Type() == EntityType::PLATFORM) {
             // Fall through platform
-            character_->FallthroughPlatform();
-            character_->SetActionState(new AirborneNeutralState(character_));
+            character->FallthroughPlatform();
+            character->SetActionState(new AirborneNeutralState(character));
             return;
         } else {
-            character_->SetActionState(new DashState(character_));
+            character->SetActionState(new DashState(character));
             return;
         }
     }
 }
 
 void NeutralState::Tick() {    
-    character_->ApplyFriction();
-    character_->ApplyVelocity();
-    //character_->SetSprite(character_->GetSprite("dash", data.frame_ % 11));
+    character->ApplyFriction();
+    character->ApplyVelocity();
+    //character->SetSprite(character->GetSprite("dash", data.frame_ % 11));
 }
 
 void NeutralState::HandleCollision(const Entity &entity, VectorV pv) {
@@ -78,7 +78,7 @@ void NeutralState::HandleCollision(const Entity &entity, VectorV pv) {
 
 void NeutralState::SwitchState(CharState state) {
     if (state == AIRBORNE) {
-        character_->SetActionState(new AirborneNeutralState(character_));
+        character->SetActionState(new AirborneNeutralState(character));
     } else {
         std::cerr << "ERROR SWITCHING STATES" << std::endl;
     }

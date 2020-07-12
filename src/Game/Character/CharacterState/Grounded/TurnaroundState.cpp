@@ -13,21 +13,21 @@
 #include "../../Character.hpp"
 
 void TurnaroundState::Turnaround() {
-    character_->NullVelocityX();
-    character_->Turnaround();
+    character->NullVelocityX();
+    character->Turnaround();
 }
 
 void TurnaroundState::ProcessInput(const PlayerInput &input) {
     if (input.IsPressed(JUMP)) {
-        character_->SetActionState(new JumpsquatState(character_));
+        character->SetActionState(new JumpsquatState(character));
         return;
     }
 }
 
 void TurnaroundState::Tick() {
-    data.frame_--;
-    if (data.frame_ == 0) {
-        character_->SetActionState(new DashState(character_));
+    data.frame--;
+    if (data.frame == 0) {
+        character->SetActionState(new DashState(character));
         return;
     }
 }
@@ -39,7 +39,7 @@ void TurnaroundState::HandleCollision(const Entity &e, VectorV pv) {
 void TurnaroundState::SwitchState(CharState state) {
     switch (state) {
         case AIRBORNE:
-            character_->SetActionState(new AirborneNeutralState(character_));
+            character->SetActionState(new AirborneNeutralState(character));
             return;
         case GROUNDED:
             std::cerr << "ERROR SWITCH STATE TURNAROUNDSTATE" << std::endl;

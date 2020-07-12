@@ -14,7 +14,7 @@
 class TurnaroundState : public GroundedState {
 public:
     TurnaroundState(Character *ch) : GroundedState(ch) {
-        data.frame_ = 7;
+        data.frame = 7;
         Turnaround();
     }
     

@@ -1,13 +1,13 @@
 //
-//  GameController.hpp
-//  SFML-App
+//  RogueController.hpp
+//  ProjectWayward
 //
-//  Created by Jack Erb on 4/24/20.
+//  Created by Jack Erb on 7/11/20.
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#ifndef GameController_hpp
-#define GameController_hpp
+#ifndef RogueController_hpp
+#define RogueController_hpp
 
 #include "AbstractGameController.hpp"
 
@@ -24,14 +24,15 @@
 struct SDL_Renderer;
 class PlayerInput;
 
-class GameController: public AbstractGameController {
+class RogueController: public AbstractGameController {
 public:
-    GameController(SDL_Renderer *rd, float w, float h);
-    ~GameController() {}
+    RogueController(SDL_Renderer *rd, float w, float h);
+    ~RogueController() {}
         
     void PreTick(bool rb = false);
-    void ProcessInput(const PlayerInput &pin, const PlayerInput &rin, bool rb = false);
+    
     void Tick();
+    void ProcessInput(const PlayerInput &pin, const PlayerInput &rin, bool rb = false);
     void Render(SDL_Renderer *rd);
     
     void RollbackTick();
@@ -39,16 +40,15 @@ public:
     void RollbackAndReplay();
         
 private:
-    void GenerateStage(SDL_Renderer *rd);
+    void GenerateRogueLevel();
     
 private:
     Character player_;
-    Character remotePlayer_;
     PhysicsEngine engine_;
     CameraController camera_;
-        
-    NetworkController network_;
-
+    
+    LevelData level_;
+    
     friend class NetworkController;
     friend int main(int, char**);
 };

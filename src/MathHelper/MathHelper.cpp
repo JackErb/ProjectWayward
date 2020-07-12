@@ -6,7 +6,7 @@
 //  Copyright © 2020 Jack Erb. All rights reserved.
 //
 
-#include "MathHelper.hpp"
+#include "../MathHelper/MathHelper.h"
 
 #include <vector>
 #include <math.h>
@@ -79,16 +79,20 @@ VectorV operator-(const VectorV &v, const fpoat &f) {
 static fpoat PI_4 = FixedPoint::PI * fpoat(0,25);
 static fpoat PI_3_4 = FixedPoint::PI * fpoat(0,75);
 
-int FixedPoint::BASE = 3;
-int FixedPoint::MULT = 1000;
-fpoat FixedPoint::PI = fpoat(3,142);
+int FixedPoint::BASE = 2;
+int FixedPoint::MULT = 100;
+fpoat FixedPoint::PI = FixedPoint::FromFloat(3.14159);
 fpoat FixedPoint::MAX = fpoat(10000000000000000);
 fpoat FixedPoint::MIN = fpoat(10000000000000000, true);
 fpoat FixedPoint::ZERO = fpoat(0);
 
 fpoat FixedPoint::FromFloat(float f) {
-	f *= MULT;
-	return fpoat((int)abs(f), f < 0);
+	int fp = abs(f) * MULT;
+	return fpoat(fp, f < 0);
+}
+
+fpoat FixedPoint::FromInt(int n) {
+    return fpoat(abs(n), 0, n < 0);
 }
 
 fpoat fpmin(const fpoat& v1, const fpoat& v2) {
@@ -146,59 +150,34 @@ FixedPoint::FixedPoint(int fpint, int fpdec, bool s) {
 }
 
 fpoat operator+(const fpoat &v1, const fpoat &v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-	long long rn = s1 * v1.n + s2 * v2.n;
-    bool sign = false;
-    if (rn < 0) {
-        sign = true;
-        rn *= -1;
-    }
-    return fpoat(rn, sign);
+    long long rn = (v1.sign ? -v1.n : v1.n) + (v2.sign ? -v2.n : v2.n);
+    bool sign = rn < 0;
+    return fpoat(abs(rn), sign);
 }
 
 fpoat operator-(const fpoat &v1, const fpoat &v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-	long long rn = s1 * v1.n - s2 * v2.n;
-    bool sign = false;
-    if (rn < 0) {
-        sign = true;
-        rn *= -1;
-    }
-    return fpoat(rn, sign);
+    long long rn = (v1.sign ? -v1.n : v1.n) - (v2.sign ? -v2.n : v2.n);
+    bool sign = rn < 0;
+    return fpoat(abs(rn), sign);
 }
 
 fpoat operator/(const fpoat &v1, const fpoat &v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-	long long rn = (s1 * v1.n) * FixedPoint::MULT / (s2 * v2.n);
-    bool sign = false;
-    if (rn < 0) {
-        sign = true;
-        rn *= -1;
+    if (v2.n == 0) {
+        std::cerr << "ERROR DIVIDE BY 0" << std::endl;
+        return fpoat(0);
     }
-    return fpoat(rn, sign);
+	long long rn = v1.n * FixedPoint::MULT / v2.n;
+    return fpoat(rn, v1.sign != v2.sign);
 }
 
 fpoat operator*(const fpoat &v1, const fpoat &v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-    long long rn = s1 * v1.n * s2 * v2.n;
-
-	bool sign = false;
-    if (rn < 0) {
-        sign = true;
-        rn *= -1;
-    }
-	rn /= FixedPoint::MULT;
-
-    return fpoat(rn, sign);
+    long long rn = v1.n * v2.n / FixedPoint::MULT;
+    return fpoat(rn, v1.sign != v2.sign);
 }
 
 float FixedPoint::f() const {
     float s = (((int)sign) * 2 - 1) * -1;
-    return s * (((float)n) / (float)pow(10,FixedPoint::BASE));
+    return s * ((double)n / (double)MULT);
 }
 
 int FixedPoint::i() const {

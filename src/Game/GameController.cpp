@@ -20,6 +20,8 @@
 #include "SDL_image.h"
 #endif
 
+#include "PlayerInput.hpp"
+#include "../Network/NetworkController.hpp"
 #include "GameController.hpp"
 #include "PlayerInput.hpp"
 #include "Physics/PhysicsEngine.hpp"
@@ -28,6 +30,8 @@
 #include "Loaders/SpriteLoader.hpp"
 #include "Loaders/MoveLoader.hpp"
 #include "Loaders/ResourcePath.hpp"
+#include "../Generator/Generator.hpp"
+#include "../Generator/LevelData.hpp"
 
 using std::list;
 using std::cout;
@@ -53,25 +57,32 @@ GameController::GameController(SDL_Renderer *rd, float w, float h) : player_(0, 
     AnimMap res2 = SpriteLoader::LoadAnimations(rd, {{"dash", 10}}, 0.1515);
     remotePlayer_.SetAnimMap(res2);
     remotePlayer_.SetTexture(res2["dash"][0]);
-    
+            
+    SpriteLoader::LoadTexture(rd, "rocket");
+                  
+    engine_.AddCharacter(&player_);
+    engine_.AddCharacter(&remotePlayer_);
+
+    GenerateStage(rd);
+}
+
+void GameController::GenerateStage(SDL_Renderer *rd) {
     StageEntity *stage = new StageEntity(1, {fpoat(0), fpoat(800,0)});
     stage->polygons = {
-		{{fpoat(1200,0,true),fpoat(500,0,true)}, {fpoat(1200,0),fpoat(500,0,true)},
-		 {fpoat(1200,0),fpoat(500,0)}, {fpoat(1200,0,true),fpoat(500,0)}}
+        {{fpoat(1200,0,true),fpoat(500,0,true)}, {fpoat(1200,0),fpoat(500,0,true)},
+         {fpoat(1200,0),fpoat(500,0)}, {fpoat(1200,0,true),fpoat(500,0)}}
     };
     stage->isStatic = true;
     stage->SetTexture(SpriteLoader::LoadTexture(rd, "stage"));
     
     PlatformEntity *platform = new PlatformEntity(3, {fpoat(0), fpoat(60,0,true)});
-	platform->polygons = {
-		{{fpoat(300,0,true),fpoat(10,0,true)}, {fpoat(300,0),fpoat(10,0,true)},
-		 {fpoat(300,0),fpoat(10,0)}, {fpoat(300,0,true),fpoat(10,0)}}
-	};
+    platform->polygons = {
+        {{fpoat(300,0,true),fpoat(10,0,true)}, {fpoat(300,0),fpoat(10,0,true)},
+         {fpoat(300,0),fpoat(10,0)}, {fpoat(300,0,true),fpoat(10,0)}}
+    };
     platform->isStatic = true;
     platform->SetTexture(SpriteLoader::LoadTexture(rd, "platform"));
-                  
-    engine_.AddCharacter(&player_);
-    //engine_.AddCharacter(&remotePlayer_);
+    
     engine_.AddStage(stage);
     engine_.AddStage(platform);
 }

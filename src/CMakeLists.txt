@@ -11,23 +11,32 @@ endif()
 add_subdirectory(Game)
 add_subdirectory(MSL)
 add_subdirectory(Network)
+add_subdirectory(Generator)
+add_subdirectory(MathHelper)
 add_subdirectory(test)
 #add_subdirectory(imgui)
 
+target_link_libraries(main GameLib MSLLib NetworkLib GeneratorLib MathHelper)
+target_link_libraries(GeneratorLib MathHelper)
+
 if (APPLE)
-	target_link_libraries(main
+	set(SDL_LIBS
 		"/Library/Frameworks/SDL2.framework"
 		"/Library/Frameworks/SDL2_image.framework"
+	)
+
+	set(NETWORK_LIBS
 		"/Library/Frameworks/sfml-network.framework"
 		"/Library/Frameworks/sfml-system.framework"
-	#	imgui
 	)
 else()
-	#find_library(SDL SDL2 PATHS "C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/")
-	#find_library(SDL_image SDL2_image PATHS "C:/Users/Jack/Desktop/slibs/SDL2_image-2.0.5/lib/x64/")
-	#find_library(SDL_main SDL2_main PATHS "C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64")
+	set(SDL_LIBS 
+		"C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/SDL2.lib"
+		"C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/SDL2main.lib"
+		"C:/Users/Jack/Desktop/slibs/SDL2_image-2.0.5/lib/x64/SDL2_image.lib"
+	)
 
-	target_link_libraries(main
+	set(NETWORK_LIBS
 		"C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/SDL2.lib"
 		"C:/Users/Jack/Desktop/slibs/SDL2-2.0.12/lib/x64/SDL2main.lib"
 		"C:/Users/Jack/Desktop/slibs/SDL2_image-2.0.5/lib/x64/SDL2_image.lib"
@@ -35,7 +44,6 @@ else()
 		"C:/Users/Jack/Desktop/slibs/SFML-2.5.1/lib/sfml-system-s-d.lib"
 		"winmm.lib"
 		"ws2_32.lib"
-		#imgui
 	)
 
 	include_directories(main
@@ -45,27 +53,32 @@ else()
 	)
 endif()
 
+target_link_libraries(main "${SDL_LIBS}")
+target_link_libraries(GameLib GeneratorLib "${SDL_LIBS}")
+target_link_libraries(NetworkLib "${NETWORK_LIBS}")
+
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_definitions(SFML_STATIC)
 
-target_include_directories(main PUBLIC
-	"${PROJECT_BINARY_DIR}"
-	"${PROJECT_SOURCE_DIR}/Game"
-	"${PROJECT_SOURCE_DIR}/Game/Character"
-	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState"
-	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState/Airborne"
-	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState/Grounded"
-	"${PROJECT_SOURCE_DIR}/Game/Entities/"
-	"${PROJECT_SOURCE_DIR}/Game/Loaders"
-	"${PROJECT_SOURCE_DIR}/Game/Physics"
-	"${PROJECT_SOURCE_DIR}/MSL"
-	"${PROJECT_SOURCE_DIR}/MSL/AST"
-	"${PROJECT_SOURCE_DIR}/MSL/AST/Expressions"
-	"${PROJECT_SOURCE_DIR}/MSL/AST/Statements"
-	"${PROJECT_SOURCE_DIR}/Network"
-)
+#target_include_directories(main PUBLIC
+#	"${PROJECT_BINARY_DIR}"
+#	"${PROJECT_SOURCE_DIR}/Game"
+#	"${PROJECT_SOURCE_DIR}/Game/Character"
+#	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState"
+#	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState/Airborne"
+#	"${PROJECT_SOURCE_DIR}/Game/Character/CharacterState/Grounded"
+#	"${PROJECT_SOURCE_DIR}/Game/Entities/"
+#	"${PROJECT_SOURCE_DIR}/Game/Loaders"
+#	"${PROJECT_SOURCE_DIR}/Game/Physics"
+#	"${PROJECT_SOURCE_DIR}/MSL"
+#	"${PROJECT_SOURCE_DIR}/MSL/AST"
+#	"${PROJECT_SOURCE_DIR}/MSL/AST/Expressions"
+#	"${PROJECT_SOURCE_DIR}/MSL/AST/Statements"
+#	"${PROJECT_SOURCE_DIR}/Network"
+#)
 
 install(TARGETS main DESTINATION bin)

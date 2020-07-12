@@ -17,7 +17,7 @@ class DashState : public GroundedState {
 public:
     DashState(Character *ch) : GroundedState(ch) {
         init();
-        data.frame_ = 0;
+        data.frame = 0;
     }
     DashState(Character *ch, bool rb) : GroundedState(ch) {}
     
