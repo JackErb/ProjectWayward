@@ -12,10 +12,10 @@
 
 void JumpsquatState::ProcessInput(const PlayerInput &input) {
     if (input.stick.hyp() > 0.3f) {
-        if (input.stick.inDirection(LEFT) && data.type == JUP) {
-            data.type = JLEFT;
-        } else if (input.stick.inDirection(RIGHT) && data.type == JUP) {
-            data.type = JRIGHT;
+        if (input.stick.inDirection(LEFT) && data.type == Jump_Up) {
+            data.type = Jump_Left;
+        } else if (input.stick.inDirection(RIGHT) && data.type == Jump_Up) {
+            data.type = Jump_Right;
         }
     }
     
@@ -40,10 +40,10 @@ void JumpsquatState::HandleCollision(const Entity &e1, VectorV pv) {
 
 void JumpsquatState::SwitchState(CharState state) {
     switch (state) {
-        case AIRBORNE:
+        case State_Airborne:
             character->SetActionState(new AirborneNeutralState(character));
             return;
-        case GROUNDED:
+        case State_Grounded:
             std::cerr << "ERROR SWITCH STATE JUMPSQUAT" << std::endl;
             return;
     }

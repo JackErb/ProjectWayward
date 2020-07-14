@@ -24,8 +24,11 @@ typedef struct GeneratorOptions {
     int chunkWidth;
     int chunkHeight;
     
+    int tileWidth;
+    int tileHeight;
+    
     // Temporary vector
-    std::unordered_map<ChunkType, std::string> *chunkTemplates;
+    std::unordered_map<ChunkType, std::vector<ChunkTemplate>> *chunkTemplates;
 } GeneratorOptions;
 
 LevelData GenerateLevel(const GeneratorOptions& opt);

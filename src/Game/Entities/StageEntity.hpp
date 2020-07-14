@@ -20,7 +20,7 @@ public:
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override { return false; }
     void RollbackTick() override { Entity::RollbackTick(); }
     
-    EntityType Type() const override { return STAGE; }
+    EntityType Type() const override { return Ent_Stage; }
 };
 
 #endif /* StageEntity_hpp */

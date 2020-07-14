@@ -30,7 +30,7 @@ void GroundedScriptState::HandleCollision(const Entity &entity, VectorV pv) {
 }
 
 void GroundedScriptState::SwitchState(CharState state) {
-    if (state == AIRBORNE) {
+    if (state == State_Airborne) {
         character->mslIntp->CallFunction("Airborne");
     }
 }

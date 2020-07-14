@@ -293,7 +293,7 @@ void PhysicsEngine::SetLevel(LevelData *level) {
     // Generate StageEntity for each chunk in the level
     for (const auto& row : level->chunks) {
         for (const ChunkData chk : row) {
-            VectorV pos = {FixedPoint::FromInt(chk.x), FixedPoint::FromInt(chk.y)};
+            VectorV pos = {FixedPoint::FromInt(chk.chunk_x), FixedPoint::FromInt(chk.chunk_y)};
             StageEntity *chunk = new StageEntity(chunkId_++, pos);
             chunk->isStatic = true;
             chunk->polygons = chk.mesh;

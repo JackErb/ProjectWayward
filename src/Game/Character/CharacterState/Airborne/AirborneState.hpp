@@ -15,7 +15,7 @@ class AirborneState : public CharacterState {
 public:
     AirborneState(Character *ch) : CharacterState(ch) {}
     CharState GetState() const override final {
-        return AIRBORNE;
+        return State_Airborne;
     }
 };
 

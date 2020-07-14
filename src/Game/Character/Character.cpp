@@ -65,10 +65,10 @@ void Character::initMslBindings() {
     
     mslIntp->bindings_["quit"] = [=]() {
         switch (state->GetState()) {
-            case GROUNDED:
+            case State_Grounded:
                 SetActionState(new NeutralState(this));
                 break;
-            case AIRBORNE:
+            case State_Airborne:
                 SetActionState(new AirborneNeutralState(this));
                 break;
         }
@@ -122,11 +122,11 @@ void Character::Tick() {
 
     // Do state dependent actions
     switch (state->GetState()) {
-        case AIRBORNE:
+        case State_Airborne:
             break;
-        case GROUNDED:
+        case State_Grounded:
             if (!engine->CheckBoundingBoxAgainstPolys(this, data.groundedData.stage)) {
-                state->SwitchState(AIRBORNE);
+                state->SwitchState(State_Airborne);
                 initAirborneData();
             }
             break;
@@ -189,35 +189,45 @@ void Character::Rollback() {
 }
 
 void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
+    // Ignore fallthrough
     if (entity.id == data.ft) {
         return;
     }
     
-    if (entity.Type() == CHARACTER) {
-        fill = true;
-    }
-    
-    if (entity.Type() == STAGE) {
+    if (entity.Type() == Ent_Stage) {
         // Apply the push vector to prevent overlap
         Transform(pv);
+        
+        // TODO: Fix grounded state
+        // The below code doesn't work but the idea is a potential fix to the problem
+        // of transitioning between different stage entities but not going airborne
+        //if (state->GetState() == State_Grounded) data.groundedData.stage = &entity;
     }
     
-    if (state->GetState() == AIRBORNE) {
+    if (state->GetState() == State_Airborne) {
         fpoat vy = Velocity().y;
-        if (entity.Type() == STAGE) {            
+        if (entity.Type() == Ent_Stage) {
             if (pv.x.n == 0 && pv.y.sign && !vy.sign && vy.n != 0) {
                 // Land on the stage
                 NullVelocityY();
-                state->SwitchState(GROUNDED);
+                
+                // Current state is in charge of setting new state (transitioning to GROUNDED)
+                state->SwitchState(State_Grounded);
                 data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                 return;
             } else if (!pv.y.sign && pv.x.n == 0) {
+                // Head ceiling bump
+                // TODO: horizontal check (don't null velocity if barely clipping stage)
                 NullVelocityY();
+                return;
             }
-        } else if (entity.Type() == PLATFORM && !input->stick.inDirection(DOWN)) {
+            // TODO: null velocity x hugging wall
+        } else if (entity.Type() == Ent_Platform && !input->stick.inDirection(DOWN)) {
             if (pv.x.n == 0 && pv.y.sign) {
                 // The character collided with the platform. Check if the character
                 // is above the platform and falling down
+                // TODO: Fix this -- Bounding box collision test is not always accurate
+                // (ex: level comprised of multiple polygons is one huge rect)
                 Rectangle b = BoundingBox();
                 Rectangle s = entity.BoundingBox();
                 
@@ -229,14 +239,13 @@ void Character::HandleCollision(const Entity &entity, const VectorV &pv) {
                     // Apply the push vector to prevent overlap
                     Transform(pv);
                     
-                    state->SwitchState(GROUNDED);
+                    state->SwitchState(State_Grounded);
                     data.groundedData.stage = dynamic_cast<const StageEntity*>(&entity);
                     return;
 				}
 			}
         }
     }
-    
     state->HandleCollision(entity, pv);
 }
 
@@ -251,7 +260,7 @@ bool Character::HandleHit(const Entity *e, int f, const HitboxData &hd) {
         center = center + e->Position();
         
         if (Position().x < center.x) {
-            angle = angle - FixedPoint::PI * fpoat(0,5000);
+            angle = angle - FixedPoint::PI * fpoat(0,5);
         }
     } else {
         if (e->Direction() == -1) angle = FixedPoint::PI - angle;

@@ -16,7 +16,7 @@ public:
     GroundedState(Character *ch) : CharacterState(ch) {}
 
     CharState GetState() const override final {
-        return GROUNDED;
+        return State_Grounded;
     }
 };
 

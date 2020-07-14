@@ -46,7 +46,7 @@ public:
     void SetScale(float s) { scale = s; }
 
 public:
-    float scale = 0.65f;
+    float scale = 0.4f;
     LevelData *level;
 
 private:

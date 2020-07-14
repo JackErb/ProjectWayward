@@ -11,52 +11,17 @@
 
 #include <string>
 
-void LevelData::GenerateRandChunk(int x, int y, ChunkType typ, Random *r) {
-    std::string rep;
-    ChunkData *chunk = &chunks[x][y];
-    switch (typ) {
-        case Main:
-            chunk->mesh.push_back({{fpoat(0),fpoat(0)},{fpoat(1600,0),fpoat(0)},
-                {fpoat(1600,0),fpoat(400,0)},{fpoat(0),fpoat(400,0)}});
-            chunk->mesh.push_back({{fpoat(0),fpoat(1200,0)},{fpoat(1600,0),fpoat(1200,0)},
-                {fpoat(1600,0),fpoat(1600,0)},{fpoat(0),fpoat(1600,0)}});
-            break;
-        case MainDrop:
-            chunk->mesh.push_back({{fpoat(0),fpoat(0)},{fpoat(1600,0),fpoat(0)},
-                {fpoat(1600,0),fpoat(400,0)},{fpoat(0),fpoat(400,0)}});
-            chunk->mesh.push_back({{fpoat(0),fpoat(1200,0)},{fpoat(600,0),fpoat(1200,0)},
-                {fpoat(600,0),fpoat(1600,0)},{fpoat(0),fpoat(1600,0)}});
-            chunk->mesh.push_back({{fpoat(1000,0),fpoat(1200,0)},{fpoat(1600,0),fpoat(1200,0)},
-                {fpoat(1600,0),fpoat(1600,0)},{fpoat(1000,0),fpoat(1600,0)}});
-            break;
-        case MainFall:
-            chunk->mesh.push_back({{fpoat(0),fpoat(0)},{fpoat(600,0),fpoat(0)},
-                {fpoat(600,0),fpoat(1600,0)},{fpoat(0),fpoat(1600,0)}});
-            chunk->mesh.push_back({{fpoat(1000,0),fpoat(0)},{fpoat(1600,0),fpoat(0)},
-                {fpoat(1600,0),fpoat(1600,0)},{fpoat(1000,0),fpoat(1600,0)}});
-            break;
-        case MainLand:
-            chunk->mesh.push_back({{fpoat(0),fpoat(0)},{fpoat(600,0),fpoat(0)},
-                {fpoat(600,0),fpoat(400,0)},{fpoat(0),fpoat(400,0)}});
-            chunk->mesh.push_back({{fpoat(1000,0),fpoat(0)},{fpoat(1600,0),fpoat(0)},
-                {fpoat(1600,0),fpoat(400,0)},{fpoat(1000,0),fpoat(400,0)}});
-            chunk->mesh.push_back({{fpoat(0),fpoat(1200,0)},{fpoat(1600,0),fpoat(1200,0)},
-                {fpoat(1600,0),fpoat(1600,0)},{fpoat(0),fpoat(1600,0)}});
-            break;
-        default:
-            chunk->mesh.push_back({{fpoat(0),fpoat(0)},{fpoat(1600,0),fpoat(0)},
-                {fpoat(1600,0),fpoat(1600,0)},{fpoat(0),fpoat(1600,0)}});
-            break;
-    }
-}
-
 void LevelData::Init(const GeneratorOptions& opt) {
     for (int x = 0; x < opt.mapWidth; x++) {
         chunks.push_back(vector<ChunkData>());
         for (int y = 0; y < opt.mapHeight; y++) {
             chunks[x].push_back(ChunkData());
-            chunks[x][y].x = x * 1600;
-            chunks[x][y].y = y * 1600;
+            chunks[x][y].chunk_x = x * (opt.chunkWidth * opt.tileWidth) / 2;
+            chunks[x][y].chunk_y = y * (opt.chunkHeight * opt.tileHeight) / 2;
+            chunks[x][y].chunk_w = opt.chunkWidth;
+            chunks[x][y].chunk_h = opt.chunkHeight;
+            chunks[x][y].tile_w  = opt.tileWidth;
+            chunks[x][y].tile_h  = opt.tileHeight;
         }
     }
 }

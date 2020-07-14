@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <list>
+#include <string>
 #include <math.h>
 
 #if defined(__APPLE__)
@@ -42,8 +43,8 @@ using std::endl;
 RogueController::RogueController(SDL_Renderer *rd, float w, float h) : player_(0, { fpoat(0), fpoat(500,0,true) }), camera_(&engine_.entities_, w, h) {
 	player_.polygons = {
         {{fpoat(40,0,true), fpoat(120,0)}, {fpoat(75,0), fpoat(120,0)},
-		 {fpoat(75,0), fpoat(60,0,true)}, {fpoat(40,0,true), fpoat(60,0,true)}},
-        {{fpoat(40,0), fpoat(75,0,true)}, {fpoat(57,0), fpoat(0)}}
+		 {fpoat(75,0), fpoat(60,0,true)}, {fpoat(40,0,true), fpoat(60,0,true)}}//,
+        //{{fpoat(40,0), fpoat(75,0,true)}, {fpoat(57,0), fpoat(0)}}
     };
     AnimMap res = SpriteLoader::LoadAnimations(rd, {{"dash", 10}}, 0.1515);
     player_.SetAnimMap(res);
@@ -58,8 +59,325 @@ void RogueController::GenerateRogueLevel() {
     GeneratorOptions opt;
     opt.mapWidth = 10;
     opt.mapHeight = 15;
+    
+    opt.chunkWidth = 10;
+    opt.chunkHeight = 10;
+    
+    opt.tileWidth = 300;
+    opt.tileHeight = 300;
+    
+    std::unordered_map<ChunkType, std::vector<ChunkTemplate>> templates;
+    
+    templates[Chunk_Main] = {
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "  ooooo   "
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "ooo       "
+                      + "          "
+                      + "          "
+                      + "  ooooooo "
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "  oooooooo"
+        + "      ooo"
+        + "          "
+        + "          "
+        + "  oooo    "
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oo     ooo"
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "  oo   oo "
+                      + "ooooo  ooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooo   ooo"
+        + "          "
+        + "          "
+        + "     oo   "
+        + "   oooo   "
+        + "o        o"
+        + "oo       o"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "ooo   oooo"
+        + "o       oo"
+        + "          "
+        + "   ooooo  "
+        + "  oooooo  "
+        + "   oooo  o"
+        + "o       oo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "ooo   oooo"
+        + "o       oo"
+        + "          "
+        + "   ooooo  "
+        + " oooooooo "
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo")
+    };
+    
+    templates[Chunk_MainDrop] = {
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "ooo   oooo"
+                      + "o         "
+                      + "          "
+                      + "          "
+                      + "oo        "
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "ooo    ooo"),
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "ooo     oo"
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "oo     ooo"
+                      + "oo    oooo"
+                      + "ooo   oooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "ooo     oo"
+        + "          "
+        + "          "
+        + "  ooo     "
+        + "ooooo  oo   "
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "ooo  ooooo")
+    };
+    
+    templates[Chunk_MainFall] = {
+        ChunkTemplate(std::string("")
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "          "
+                      + "   ooo    "
+                      + "   oooo   "
+                      + "          "
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "ooo    ooo"),
+        ChunkTemplate(std::string("")
+                    + "ooo    ooo"
+                    + "ooo    ooo"
+                    + "ooo    ooo"
+                    + "oo      oo"
+                    + "oo        "
+                    + "oo        "
+                    + "oo      oo"
+                    + "ooo    ooo"
+                    + "ooo    ooo"
+                    + "ooo    ooo"),
+        ChunkTemplate(std::string("")
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "oo      oo"
+        + "oooooo  oo"
+        + "ooooo    o"
+        + "oo      oo"
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "ooo    ooo")
+    };
+    
+    templates[Chunk_MainLand] = {
+        ChunkTemplate(std::string("")
+                      + "ooo    ooo"
+                      + "oo     ooo"
+                      + "o        o"
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "   oooo   "
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "          "
+                      + "    oo    "
+                      + "   oooo   "
+                      + "   ooooo  "
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "ooo    ooo"
+        + "          "
+        + "oooooo    "
+        + "  ooooo   "
+        + "   ooooo  "
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "ooo    ooo"
+        + "oo      oo"
+        + "         o"
+        + "          "
+        + "   ooooo  "
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+    };
+    
+    templates[Chunk_Standard] = {
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "ooo    ooo"
+        + "oo     ooo"
+        + "o        o"
+        + "          "
+        + "          "
+        + "          "
+        + "   oooo   "
+        + "oooooooooo"
+        + "oooooooooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+        + "oooooooooo"
+        + "ooo    ooo"
+        + "o        o"
+        + "          "
+        + "         o"
+        + "        oo"
+        + "        oo"
+        + "oooo   ooo"
+        + "ooo   oooo"
+        + "oooooooooo"),
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "ooo   oooo"
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "ooo    ooo"
+                      + "ooo    ooo"
+                      + "ooo    ooo"),
+        ChunkTemplate(std::string("")
+                      + "oooooooooo"
+                      + "oooooooooo"
+                      + "ooo     oo"
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "          "
+                      + "oo    oooo"
+                      + "oo    oooo"
+                      + "ooo   oooo")
+    };
+    
+    opt.chunkTemplates = &templates;
     level_ = GenerateLevel(opt);
-    player_.SetPosition({fpoat(level_.start_x * 1600, 0), fpoat(400,0)});
+    
+    
+    // Chunk dimensions in pixels
+    int spawn_x = level_.chunks[level_.start_x][0].chunk_x + opt.chunkWidth * opt.tileWidth / 2;
+    int spawn_y = opt.chunkHeight * opt.tileHeight / 2;
+    
+    player_.SetPosition({fpoat(spawn_x, 0), fpoat(spawn_y,0)});
     camera_.level = &level_;
     engine_.SetLevel(&level_);
 }

@@ -17,9 +17,11 @@ struct GeneratorOptions;
 typedef struct LevelData {
     vector<vector<ChunkData>> chunks;
     int start_x;
+    int map_w;
+    int map_h;
     
     void Init(const GeneratorOptions& opt);
-    void GenerateRandChunk(int x, int y, ChunkType type, Random *r);
+    void PrintChunks();
 } LevelData;
 
 #endif  // LevelData_hpp

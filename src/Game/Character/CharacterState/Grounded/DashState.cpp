@@ -98,10 +98,10 @@ void DashState::HandleCollision(const Entity &e1, VectorV pv) {
 
 void DashState::SwitchState(CharState state) {
     switch (state) {
-        case GROUNDED:
+        case State_Grounded:
             std::cerr << "Switch to grounded state while actionState=Dash" << std::endl;
             return;
-        case AIRBORNE:
+        case State_Airborne:
             character->SetActionState(new AirborneNeutralState(character));
             return;
     }

@@ -28,7 +28,7 @@ int64_t random_long(int64_t seed) {
 }
 
 
-Random::Random(int64_t seed) : pv(seed) {
+Random::Random(int64_t seed) : pv(seed < 0 ? -seed : seed) {
     mult = 1.0 / (1.0 + (m-1));
 }
 

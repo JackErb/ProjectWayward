@@ -75,11 +75,6 @@ namespace Msl {
                 return "DEFAULT";
         }
     }
-    
-    typedef enum MoveType {
-        NAIR
-    } MoveType;
-
 
     typedef struct MoveScript {
         std::string name;

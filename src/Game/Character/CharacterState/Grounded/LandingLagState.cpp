@@ -12,7 +12,7 @@
 #include "../../Character.hpp"
 
 void LandingLagState::ProcessInput(const PlayerInput &input) {
-    
+    std::cout << "Landing Lag" << std::endl;
 }
 
 void LandingLagState::Tick() {
@@ -30,7 +30,7 @@ void LandingLagState::HandleCollision(const Entity &e1, VectorV pv) {
 }
 
 void LandingLagState::SwitchState(CharState state) {
-    if (state == AIRBORNE) {
+    if (state == State_Airborne) {
         character->SetActionState(new AirborneNeutralState(character));
         return;
     } else {

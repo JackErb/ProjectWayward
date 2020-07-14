@@ -38,10 +38,10 @@ void TurnaroundState::HandleCollision(const Entity &e, VectorV pv) {
 
 void TurnaroundState::SwitchState(CharState state) {
     switch (state) {
-        case AIRBORNE:
+        case State_Airborne:
             character->SetActionState(new AirborneNeutralState(character));
             return;
-        case GROUNDED:
+        case State_Grounded:
             std::cerr << "ERROR SWITCH STATE TURNAROUNDSTATE" << std::endl;
             return;
     }

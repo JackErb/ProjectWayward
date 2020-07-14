@@ -13,7 +13,9 @@
 
 class AirborneNeutralState : public AirborneState {
 public:
-    AirborneNeutralState(Character *ch) : AirborneState(ch) {}
+    AirborneNeutralState(Character *ch) : AirborneState(ch) {
+        data.frame = 0;
+    }
     AirborneNeutralState(Character *ch, bool rb) : AirborneState(ch) {}
     ~AirborneNeutralState() {}
     

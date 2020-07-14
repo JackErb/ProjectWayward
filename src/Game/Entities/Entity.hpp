@@ -34,7 +34,7 @@ typedef struct Rectangle {
 } RectangleV;
 
 typedef enum EntityType {
-	CHARACTER, STAGE, PLATFORM, DECORATION, PROJECTILE
+	Ent_Character, Ent_Stage, Ent_Platform, Ent_Decoration, Ent_Projectile
 } EntityType;
 
 class PhysicsEngine;

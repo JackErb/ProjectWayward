@@ -55,7 +55,7 @@ void NeutralState::ProcessInput(const PlayerInput &input) {
     fpoat hyp = input.stick.hyp();
     if (hyp >= StickDZ::DEADZONE) {
         if (input.stick.inDirection(DOWN_T) &&
-            character->Stage()->Type() == EntityType::PLATFORM) {
+            character->Stage()->Type() == Ent_Platform) {
             // Fall through platform
             character->FallthroughPlatform();
             character->SetActionState(new AirborneNeutralState(character));
@@ -77,7 +77,7 @@ void NeutralState::HandleCollision(const Entity &entity, VectorV pv) {
 }
 
 void NeutralState::SwitchState(CharState state) {
-    if (state == AIRBORNE) {
+    if (state == State_Airborne) {
         character->SetActionState(new AirborneNeutralState(character));
     } else {
         std::cerr << "ERROR SWITCHING STATES" << std::endl;

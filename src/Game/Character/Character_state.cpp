@@ -32,7 +32,7 @@ void Character::ApplyGravity(const fpoat& m) {
 }
 
 void Character::Jump(JumpType type, bool fullhop) {
-    if (state->GetState() != AIRBORNE) {
+    if (state->GetState() != State_Airborne) {
         std::cerr << "ERROR: JUMP INVALID STATE " << std::endl;
         return;
     }
@@ -43,20 +43,20 @@ void Character::Jump(JumpType type, bool fullhop) {
     
     fpoat xv;
 	fpoat yv = fullhop ? attr.FullhopJump : attr.ShorthopJump;
-    if (type == JLEFT || type == JUP || type == JRIGHT) {
+    if (type == Jump_Left || type == Jump_Up || type == Jump_Right) {
         initAirborneData();
     }
     switch (type) {
-        case JLEFT:
+        case Jump_Left:
             xv = - attr.MaxGroundSpeed;
             break;
-        case JUP:
+        case Jump_Up:
             xv = fpoat(0);
             break;
-        case JRIGHT:
+        case Jump_Right:
             xv = attr.MaxGroundSpeed;
             break;
-        case DJUMP:
+        case Jump_Double:
             if (data.airborneData.jumps > 0) {
                 data.airborneData.jumps--;
                 xv = fpoat(0);
@@ -73,7 +73,7 @@ void Character::Jump(JumpType type, bool fullhop) {
 }
 
 void Character::Dash(const fpoat &m) {
-    if (state->GetState() != GROUNDED) {
+    if (state->GetState() != State_Grounded) {
         std::cerr << "ERROR: DASH INVALID STATE " << std::endl;
         return;
     }
@@ -87,7 +87,7 @@ void Character::Dash(const fpoat &m) {
 }
 
 void Character::Vector() {
-    if (state->GetState() != AIRBORNE) {
+    if (state->GetState() != State_Airborne) {
         std::cerr << "ERROR: VECTOR INVALID STATE " << std::endl;
         return;
     }
@@ -120,7 +120,7 @@ void Character::FastFall() {
 }
 
 void Character::ApplyFriction() {
-	fpoat m = (state->GetState() == GROUNDED) ? attr.GroundFriction : attr.AirFriction;
+	fpoat m = (state->GetState() == State_Grounded) ? attr.GroundFriction : attr.AirFriction;
     Entity::data.velocity.x = Entity::data.velocity.x * m;
 }
 
@@ -131,8 +131,8 @@ void Character::SetActionState(CharacterState *s) {
 }
 
 void Character::FallthroughPlatform() {
-    if (state->GetState() == AIRBORNE ||
-        data.groundedData.stage->Type() != EntityType::PLATFORM) {
+    if (state->GetState() == State_Airborne ||
+        data.groundedData.stage->Type() != Ent_Platform) {
         std::cerr << "ERROR Attempt to fall through " << data.groundedData.stage->Type();
         std::cerr << ", WITH STATE " << state->GetState() << std::endl;
         return;
@@ -144,7 +144,7 @@ void Character::FallthroughPlatform() {
 }
 
 void Character::WallJump(int dir) {
-    if (state->GetState() != AIRBORNE) {
+    if (state->GetState() != State_Airborne) {
         std::cerr << "ERROR Attempt to walljump, state: " << state->GetState() << std::endl;
         return;
     }
@@ -156,7 +156,7 @@ void Character::WallJump(int dir) {
 }
 
 void Character::Airdodge() {
-    if (state->GetState() != AIRBORNE || !data.airborneData.airdodge) {
+    if (state->GetState() != State_Airborne || !data.airborneData.airdodge) {
         std::cerr << "ERROR Attempt to airdodge, state: " << state->GetState();
         std::cerr << ", airdodge: " << data.airborneData.airdodge << std::endl;
         return;

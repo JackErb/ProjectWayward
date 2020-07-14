@@ -64,31 +64,86 @@ fpoat dot(const VectorV &v1, const VectorV &v2);
 
 VectorV geometric_center(const PolygonV &p, int dir = 1);
 
-VectorV operator+(const VectorV &v1, const VectorV &v2);
-VectorV operator-(const VectorV &v1, const VectorV &v2);
-VectorV operator/(const VectorV &v, const fpoat &f);
-VectorV operator*(const VectorV &v, const fpoat &f);
-VectorV operator+(const VectorV &v, const fpoat &f);
-VectorV operator-(const VectorV &v, const fpoat &f);
+inline fpoat operator+(const fpoat &v1, const fpoat &v2) {
+    long long rn = (v1.sign ? -v1.n : v1.n) + (v2.sign ? -v2.n : v2.n);
+    bool sign = rn < 0;
+    return fpoat(abs(rn), sign);
+}
 
-fpoat operator+(const fpoat &v1, const fpoat &v2);
-fpoat operator-(const fpoat &v1, const fpoat &v2);
-fpoat operator/(const fpoat &v1, const fpoat &v2);
-fpoat operator*(const fpoat &v1, const fpoat &v2);
-fpoat operator-(const fpoat &v1);
+inline fpoat operator-(const fpoat &v1, const fpoat &v2) {
+    long long rn = (v1.sign ? -v1.n : v1.n) - (v2.sign ? -v2.n : v2.n);
+    bool sign = rn < 0;
+    return fpoat(abs(rn), sign);
+}
+
+inline fpoat operator/(const fpoat &v1, const fpoat &v2) {
+    if (v2.n == 0) {
+        std::cerr << "ERROR DIVIDE BY 0" << std::endl;
+        return fpoat(0);
+    }
+    long long rn = v1.n * FixedPoint::MULT / v2.n;
+    return fpoat(rn, v1.sign != v2.sign);
+}
+
+inline fpoat operator*(const fpoat &v1, const fpoat &v2) {
+    long long rn = v1.n * v2.n / FixedPoint::MULT;
+    return fpoat(rn, v1.sign != v2.sign);
+}
+
+inline bool operator<(const fpoat& v1, const fpoat& v2) {
+    long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
+    long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
+    return s1 * v1.n < s2 * v2.n;
+}
+inline bool operator>(const fpoat& v1, const fpoat& v2) {
+    long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
+    long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
+    return s1 * v1.n > s2 * v2.n;
+}
+
+inline bool operator==(const fpoat& v1, const fpoat& v2) {
+    return v1.n == v2.n && v1.sign == v2.sign;
+}
+
+inline bool operator>=(const fpoat& v1, const fpoat& v2) {
+    return v1 > v2 || v1 == v2;
+}
+
+inline bool operator<=(const fpoat& v1, const fpoat& v2) {
+    return v1 < v2 || v1 == v2;
+}
+
+inline fpoat operator-(const fpoat& v) {
+    return fpoat(v.n, !v.sign);
+}
+
+inline VectorV operator+(const VectorV &v1, const VectorV &v2) {
+    return VectorV(v1.x + v2.x, v1.y + v2.y);
+}
+
+inline VectorV operator-(const Vector &v1, const Vector &v2) {
+    return VectorV(v1.x - v2.x, v1.y - v2.y);
+}
+
+inline VectorV operator/(const VectorV &v, const fpoat &f) {
+    return VectorV(v.x / f, v.y / f);
+}
+
+inline VectorV operator*(const VectorV &v, const fpoat &f) {
+    return VectorV(v.x * f, v.y * f);
+}
+
+inline VectorV operator+(const VectorV &v, const fpoat &f) {
+    return VectorV(v.x + f, v.y + f);
+}
+
+inline VectorV operator-(const VectorV &v, const fpoat &f) {
+    return VectorV(v.x - f, v.y - f);
+}
 
 fpoat operator*(int v1, const fpoat& v2);
 fpoat operator*(const fpoat& v1, int v2);
-
-bool operator>(const fpoat& v1, const fpoat& v2);
-bool operator<(const fpoat& v1, const fpoat& v2);
-bool operator>=(const fpoat& v1, const fpoat& v2);
-bool operator<=(const fpoat& v1, const fpoat& v2);
-bool operator==(const fpoat& v1, const fpoat& v2);
-
 bool operator>(const fpoat& v1, int v2);
 bool operator<(const fpoat& v2, int v1);
-
-fpoat operator-(const fpoat& v);
 
 #endif /* MathHelper_h */

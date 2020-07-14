@@ -31,27 +31,6 @@ class MslInterpreter;
 
 class Character : public Entity {
 public:
-    typedef struct CharacterAttributes {
-        fpoat GroundAccel = fpoat(0,2500);
-		fpoat MaxGroundSpeed = fpoat(30,0);
-		fpoat GroundFriction = fpoat(0,8700);
-           
-		fpoat AirAccel = fpoat(3,5000);
-		fpoat MaxAirSpeed = fpoat(38,0);
-		fpoat AirFriction = fpoat(0,9100);
-           
-		fpoat Gravity = fpoat(3, 4000);
-		fpoat MaxFallSpeed = fpoat(40,0);
-		fpoat FastFallSpeed = fpoat(70,0);
-        
-		fpoat DoubleJump = fpoat(65,0,true);
-		fpoat WallJump = fpoat(60,0,true);
-		fpoat FullhopJump = fpoat(63,0,true);
-		fpoat ShorthopJump = fpoat(40,0,true);
-        
-		fpoat AirdodgeVelocity = fpoat(60,0);
-    } Attributes;
-    
     typedef struct GroundedData {
         const StageEntity *stage;
     } GroundedData;
@@ -74,7 +53,7 @@ public:
     
     
     /* Get Methods */
-    EntityType Type() const override { return CHARACTER; }
+    EntityType Type() const override { return Ent_Character; }
     TextureV* GetTexture(const string& state, int frame) { return anims[state][frame]; }
     const StageEntity* Stage() const { return data.groundedData.stage; }
     int Jumps() const { return data.airborneData.jumps; }

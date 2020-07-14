@@ -52,30 +52,6 @@ VectorV unit_vec(VectorV v) {
     return v / hyp;
 }
 
-VectorV operator+(const VectorV &v1, const VectorV &v2) {
-    return VectorV(v1.x + v2.x, v1.y + v2.y);
-}
-
-VectorV operator-(const Vector &v1, const Vector &v2) {
-    return VectorV(v1.x - v2.x, v1.y - v2.y);
-}
-
-VectorV operator/(const VectorV &v, const fpoat &f) {
-    return VectorV(v.x / f, v.y / f);
-}
-
-VectorV operator*(const VectorV &v, const fpoat &f) {
-    return VectorV(v.x * f, v.y * f);
-}
-
-VectorV operator+(const VectorV &v, const fpoat &f) {
-    return VectorV(v.x + f, v.y + f);
-}
-
-VectorV operator-(const VectorV &v, const fpoat &f) {
-    return VectorV(v.x - f, v.y - f);
-}
-
 static fpoat PI_4 = FixedPoint::PI * fpoat(0,25);
 static fpoat PI_3_4 = FixedPoint::PI * fpoat(0,75);
 
@@ -85,6 +61,16 @@ fpoat FixedPoint::PI = FixedPoint::FromFloat(3.14159);
 fpoat FixedPoint::MAX = fpoat(10000000000000000);
 fpoat FixedPoint::MIN = fpoat(10000000000000000, true);
 fpoat FixedPoint::ZERO = fpoat(0);
+
+float FixedPoint::f() const {
+    float s = (((int)sign) * 2 - 1) * -1;
+    return s * ((double)n / (double)MULT);
+}
+
+int FixedPoint::i() const {
+    int s = (((int)sign) * 2 - 1) * -1;
+    return s * (n / MULT);
+}
 
 fpoat FixedPoint::FromFloat(float f) {
 	int fp = abs(f) * MULT;
@@ -149,71 +135,8 @@ FixedPoint::FixedPoint(int fpint, int fpdec, bool s) {
     sign = s;
 }
 
-fpoat operator+(const fpoat &v1, const fpoat &v2) {
-    long long rn = (v1.sign ? -v1.n : v1.n) + (v2.sign ? -v2.n : v2.n);
-    bool sign = rn < 0;
-    return fpoat(abs(rn), sign);
-}
-
-fpoat operator-(const fpoat &v1, const fpoat &v2) {
-    long long rn = (v1.sign ? -v1.n : v1.n) - (v2.sign ? -v2.n : v2.n);
-    bool sign = rn < 0;
-    return fpoat(abs(rn), sign);
-}
-
-fpoat operator/(const fpoat &v1, const fpoat &v2) {
-    if (v2.n == 0) {
-        std::cerr << "ERROR DIVIDE BY 0" << std::endl;
-        return fpoat(0);
-    }
-	long long rn = v1.n * FixedPoint::MULT / v2.n;
-    return fpoat(rn, v1.sign != v2.sign);
-}
-
-fpoat operator*(const fpoat &v1, const fpoat &v2) {
-    long long rn = v1.n * v2.n / FixedPoint::MULT;
-    return fpoat(rn, v1.sign != v2.sign);
-}
-
-float FixedPoint::f() const {
-    float s = (((int)sign) * 2 - 1) * -1;
-    return s * ((double)n / (double)MULT);
-}
-
-int FixedPoint::i() const {
-	int s = (((int)sign) * 2 - 1) * -1;
-	return s * (n / pow(10, FixedPoint::BASE));
-}
-
-bool operator<(const fpoat& v1, const fpoat& v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-	return s1 * v1.n < s2 * v2.n;
-}
-bool operator>(const fpoat& v1, const fpoat& v2) {
-	long long s1 = (((long long)v1.sign) * 2 - 1) * -1;
-	long long s2 = (((long long)v2.sign) * 2 - 1) * -1;
-	return s1 * v1.n > s2 * v2.n;
-}
-
-bool operator>=(const fpoat& v1, const fpoat& v2) {
-	return v1 > v2 || v1 == v2;
-}
-
-bool operator<=(const fpoat& v1, const fpoat& v2) {
-	return v1 < v2 || v1 == v2;
-}
-
-bool operator==(const fpoat& v1, const fpoat& v2) {
-	return v1.n == v2.n && v1.sign == v2.sign;
-}
-
 fpoat operator*(int v1, const fpoat& v2) {
 	return fpoat(abs(v1), 0, v1 < 0) * v2;
-}
-
-fpoat operator-(const fpoat& v) {
-	return fpoat(v.n, !v.sign);
 }
 
 fpoat operator*(const fpoat& v1, int v2) { return fpoat(v1.n * abs(v2), (v2 < 0) != v1.sign); }

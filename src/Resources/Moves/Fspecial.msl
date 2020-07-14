@@ -13,3 +13,11 @@ func ProcessInput() {
 }
 
 func Tick() {}
+
+func Land() {
+    
+}
+
+func Airborne() {
+    
+}

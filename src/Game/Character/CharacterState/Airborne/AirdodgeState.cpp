@@ -36,7 +36,7 @@ void AirdodgeState::Tick() {
 }
 
 void AirdodgeState::HandleCollision(const Entity &e, VectorV pv) {
-    if (e.Type() == STAGE) {
+    if (e.Type() == Ent_Stage) {
         // Apply the push vector to prevent overlap
         character->Transform(pv);
         
@@ -53,7 +53,7 @@ void AirdodgeState::HandleCollision(const Entity &e, VectorV pv) {
                 character->WallJump(1);
             }
         }
-    } else if (e.Type() == PLATFORM) {
+    } else if (e.Type() == Ent_Platform) {
         if (pv.x.n == 0 && pv.y < 0) {
             // The character collided with the platform. Check if the character
             // is above the platform and falling down
@@ -75,9 +75,9 @@ void AirdodgeState::HandleCollision(const Entity &e, VectorV pv) {
 }
 
 void AirdodgeState::SwitchState(CharState state) {
-    if (state == AIRBORNE) {
+    if (state == State_Airborne) {
         std::cerr << "ATTEMPT TO SWITCH TO AIRBORNE WHILE AIRDODGESTATE" << std::endl;
-    } else if (state == GROUNDED) {
+    } else if (state == State_Grounded) {
         // Land on stage/platform
         character->SetActionState(new LandingLagState(character, 5));
         return;

@@ -25,7 +25,7 @@ public:
     bool HandleHit(const Entity *e, int f, const HitboxData &hd) override;
     
     void RollbackTick() override { Entity::RollbackTick(); }
-    EntityType Type() const override { return PROJECTILE; }
+    EntityType Type() const override { return Ent_Projectile; }
     
 private:
     void init(const std::string &script);

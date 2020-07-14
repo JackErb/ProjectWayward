@@ -14,6 +14,7 @@
 #include "../MathHelper/Random.h"
 
 #include <vector>
+#include <chrono>
 
 using std::vector;
 
@@ -22,7 +23,7 @@ vector<vector<ChunkType>> GenerateGrid(const GeneratorOptions& opt, LevelData *l
     for (int x = 0; x < opt.mapWidth; x++) {
         grid.push_back(vector<ChunkType>());
         for (int y = 0; y < opt.mapHeight; y++) {
-            grid[x].push_back(ChunkType::Standard);
+            grid[x].push_back(Chunk_Standard);
         }
     }
     
@@ -33,17 +34,18 @@ vector<vector<ChunkType>> GenerateGrid(const GeneratorOptions& opt, LevelData *l
     
     int dir = 0;
     
-    ChunkType nextPath = Main;
+    ChunkType nextPath = Chunk_Main;
     int drops = 0;
     
     while (path_y < opt.mapHeight) {
         grid[path_x][path_y] = nextPath;
         
         float rf = r->rand();
-        if (rf < 0.25 - drops * 0.09) {
-            grid[path_x][path_y] = nextPath == MainLand ? MainFall : MainDrop;
+        if (rf < 0.3 - drops * 0.09) {
+            grid[path_x][path_y] = nextPath == Chunk_MainLand ?
+                Chunk_MainFall : Chunk_MainDrop;
             path_y++;
-            nextPath = MainLand;
+            nextPath = Chunk_MainLand;
             dir = 0;
             drops++;
         } else {
@@ -51,43 +53,20 @@ vector<vector<ChunkType>> GenerateGrid(const GeneratorOptions& opt, LevelData *l
                 dir = r->rand() < 0.5 ? -1 : 1;
             path_x += dir;
             
-            if (path_x < 0 || path_x >= opt.mapWidth) {
+            if (path_x < 1 || path_x >= opt.mapWidth - 1) {
                 path_x -= dir;
-                grid[path_x][path_y] = nextPath == MainLand ? MainFall : MainDrop;
+                grid[path_x][path_y] = nextPath == Chunk_MainLand ?
+                    Chunk_MainFall : Chunk_MainDrop;
                 
                 path_y++;
-                nextPath = MainLand;
+                nextPath = Chunk_MainLand;
                 dir *= -1;
                 drops++;
             } else {
-                nextPath = Main;
+                nextPath = Chunk_Main;
                 drops = 0;
             }
         }
-    }
-    
-    for (int y = 0; y < opt.mapHeight; y++) {
-        for (int x = 0; x < opt.mapWidth; x++) {
-            char c;
-            switch (grid[x][y]) {
-                case Main:
-                    c = '=';
-                    break;
-                case MainLand:
-                    c = '-';
-                    break;
-                case MainDrop:
-                case MainFall:
-                    c = 'v';
-                    break;
-                case Degen:
-                case Standard:
-                    c = ' ';
-                    break;
-            }
-            printf("%c", c);
-        }
-        printf("\n");
     }
     
     return grid;
@@ -100,13 +79,20 @@ void GenerateLevelDataFromGrid(const GeneratorOptions& opt,
     level->Init(opt);
     for (int x = 0; x < opt.mapWidth; x++) {
         for (int y = 0; y < opt.mapHeight; y++) {
-            level->GenerateRandChunk(x, y, grid[x][y], r);
+            ChunkType type = grid[x][y];
+            
+            auto templates = opt.chunkTemplates->find(type)->second;
+            int rand = r->rand(0, templates.size());
+            level->chunks[x][y].GenerateTiles(templates[rand].chunk);
+            level->chunks[x][y].GenerateMesh();
         }
     }
 }
 
 LevelData GenerateLevel(const GeneratorOptions& opt) {
+    // Seed random number generator
     Random r(rand());
+    
     LevelData level;
     vector<vector<ChunkType>> grid = GenerateGrid(opt, &level, &r);
     GenerateLevelDataFromGrid(opt, grid, &level, &r);

@@ -26,7 +26,7 @@ using std::max;
 
 void CameraController::Tick() {
     for (Entity* e : *entities_) {
-        if (e->Type() == CHARACTER) {
+        if (e->Type() == Ent_Character) {
             TransformCamera(-e->Position().x.f(), -e->Position().y.f());
         }
     }
@@ -80,7 +80,7 @@ void CameraController::Render(SDL_Renderer* rd) {
              e->Texture()->render(rd, pos.x, pos.y, e->Direction() == -1);
         }
 
-        if (drawHitboxes && (e->Type() == CHARACTER || e->Type() == PROJECTILE)) {
+        if (drawHitboxes && (e->Type() == Ent_Character || e->Type() == Ent_Projectile)) {
             const VectorV& pos = e->Position();
             int dir = e->Direction();
             for (const PolygonV& p : e->polygons) {
