@@ -1,1 +1,0 @@
-target_sources(main PUBLIC Tests.hpp MathHelperTest.cpp)

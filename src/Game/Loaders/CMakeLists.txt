@@ -1,1 +1,0 @@
-target_sources(GameLib PUBLIC MoveLoader.hpp MoveLoader.cpp SpriteLoader.hpp SpriteLoader.cpp ResourcePath.hpp ResourcePath.cpp)
