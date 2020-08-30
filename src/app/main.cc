@@ -1,6 +1,8 @@
 #include <timer.h>
-#include <SDL.h>
 #include <GameController.h>
+
+#include <glad/glad.h>
+#include <SDL.h>
 
 #include <iostream>
 #include <string>
@@ -15,16 +17,16 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-bool initSdl(SDL_Window**, SDL_Renderer**, int, int);
+bool initSdl(SDL_Window**, SDL_GLContext*, int, int);
 
 int main(int, char**) {
 	bool quit = false;
     
-	SDL_Window *w;
-	SDL_Renderer *rd;
+	SDL_Window *window;
+	SDL_GLContext gl_context;
     const int WIDTH = 1200;
     const int HEIGHT = 1000;
-	if (!initSdl(&w, &rd, WIDTH, HEIGHT)) {
+	if (!initSdl(&window, &gl_context, WIDTH, HEIGHT)) {
 		cerr << "Failed to initialize SDL. Exiting program." << endl;
 		return EXIT_FAILURE;
 	}
@@ -61,39 +63,60 @@ int main(int, char**) {
     return EXIT_SUCCESS;
 }
 
-void printSDLError(string msg) {
+void printSdlError(string msg) {
 	cerr << msg << endl;
 	cerr << SDL_GetError() << endl;
 }
 
-bool initSdl(SDL_Window **w, SDL_Renderer **rd, int WIDTH, int HEIGHT) {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) < 0) { 
-        printSDLError("Failed to initialize SDL."); 
+bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIGHT) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) { 
+        printSdlError("Failed to initialize SDL."); 
         return false; 
     } 
      
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); 
-    *w = SDL_CreateWindow("Wayward", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                     WIDTH, HEIGHT, SDL_WINDOW_SHOWN); 
-     
-    if (*w == NULL) { 
-        printSDLError("Window could not be created."); 
-        return false; 
-    } 
-     
-    *rd = SDL_CreateRenderer(*w, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED); 
-    if (*rd == NULL) { 
-        printSDLError("Renderer could not be created"); 
-        return false; 
-    } 
-     
-    SDL_SetRenderDrawColor(*rd, 0, 0, 0, 255); 
-    int imgFlags = IMG_INIT_PNG; 
-    if (!(IMG_Init(imgFlags) & imgFlags)) { 
-        printSDLError("SDL_image could not be initialized"); 
-        return false; 
-    } 
+    //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); 
  
+ 	// Set OpenGL attributes
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_PROFILE_MASK,
+        SDL_GL_CONTEXT_PROFILE_CORE
+    );
+
+  #ifdef __APPLE__
+	SDL_GL_SetAttribute( // required on Mac OS
+        SDL_GL_CONTEXT_FLAGS,
+        SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG
+    );
+  #endif
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+	SDL_WindowFlags window_flags = (SDL_WindowFlags)(
+        SDL_WINDOW_OPENGL
+        | SDL_WINDOW_SHOWN
+        | SDL_WINDOW_ALLOW_HIGHDPI
+    );
+    *window = SDL_CreateWindow("Wayward", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        					   WIDTH, HEIGHT, window_flags);
+	if (*window == NULL) {
+		printSdlError("Window could not be created.");
+        return false;
+    }
+
+    *gl_context = SDL_GL_CreateContext(*window);
+ 	if (*gl_context == NULL) {
+		printSdlError("GL Context could not be created.");
+		return false;
+	}
+ 	SDL_GL_MakeCurrent(*window, *gl_context);
+
+    // enable VSync
+    SDL_GL_SetSwapInterval(1);
+
     cout << "SDL succesfully initialized" << endl; 
     return true; 
 }
