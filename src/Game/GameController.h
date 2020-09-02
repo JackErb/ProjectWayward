@@ -16,7 +16,6 @@ class GameController {
 
   private:
     std::vector<Entity*> entities;
-	std::vector<Entity*> static_entities;
 };
 
 #endif  /* GameController_h */
