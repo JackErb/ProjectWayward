@@ -1,4 +1,4 @@
-set(SOURCES TextureLoader.h TextureLoader.cc Renderer.h Renderer.cc
+set(SOURCES TextureLoader.cc Renderer.h Renderer.cc
             WaywardGL.h WaywardGL.cc Shader.h Shader.cc)
 
 add_library(ww_graphics STATIC ${SOURCES})

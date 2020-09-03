@@ -36,9 +36,6 @@ int main(int, char**) {
 	}
 
 	WaywardGL::init(WIDTH, HEIGHT);
-	int spriteHandle = WaywardGL::addSprite(1500, 1700);
-	int handle2 = WaywardGL::addSprite(750, 850);
-	WaywardGL::updateSpritePos(handle2, -300.f, -200.f);
 
 	long subFrameCount = 0;
     long frameCount = 0;
@@ -105,7 +102,7 @@ void printSdlError(string msg) {
 }
 
 bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIGHT) {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) { 
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) { 
         printSdlError("Failed to initialize SDL."); 
         return false; 
     } 

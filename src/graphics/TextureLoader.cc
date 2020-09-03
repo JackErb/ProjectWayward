@@ -1,6 +1,6 @@
-#define STB_IMAGE_IMPLEMENTATION
+#include "WaywardGL.h"
 
-#include "TextureLoader.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include <glad/glad.h>
 #include <stb_image.h>
 #include "resource_path.h"
@@ -12,7 +12,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-unsigned int loadTexture(string file_name) {
+unsigned int WaywardGL::loadTexture(string file_name) {
 	unsigned int texture_id;
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);

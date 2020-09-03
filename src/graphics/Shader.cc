@@ -15,7 +15,7 @@ unsigned int loadShader(string file_name, GLenum shader_type) {
 	ifstream file;
     file.exceptions(file.exceptions() | std::ios::failbit);
     
-    try {
+	try {
         file.open(path);
     } catch (std::ios_base::failure& e) {
         cerr << "Failed to open file: " << path << endl;

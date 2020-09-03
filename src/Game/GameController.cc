@@ -1,11 +1,12 @@
 #include "GameController.h"
 #include "Entity.h"
+#include "Player.h"
 
 #include <TextureLoader.h>
 
 GameController::GameController() {
-//	unsigned int player_texture = loadTexture("jump_3.png");
-//	entities.push_back(new Entity(player_texture));
+	player_input.gc_index = 0;
+	entities.push_back(new Player());
 }
 
 GameController::~GameController() {
@@ -14,11 +15,14 @@ GameController::~GameController() {
 
 
 void GameController::pretick() {
-
+	player_input.tick();
+	entities[0]->processInput(player_input);
 }
 
 void GameController::tick() {
-
+	for (Entity *entity : entities) {
+		entity->tick();
+	}
 }
 
 void GameController::render() {

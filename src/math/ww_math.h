@@ -5,7 +5,8 @@
 #include <iostream>
 
 struct FixedPoint {
-public:
+  public:
+  	FixedPoint() : n(0) {}
 	FixedPoint(long long n) : n(n) {}
 
 	long long n;

@@ -2,6 +2,7 @@
 #define GameController_h
 
 #include <vector>
+#include "Input.h"
 
 class Entity;
 
@@ -15,6 +16,7 @@ class GameController {
 	void render();
 
   private:
+  	PlayerInput player_input;
     std::vector<Entity*> entities;
 };
 

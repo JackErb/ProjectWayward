@@ -19,10 +19,10 @@ static float windowWidth;
 static float windowHeight;
 static float windowScale;
 
-unsigned int PlayerTexture;
-
 static const int SpriteVBOLen = 4;
-static float SpriteVertices[400];
+static const int MaxSprites = 100;
+
+static float SpriteVertices[SpriteVBOLen * MaxSprites];
 static int SpriteIndex = 0;
 static unsigned int SpriteShaderProg;
 static unsigned int SpriteVAO;
@@ -58,8 +58,6 @@ void WaywardGL::init(int width, int height) {
 	// Unbind VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	PlayerTexture = loadTexture("jump_3.png");
-
 	glEnable(GL_BLEND);
 }
 
@@ -69,7 +67,6 @@ void WaywardGL::render() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glActiveTexture(GL_TEXTURE0);
- 	glBindTexture(GL_TEXTURE_2D, PlayerTexture);
 	glUseProgram(SpriteShaderProg);
  
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -99,4 +96,8 @@ void WaywardGL::updateSpritePos(int sprite_handle, float x, float y) {
 	int spriteIndex = sprite_handle * SpriteVBOLen;
 	SpriteVertices[spriteIndex] = x;
 	SpriteVertices[spriteIndex + 1] = y;
+}
+
+void WaywardGL::setTexture(unsigned int texture_handle) {
+ 	glBindTexture(GL_TEXTURE_2D, texture_handle);
 }

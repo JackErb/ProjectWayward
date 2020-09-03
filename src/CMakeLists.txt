@@ -26,5 +26,5 @@ target_link_libraries(ww_game ww_graphics ww_math ${SDL_LIBS})
 target_link_libraries(wayward ww_game ww_math)
 
 target_include_directories(ww_graphics PUBLIC include/)
-target_include_directories(ww_game PUBLIC graphics/)
-target_include_directories(wayward PUBLIC game/ graphics/ include/ util/)
+target_include_directories(ww_game PUBLIC game/ game/entities/ game/state/ graphics/ math)
+target_include_directories(wayward PUBLIC game/ math/ graphics/ include/ util/)
