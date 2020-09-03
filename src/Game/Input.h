@@ -6,33 +6,34 @@
 #include <unordered_map>
 
 enum ButtonState {
-	Pressed, Released, Held
+    Pressed, Released, Held
 };
 
 enum ButtonAction {
-	Jump, Attack
+    Jump, Attack
 };
 
 typedef struct _SDL_GameController SDL_GameController;
 
 struct StickState {
-	FixedPoint x;
-	FixedPoint y;
-	FixedPoint angle;
-	FixedPoint hyp;
+    FixedPoint x;
+    FixedPoint y;
+    FixedPoint angle;
+    FixedPoint hyp;
 };
 
 struct PlayerInput {
-	void updateButtonsState();
-	void tick();
+    void updateButtonsState();
+    void tick();
 
-	int gc_index;
+    int frame = 0;
+    int gc_index;
 
-	StickState stick;
-	StickState cstick;
+    StickState stick;
+    StickState cstick;
 
-	std::unordered_map<ButtonAction, ButtonState> buttons;
-	SDL_GameController *gc = NULL;
+    std::unordered_map<ButtonAction, ButtonState> buttons;
+    SDL_GameController *gc = NULL;
 };
 
 #endif  /* PlayerInput_h */

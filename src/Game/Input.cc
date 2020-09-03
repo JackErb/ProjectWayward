@@ -79,6 +79,9 @@ void PlayerInput::tick() {
             }
         }
     } else {
-        cout << "Controller not connected" << endl;
+        if (frame % 100 == 0) {
+            cout << "Controller not connected" << endl;
+        }
     }
+    frame++;
 }

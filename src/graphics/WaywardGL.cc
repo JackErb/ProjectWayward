@@ -21,7 +21,7 @@ static float windowScale;
 
 static const int SpriteVBOLen = 4;
 static const int ShapeVBOLen = 4;
-static const int MaxSprites = 100;
+static const int MaxSprites = 150;
 
 static unsigned int SpriteVAO;
 
@@ -40,7 +40,7 @@ void WaywardGL::init(int width, int height) {
 
     windowWidth = width;
     windowHeight = height;
-    windowScale = 0.5;
+    windowScale = 0.35;
 
     SpriteShaderProg = loadShaderProgram("basic.vert", "basic.geom", "basic.frag");
     ShapeShaderProg = loadShaderProgram("basic.vert", "shape.geom", "shape.frag");
@@ -62,6 +62,13 @@ void WaywardGL::init(int width, int height) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glEnable(GL_BLEND);
+
+    for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 10; y++) {
+            unsigned int handle = WaywardGL::addSprite(300, 340);
+            WaywardGL::updateSpritePos(handle, (x-4) * 400, (y-4) * 400);
+        }
+    }
 }
 
 void WaywardGL::render() {
@@ -98,26 +105,31 @@ void WaywardGL::deinit() {
 }
 
 unsigned int WaywardGL::addSprite(float w, float h) {
-    int spriteIndex = SpriteIndex * SpriteVBOLen;
-    SpriteVertices[spriteIndex + 0] = 0.f;
-    SpriteVertices[spriteIndex + 1] = 0.f;
-    SpriteVertices[spriteIndex + 2] = w;
-    SpriteVertices[spriteIndex + 3] = h;
+    if (SpriteIndex >= MaxSprites) {
+        std::cerr << "Ran out of sprite space WaywardGL" << std::endl;
+        exit(1);
+    }
+   
+    int sprite_index = SpriteIndex * SpriteVBOLen;
+    SpriteVertices[sprite_index + 0] = 0.f;
+    SpriteVertices[sprite_index + 1] = 0.f;
+    SpriteVertices[sprite_index + 2] = w;
+    SpriteVertices[sprite_index + 3] = h;
     return SpriteIndex++;
 }
 
 void WaywardGL::updateSpritePos(unsigned int sprite_handle, float x, float y) {
-    int spriteIndex = sprite_handle * SpriteVBOLen;
-    SpriteVertices[spriteIndex] = x;
-    SpriteVertices[spriteIndex + 1] = y;
+    int sprite_index = sprite_handle * SpriteVBOLen;
+    SpriteVertices[sprite_index] = x;
+    SpriteVertices[sprite_index + 1] = y;
 }
 
 unsigned int WaywardGL::addShape(float w, float h) {
-    int shapeIndex = ShapeIndex * ShapeVBOLen;
-    ShapeVertices[shapeIndex + 0] = 0.f;
-    ShapeVertices[shapeIndex + 1] = 0.f;
-    ShapeVertices[shapeIndex + 2] = w;
-    ShapeVertices[shapeIndex + 3] = h;
+    int shape_index = ShapeIndex * ShapeVBOLen;
+    ShapeVertices[shape_index + 0] = 0.f;
+    ShapeVertices[shape_index + 1] = 0.f;
+    ShapeVertices[shape_index + 2] = w;
+    ShapeVertices[shape_index + 3] = h;
     return ShapeIndex++;
 }
 

@@ -22,6 +22,7 @@ using std::cerr;
 using std::endl;
 
 bool initSdl(SDL_Window**, SDL_GLContext*, int, int);
+void reportGLError(GLenum error);
 
 int main(int, char**) {
     bool quit = false;
@@ -58,8 +59,9 @@ int main(int, char**) {
         controller.tick();
         controller.render();
 
-        if (glGetError() != GL_NO_ERROR) {
-            cerr << "GL ERROR: " << glGetError() << endl;
+        GLenum error;
+        while ((error = glGetError()) != GL_NO_ERROR) {
+            reportGLError(error);
         }
 
         WaywardGL::render();
@@ -69,7 +71,7 @@ int main(int, char**) {
         SDL_GL_SwapWindow(window);
 
         now = Timer::now();
-        while (duration_cast<microseconds>(now - start).count() < 14000) {
+        while (duration_cast<microseconds>(now - start).count() < 13000) {
             std::this_thread::sleep_for(milliseconds(1));
             now = Timer::now();
         }
@@ -162,4 +164,32 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
 
     cout << "SDL & OpenGL succesfully initialized" << endl; 
     return true; 
+}
+
+void reportGLError(GLenum error) {
+    switch (error) {
+    case GL_NO_ERROR:
+        break;
+    case GL_INVALID_ENUM:
+        cerr << "GL::ERROR:: GL invalid enum" << endl;
+        break;
+    case GL_INVALID_VALUE:
+        cerr << "GL::ERROR:: GL invalid value" << endl;
+        break;
+    case GL_INVALID_OPERATION:
+        cerr << "GL::ERROR:: GL invalid operation" << endl;
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        cerr << "GL::ERROR:: GL invalid framebuffer operation" << endl;
+        break;
+    case GL_OUT_OF_MEMORY:
+        cerr << "GL::ERROR:: GL out of memory" << endl;
+        break;
+    case GL_STACK_UNDERFLOW:
+        cerr << "GL::ERROR:: GL stack underflow" << endl;
+        break;
+    case GL_STACK_OVERFLOW:
+        cerr << "GL::ERROR:: GL stack overflow" << endl;
+        break;
+    }
 }
