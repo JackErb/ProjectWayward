@@ -16,7 +16,7 @@ using std::max;
 using std::vector;
 
 pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
-										   const Polygon &p2, const Vector2D &pos2);
+                                           const Polygon &p2, const Vector2D &pos2);
 
 vector<Vector2D> get_orthogonals(const Polygon &p1, const Polygon &p2);
 
@@ -28,14 +28,14 @@ pair<bool, Vector2D>
 bool PhysicsEngine::checkCollision(const Entity *e1, const Entity *e2, Vector2D *pv) {
     for (const Polygon& p1 : e1->polygons()) {
         for (const Polygon& p2 : e2->polygons()) {
-			auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
+            auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
             if (collision.first) {
-				*pv = collision.second;
+                *pv = collision.second;
                 return true;
             }
         }
     }
-	*pv = Vector2D();
+    *pv = Vector2D();
     return false;
 }
 
@@ -44,16 +44,16 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     // Separating Axis Theorem
     if (p1.size() == 2 && p2.size() == 2) {
         // They are both circles
-		FixedPoint x1 = p1[0].x;
-		FixedPoint x2 = p2[0].x;
+        FixedPoint x1 = p1[0].x;
+        FixedPoint x2 = p2[0].x;
 
         Vector2D c1 = Vector2D(x1, p1[0].y) + pos1;
         Vector2D c2 = Vector2D(x2, p2[0].y) + pos2;
 
-		FixedPoint xx = c2.x - c1.x;
-		FixedPoint yy = c2.y - c1.y;
-		FixedPoint dist = xx * xx + yy * yy;
-		FixedPoint rad = p1[1].x + p2[1].x;
+        FixedPoint xx = c2.x - c1.x;
+        FixedPoint yy = c2.y - c1.y;
+        FixedPoint dist = xx * xx + yy * yy;
+        FixedPoint rad = p1[1].x + p2[1].x;
         // TODO: Calculate push vec
         if (dist < rad * rad) {
             return {true, {0,0}};
@@ -88,7 +88,7 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     // Check that the push vector is pointing the right direction
     Vector2D displacement = (geometric_center(p2) + pos2) - (geometric_center(p1) + pos1);
     if (dot(displacement, min_pv) > 0) {
-		min_pv.x = -min_pv.x;
+        min_pv.x = -min_pv.x;
         min_pv.y = -min_pv.y;
     }
     
@@ -104,15 +104,15 @@ vector<Vector2D> get_orthogonals(const Polygon &p1, const Polygon &p2) {
         // p1 is a circle
         
         // The closest point in p2 to p1
-		FixedPoint x1 = p1[0].x;
+        FixedPoint x1 = p1[0].x;
 
         Vector2D vec;
-		FixedPoint dist = FixedPoint::MAX;
+        FixedPoint dist = FixedPoint::MAX;
         int i = 0;
         for (Vector2D v : p2) {
-			FixedPoint xx = v.x - x1;
-			FixedPoint yy = v.y - p1[0].y;
-			FixedPoint d = xx * xx + yy * yy;
+            FixedPoint xx = v.x - x1;
+            FixedPoint yy = v.y - p1[0].y;
+            FixedPoint d = xx * xx + yy * yy;
             if (d < dist) {
                 dist = d;
                 vec = v;
@@ -182,8 +182,8 @@ pair<bool, Vector2D> is_separating_axis(const Vector2D &axis,
     if (max1 >= min2 && max2 >= min1) {
         // Calculate push vector
         FixedPoint d = fp_min(max2 - min1, max1 - min2);
-		FixedPoint epsilon = FixedPoint(1);
-		if (d < FixedPoint(0)) epsilon = -epsilon;
+        FixedPoint epsilon = FixedPoint(1);
+        if (d < FixedPoint(0)) epsilon = -epsilon;
 
         Vector2D push_vector(axis * (d / dot(axis, axis) + epsilon));
         return make_pair(false, push_vector);

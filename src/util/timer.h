@@ -5,7 +5,7 @@
 
 class Timer {
   public:
-	static std::chrono::time_point<std::chrono::high_resolution_clock> now();
+    static std::chrono::time_point<std::chrono::high_resolution_clock> now();
 };
 
 #endif  /* Timer_h */

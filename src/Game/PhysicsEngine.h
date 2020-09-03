@@ -13,7 +13,7 @@ class Entity;
 struct Vector2D;
 
 namespace PhysicsEngine {
-	bool checkCollision(const Entity *e1, const Entity* e2, Vector2D *pv);
+    bool checkCollision(const Entity *e1, const Entity* e2, Vector2D *pv);
 };
 
 #endif /* PhysicsEngine_hpp */

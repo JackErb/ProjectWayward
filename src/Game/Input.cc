@@ -11,19 +11,27 @@ using std::cerr;
 using std::endl;
 
 StickState readStickInput(SDL_GameController *gc) {
-	StickState stick;
-	int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
-	int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
-	stick.x = FixedPoint::fromFloat((double)x / 32767.0);
+    StickState stick;
+    int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
+    int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
+    stick.x = FixedPoint::fromFloat((double)x / 32767.0);
     stick.y = FixedPoint::fromFloat((double)y / 32767.0);
-	stick.hyp = fp_sqrt(x * x + y * y);
-	stick.angle = fp_atan2(y, x);
+    stick.hyp = fp_sqrt(x * x + y * y);
+    stick.angle = fp_atan2(y, x);
 
-	return stick;
+    return stick;
 }
 
-void PlayerInput::tick() {
-    // Update all the button's state
+bool isButtonPressed(ButtonAction b, SDL_GameController *gc) {
+    switch (b) {
+    case Jump:
+        return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_A) == 1;
+    case Attack:
+        return false;
+    }
+}
+
+void PlayerInput::updateButtonsState() {
     for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
         if (it->second == ButtonState::Pressed) {
             it->second = ButtonState::Held;
@@ -38,35 +46,38 @@ void PlayerInput::tick() {
             it++;
         }
     }
-    
-    if (SDL_IsGameController(gc_index)) {
-		if (gc == NULL) {
-			gc = SDL_GameControllerOpen(gc_index);
-			cout << "Connected " << (gc == NULL) << endl;
-			if (gc == NULL) {
-				cout << "Failed to initialize game controller" << endl;
-			}
-			return;
-		}     
-  
-  		stick = readStickInput(gc);
+}
 
-        /*for (ButtonAction b : buttonActions) {
-            bool press = isActionButtonPressed(b);
-            
-            bool press = false;
-            for (int sdl_b : sdl_buttons) {
-                SDL_GameControllerButton sdl_b_ = (SDL_GameControllerButton)sdl_b;
-                press = SDL_GameControllerGetButton(gc, sdl_b_) == 1;
-                if (press) break;
+void PlayerInput::tick() {
+    updateButtonsState();
+    
+    // Update input if the controller is connected, otherwise
+    // attempt to connect to controller.
+    if (SDL_IsGameController(gc_index)) {
+        if (gc == NULL) {
+            gc = SDL_GameControllerOpen(gc_index);
+            cout << "Attempt to connect to controller " << gc_index << endl;
+            cout << "\tConnected: " << (gc == NULL) << endl;
+            if (gc == NULL) {
+                cout << "Failed to initialize game controller" << endl;
+                return;
             }
+        }     
+
+        // Read stick inputs
+        stick = readStickInput(gc);
+        
+        // Read button inputs
+        const ButtonAction actions[] = {Jump, Attack};
+        for (ButtonAction b : actions) {
+            bool pressed = isButtonPressed(b, gc);
             bool contains = buttons.find(b) != buttons.end();
-            if (press && !contains) {
-                buttons[b] = ButtonState::Pressed;
-            } else if (!press && contains) {
+            if (pressed && !contains) {
+                cout << "Pressed!" << endl;
+            } else if (!pressed && contains) {
                 buttons[b] = ButtonState::Released;
             }
-        }*/
+        }
     } else {
         cout << "Controller not connected" << endl;
     }

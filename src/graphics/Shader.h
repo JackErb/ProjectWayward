@@ -6,7 +6,7 @@
 
 unsigned int loadShader(const std::string &file_name, GLenum type);
 unsigned int loadShaderProgram(const std::string &vert, 
-							   const std::string &geom, 
-							   const std::string &frag);
+                               const std::string &geom, 
+                               const std::string &frag);
 
 #endif  /* Shader_h */

@@ -9,14 +9,14 @@ class Entity;
 class GameController {
   public:
     GameController();
-	~GameController();
+    ~GameController();
 
-	void pretick();
-	void tick();
-	void render();
+    void pretick();
+    void tick();
+    void render();
 
   private:
-  	PlayerInput player_input;
+    PlayerInput player_input;
     std::vector<Entity*> entities;
 };
 

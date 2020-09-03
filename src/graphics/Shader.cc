@@ -11,11 +11,11 @@ using std::endl;
 using std::ifstream;
 
 unsigned int loadShader(const string &file_name, GLenum shader_type) {
-	string path = resourcePath() + file_name;
-	ifstream file;
+    string path = resourcePath() + file_name;
+    ifstream file;
     file.exceptions(file.exceptions() | std::ios::failbit);
     
-	try {
+    try {
         file.open(path);
     } catch (std::ios_base::failure& e) {
         cerr << "Failed to open file: " << path << endl;
@@ -23,62 +23,62 @@ unsigned int loadShader(const string &file_name, GLenum shader_type) {
         return -1;
     }
 
-	// Get length of file
-	file.seekg(0, std::ios::end);
-	int length = file.tellg();
-	file.seekg(0, std::ios::beg);
+    // Get length of file
+    file.seekg(0, std::ios::end);
+    int length = file.tellg();
+    file.seekg(0, std::ios::beg);
 
-	// Read the file
+    // Read the file
     char *shaderSource;
-	shaderSource = new char[length];
-	file.read(shaderSource, length);
-	file.close();
+    shaderSource = new char[length];
+    file.read(shaderSource, length);
+    file.close();
 
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(shader_type);
-	glShaderSource(vertexShader, 1, &shaderSource, &length);
-	glCompileShader(vertexShader);
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(shader_type);
+    glShaderSource(vertexShader, 1, &shaderSource, &length);
+    glCompileShader(vertexShader);
 
-	int success;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    	cout << "ERROR::SHADER::COMPILATION_FAILED: " << file_name << endl;
-		cout << infoLog << endl;;
-	} else {
-		cout << "Shader: " << file_name << " succesfully compiled" << endl;
-	}
-	return vertexShader;
+    int success;
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::COMPILATION_FAILED: " << file_name << endl;
+        cout << infoLog << endl;;
+    } else {
+        cout << "Shader: " << file_name << " succesfully compiled" << endl;
+    }
+    return vertexShader;
 }
 
 
 unsigned int loadShaderProgram(const string &vert, const string &geom, const string &frag) {
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	
-	unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
-	unsigned int geomShader = loadShader(geom, GL_GEOMETRY_SHADER);
-	unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+    
+    unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
+    unsigned int geomShader = loadShader(geom, GL_GEOMETRY_SHADER);
+    unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
 
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, geomShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, geomShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
 
     int success;
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-    	glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << endl;
-		cout << infoLog << endl;
-	} else {
-		cout << "Shader succesfully compiled" << endl;
-	}
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        char infoLog[512];
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << endl;
+        cout << infoLog << endl;
+    } else {
+        cout << "Shader succesfully compiled" << endl;
+    }
     
     glDeleteShader(vertexShader);
-	glDeleteShader(geomShader);
+    glDeleteShader(geomShader);
     glDeleteShader(fragmentShader);
     
     return shaderProgram;

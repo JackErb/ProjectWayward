@@ -7,11 +7,11 @@ class PlayerState;
 class Player: public Entity {
   public:
     Player();
-	~Player();
+    ~Player();
 
-	void processInput(const PlayerInput &input);
-	void tick();
-	void handleCollision(Entity *e, const Vector2D &pv);
+    void processInput(const PlayerInput &input);
+    void tick();
+    void handleCollision(Entity *e, const Vector2D &pv);
 
-	PlayerState *state;
+    PlayerState *state;
 };

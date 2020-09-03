@@ -5,9 +5,9 @@
 
 class Chunk: public Entity {
   public:
-  	Chunk();
+    Chunk();
 
-	void tick();
+    void tick();
 };
 
 #endif  /* Chunk_h */

@@ -7,13 +7,13 @@ class Player;
 
 class PlayerState {
   public:
-	PlayerState() {}
-	~PlayerState() {}
+    PlayerState() {}
+    ~PlayerState() {}
 
-	virtual void processInput(const PlayerInput &input) = 0;
-	virtual void tick() = 0;
+    virtual void processInput(const PlayerInput &input) = 0;
+    virtual void tick() = 0;
 
-	Player *player;
+    Player *player;
 };
 
 #endif  /* PlayerState_h */

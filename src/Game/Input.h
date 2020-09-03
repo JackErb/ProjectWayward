@@ -23,6 +23,7 @@ struct StickState {
 };
 
 struct PlayerInput {
+	void updateButtonsState();
 	void tick();
 
 	int gc_index;
