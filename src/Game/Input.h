@@ -3,7 +3,7 @@
 
 #include <ww_math.h>
 #include <vector>
-#include<unordered_map>
+#include <unordered_map>
 
 enum ButtonState {
 	Pressed, Released, Held
@@ -15,13 +15,20 @@ enum ButtonAction {
 
 typedef struct _SDL_GameController SDL_GameController;
 
+struct StickState {
+	FixedPoint x;
+	FixedPoint y;
+	FixedPoint angle;
+	FixedPoint hyp;
+};
+
 struct PlayerInput {
 	void tick();
 
 	int gc_index;
 
-	Vector2D stick;
-	Vector2D cstick;
+	StickState stick;
+	StickState cstick;
 
 	std::unordered_map<ButtonAction, ButtonState> buttons;
 	SDL_GameController *gc = NULL;

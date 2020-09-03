@@ -11,6 +11,7 @@ class Player: public Entity {
 
 	void processInput(const PlayerInput &input);
 	void tick();
+	void handleCollision(Entity *e, const Vector2D &pv);
 
 	PlayerState *state;
 };

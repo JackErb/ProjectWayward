@@ -10,8 +10,11 @@ void init(int width, int height);
 void render();
 void deinit();
 
-int addSprite(float w, float h);
-void updateSpritePos(int sprite_handle, float x, float y);
+unsigned int addSprite(float w, float h);
+void updateSpritePos(unsigned int sprite_handle, float x, float y);
+
+unsigned int addShape(float w, float h);
+void updateShapePos(unsigned int shape_handle, float x, float y);
 
 unsigned int loadTexture(std::string file_name);
 

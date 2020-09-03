@@ -8,7 +8,26 @@ class GroundedState: public PlayerState {
 	GroundedState(Player *p) {
 		this->player = p;
 	}
-	~GroundedState();
+
+	void processInput(const PlayerInput &input);
+	void tick();
+};
+
+class DashState: public PlayerState {
+  public:
+    DashState(Player *p) {
+		this->player = p;
+	}
+
+	void processInput(const PlayerInput &input);
+	void tick();
+};
+
+class LandingLagState: public PlayerState {
+  public:
+    LandingLagState(Player *p) {
+		this->player = p;
+	}
 
 	void processInput(const PlayerInput &input);
 	void tick();

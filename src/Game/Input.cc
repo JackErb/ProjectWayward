@@ -10,6 +10,18 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+StickState readStickInput(SDL_GameController *gc) {
+	StickState stick;
+	int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
+	int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
+	stick.x = FixedPoint::fromFloat((double)x / 32767.0);
+    stick.y = FixedPoint::fromFloat((double)y / 32767.0);
+	stick.hyp = fp_sqrt(x * x + y * y);
+	stick.angle = fp_atan2(y, x);
+
+	return stick;
+}
+
 void PlayerInput::tick() {
     // Update all the button's state
     for (auto it = buttons.begin(); it != buttons.end(); /* No increment */) {
@@ -36,11 +48,8 @@ void PlayerInput::tick() {
 			}
 			return;
 		}     
-        
-		int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
-		int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
-		stick.x = FixedPoint::fromFloat((double)x / 32767.0);
-        stick.y = FixedPoint::fromFloat((double)y / 32767.0);
+  
+  		stick = readStickInput(gc);
 
         /*for (ButtonAction b : buttonActions) {
             bool press = isActionButtonPressed(b);

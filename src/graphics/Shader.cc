@@ -10,7 +10,7 @@ using std::cerr;
 using std::endl;
 using std::ifstream;
 
-unsigned int loadShader(string file_name, GLenum shader_type) {
+unsigned int loadShader(const string &file_name, GLenum shader_type) {
 	string path = resourcePath() + file_name;
 	ifstream file;
     file.exceptions(file.exceptions() | std::ios::failbit);
@@ -53,13 +53,13 @@ unsigned int loadShader(string file_name, GLenum shader_type) {
 }
 
 
-unsigned int loadShaderProgram() {
+unsigned int loadShaderProgram(const string &vert, const string &geom, const string &frag) {
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 	
-	unsigned int vertexShader = loadShader("basic.vert", GL_VERTEX_SHADER);
-	unsigned int geomShader = loadShader("basic.geom", GL_GEOMETRY_SHADER);
-	unsigned int fragmentShader = loadShader("basic.frag", GL_FRAGMENT_SHADER);
+	unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
+	unsigned int geomShader = loadShader(geom, GL_GEOMETRY_SHADER);
+	unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
 
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, geomShader);

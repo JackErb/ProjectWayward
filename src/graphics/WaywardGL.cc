@@ -20,13 +20,20 @@ static float windowHeight;
 static float windowScale;
 
 static const int SpriteVBOLen = 4;
+static const int ShapeVBOLen = 4;
 static const int MaxSprites = 100;
+
+static unsigned int SpriteVAO;
 
 static float SpriteVertices[SpriteVBOLen * MaxSprites];
 static int SpriteIndex = 0;
-static unsigned int SpriteShaderProg;
-static unsigned int SpriteVAO;
 static unsigned int SpriteVBO;
+static unsigned int SpriteShaderProg;
+
+static float ShapeVertices[ShapeVBOLen * MaxSprites];
+static int ShapeIndex = 0;
+static unsigned int ShapeVBO;
+static unsigned int ShapeShaderProg;
 
 void WaywardGL::init(int width, int height) {
 	glEnable(GL_MULTISAMPLE);
@@ -35,12 +42,8 @@ void WaywardGL::init(int width, int height) {
 	windowHeight = height;
 	windowScale = 0.5;
 
-	float vertices[] = {
-	    // position  // size
-		0.0f, 0.0f,  1500.0f, 1700.0f
-	};
-
-	SpriteShaderProg = loadShaderProgram();
+	SpriteShaderProg = loadShaderProgram("basic.vert", "basic.geom", "basic.frag");
+	ShapeShaderProg = loadShaderProgram("basic.vert", "shape.geom", "shape.frag");
 
     glGenVertexArrays(1, &SpriteVAO);
     glGenBuffers(1, &SpriteVBO);
@@ -62,9 +65,10 @@ void WaywardGL::init(int width, int height) {
 }
 
 void WaywardGL::render() {
+	glBindVertexArray(SpriteVAO);
+
     glBindBuffer(GL_ARRAY_BUFFER, SpriteVBO);
     glBufferData(GL_ARRAY_BUFFER, SpriteIndex * SpriteVBOLen * sizeof(float), SpriteVertices, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glUseProgram(SpriteShaderProg);
@@ -74,8 +78,18 @@ void WaywardGL::render() {
 	glUniform2f(glGetUniformLocation(SpriteShaderProg, "cameraPos"), 0.f, 0.f);
 	glUniform1f(glGetUniformLocation(SpriteShaderProg, "screenScale"), windowScale);
 
-	glBindVertexArray(SpriteVAO);
 	glDrawArrays(GL_POINTS, 0, SpriteIndex);
+
+
+
+	glUseProgram(ShapeShaderProg);
+	//glBindBuffer(GL_ARRAY_BUFFER, ShapeVBO);
+	glBufferData(GL_ARRAY_BUFFER, ShapeIndex * ShapeVBOLen * sizeof(float), ShapeVertices, GL_DYNAMIC_DRAW);
+	glUniform2f(glGetUniformLocation(ShapeShaderProg, "screenSize"), windowWidth, windowHeight);
+	glUniform2f(glGetUniformLocation(ShapeShaderProg, "cameraPos"), 0.f, 0.f);
+	glUniform1f(glGetUniformLocation(ShapeShaderProg, "screenScale"), windowScale);
+
+	glDrawArrays(GL_POINTS, 0, ShapeIndex);
 }
 
 void WaywardGL::deinit() {
@@ -83,7 +97,7 @@ void WaywardGL::deinit() {
 	glDeleteVertexArrays(1, &SpriteVAO);
 }
 
-int WaywardGL::addSprite(float w, float h) {
+unsigned int WaywardGL::addSprite(float w, float h) {
 	int spriteIndex = SpriteIndex * SpriteVBOLen;
 	SpriteVertices[spriteIndex + 0] = 0.f;
 	SpriteVertices[spriteIndex + 1] = 0.f;
@@ -92,10 +106,25 @@ int WaywardGL::addSprite(float w, float h) {
 	return SpriteIndex++;
 }
 
-void WaywardGL::updateSpritePos(int sprite_handle, float x, float y) {
+void WaywardGL::updateSpritePos(unsigned int sprite_handle, float x, float y) {
 	int spriteIndex = sprite_handle * SpriteVBOLen;
 	SpriteVertices[spriteIndex] = x;
 	SpriteVertices[spriteIndex + 1] = y;
+}
+
+unsigned int WaywardGL::addShape(float w, float h) {
+	int shapeIndex = ShapeIndex * ShapeVBOLen;
+	ShapeVertices[shapeIndex + 0] = 0.f;
+	ShapeVertices[shapeIndex + 1] = 0.f;
+	ShapeVertices[shapeIndex + 2] = w;
+	ShapeVertices[shapeIndex + 3] = h;
+	return ShapeIndex++;
+}
+
+void WaywardGL::updateShapePos(unsigned int shape_handle, float x, float y) {
+	int shapeIndex = shape_handle * ShapeVBOLen;
+	ShapeVertices[shapeIndex] = x;
+	ShapeVertices[shapeIndex + 1] = y;
 }
 
 void WaywardGL::setTexture(unsigned int texture_handle) {
