@@ -92,14 +92,15 @@ void ChunkData::generateMesh() {
                     if (expand) ry--;
                     else break;
                 }
-                
+ 
+                // Mark all tiles in rectangle as meshed
                 for (int px = rx; px <= rx + rw; px++) {
                     for (int py = ry; py <= ry + rh; py++) {
                         tiles[px][py].meshed = true;
                     }
                 }
                 
-                // Calculate rectangle mesh
+                // Generate rectangular mesh
                 FixedPoint px = chk_x + FixedPoint::fromInt(rx) * tw;
                 FixedPoint py = chk_y + FixedPoint::fromInt(ry) * th;
                 FixedPoint pw = FixedPoint::fromInt(rw+1) * tw;

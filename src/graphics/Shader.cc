@@ -1,38 +1,16 @@
 #include "Shader.h"
 
-#include "resource_path.h"
+#include "ResourceManager.h"
 #include <iostream>
-#include <fstream>
 
 using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
-using std::ifstream;
 
 unsigned int loadShader(const string &file_name, GLenum shader_type) {
-    string path = resourcePath() + file_name;
-    ifstream file;
-    file.exceptions(file.exceptions() | std::ios::failbit);
-    
-    try {
-        file.open(path);
-    } catch (std::ios_base::failure& e) {
-        cerr << "Failed to open file: " << path << endl;
-        cerr << e.what() << endl;
-        return -1;
-    }
-
-    // Get length of file
-    file.seekg(0, std::ios::end);
-    int length = file.tellg();
-    file.seekg(0, std::ios::beg);
-
-    // Read the file
-    char *shaderSource;
-    shaderSource = new char[length];
-    file.read(shaderSource, length);
-    file.close();
+    int length;
+    char *shaderSource = loadTextFile(file_name, &length);
 
     unsigned int vertexShader;
     vertexShader = glCreateShader(shader_type);
@@ -44,11 +22,13 @@ unsigned int loadShader(const string &file_name, GLenum shader_type) {
     if (!success) {
         char infoLog[512];
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::COMPILATION_FAILED: " << file_name << endl;
-        cout << infoLog << endl;;
+        cerr << "ERROR::SHADER::COMPILATION_FAILED: " << file_name << endl;
+        cerr << infoLog << endl;;
     } else {
         cout << "Shader: " << file_name << " succesfully compiled" << endl;
     }
+
+    free(shaderSource);
     return vertexShader;
 }
 

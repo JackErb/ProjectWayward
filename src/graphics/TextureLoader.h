@@ -2,10 +2,13 @@
 #define TextureLoader_h
 
 #include <string>
+#include <vector>
 
 namespace WaywardGL {
 
-unsigned int loadTexture(std::string file_path);
+unsigned int loadTexture(std::string file_name);
+
+unsigned int loadTextures(std::vector<std::string> files);
 
 }
 

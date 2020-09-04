@@ -6,19 +6,24 @@
 
 namespace WaywardGL {
 
+struct DisplayData {
+    float WindowWidth;
+    float WindowHeight;
+    float WindowScale;
+    float CameraX;
+    float CameraY;
+};
+
 void init(int width, int height);
 void render();
 void deinit();
 
-unsigned int addSprite(float w, float h);
+unsigned int addSprite(float x, float y, float w, float h);
 void updateSpritePos(unsigned int sprite_handle, float x, float y);
+void updateSpriteTexture(unsigned int sprite_handle, unsigned int texture_handle);
 
-unsigned int addShape(float w, float h);
+unsigned int addShape(float x, float y, float w, float h);
 void updateShapePos(unsigned int shape_handle, float x, float y);
-
-unsigned int loadTexture(std::string file_name);
-
-void setTexture(unsigned int texture_handle);
 }
 
 #endif  /* WaywardGL_h */

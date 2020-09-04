@@ -7,9 +7,7 @@
 using std::vector;
 
 Player::Player() {
-    sprite_handle = WaywardGL::addSprite(1500, 1700);
-    data.texture_handle = WaywardGL::loadTexture("jump_3.png");
-    WaywardGL::setTexture(data.texture_handle);
+    sprite_handle = WaywardGL::addSprite(0, 0, 1500, 1700);
 
     vector<Polygon> polygons;
     polygons.push_back(poly_square(0, 0, 1500, 1700));

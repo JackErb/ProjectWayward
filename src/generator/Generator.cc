@@ -6,6 +6,8 @@
 #include <chrono>
 #include <iostream>
 #include <ww_math.h>
+#include <cstdlib>
+#include <ctime>
 
 using std::vector;
 using std::cout;
@@ -42,6 +44,7 @@ vector<vector<ChunkType>> generateGrid(const GeneratorOptions& opt, LevelData *l
             grid[path_x][path_y] = nextPath == Chunk_MainLand ?
                 Chunk_MainFall : Chunk_MainDrop;
             path_y++;
+
             nextPath = Chunk_MainLand;
             dir = 0;
             drops++;
@@ -50,7 +53,7 @@ vector<vector<ChunkType>> generateGrid(const GeneratorOptions& opt, LevelData *l
                 dir = r->rand() < 0.5 ? -1 : 1;
             path_x += dir;
             
-            if (path_x < 1 || path_x >= opt.mapWidth - 1) {
+            if (path_x < 0 || path_x > opt.mapWidth - 1) {
                 path_x -= dir;
                 grid[path_x][path_y] = nextPath == Chunk_MainLand ?
                     Chunk_MainFall : Chunk_MainDrop;
@@ -65,6 +68,8 @@ vector<vector<ChunkType>> generateGrid(const GeneratorOptions& opt, LevelData *l
             }
         }
     }
+
+    grid[path_x][path_y-1] = Chunk_MainDrop;
     
     return grid;
 }
@@ -248,7 +253,6 @@ void generateLevelDataFromGrid(const GeneratorOptions& opt,
     for (int x = 0; x < opt.mapWidth; x++) {
         for (int y = 0; y < opt.mapHeight; y++) {
             ChunkType type = (*grid)[x][y];
-            
             auto templates = opt.templates.find(type)->second;
             int rand = r->rand(0, templates.size());
             level->chunks[x][y].generateTiles(templates[rand].chunk);
@@ -259,11 +263,12 @@ void generateLevelDataFromGrid(const GeneratorOptions& opt,
 
 LevelData WWGenerator::generateLevel(const GeneratorOptions& opt) {
     // Seed random number generator
+    srand(time(NULL));
     Random r(rand());
     
     LevelData level;
     vector<vector<ChunkType>> grid = generateGrid(opt, &level, &r);
-    generateDegenPaths(opt, &grid, &level, &r);
+    //generateDegenPaths(opt, &grid, &level, &r);
     
     generateLevelDataFromGrid(opt, &grid, &level, &r);
     return level;

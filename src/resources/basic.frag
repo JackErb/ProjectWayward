@@ -5,9 +5,8 @@ in GS_OUT {
 	vec2 texCoord;
 } fs_in;
 
-uniform sampler2D texture1;
+uniform sampler2DArray textures;
 
 void main() {
-    FragColor = texture(texture1, fs_in.texCoord);
-	//if (FragColor.w < .1) FragColor = vec4(1,0,0,0);
+    FragColor = texture(textures, vec3(fs_in.texCoord, 1));
 } 

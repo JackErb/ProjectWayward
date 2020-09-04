@@ -5,14 +5,14 @@ GeneratorOptions GenOptions::TestCaveGen;
 
 void GenOptions::init() {
     /* TestGen Init */
-    TestGen.mapWidth = 8;
-    TestGen.mapHeight = 10;
+    TestGen.mapWidth = 4;
+    TestGen.mapHeight = 4;
     
     TestGen.chunkWidth = 10;
     TestGen.chunkHeight = 10;
     
-    TestGen.tileWidth = 200;
-    TestGen.tileHeight = 200;
+    TestGen.tileWidth = 100;
+    TestGen.tileHeight = 100;
     
     
     TestGen.templates[Chunk_Main] = {
