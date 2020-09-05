@@ -18,8 +18,8 @@ using std::endl;
 
 static DisplayData Display;
 
-static SpriteBuffer PlayerSpriteBuffer;
 static const int MaxSprites = 100;
+static SpriteBuffer PlayerSpriteBuffer;
 
 static const int MaxShapes = 5000;
 static unsigned int ShapeVAO;
@@ -30,7 +30,23 @@ static int ShapeIndex = 0;
 static unsigned int ShapeVBO;
 static unsigned int ShapeShaderProg;
 
+void GLAPIENTRY
+MessageCallback( GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar* message,
+                 const void* userParam )
+{
+  cout << source << endl;
+}
+
+
 void WaywardGL::init(int width, int height) {
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+
     Display.WindowWidth = width;
     Display.WindowHeight = height;
     Display.WindowScale = 0.25;
@@ -39,6 +55,7 @@ void WaywardGL::init(int width, int height) {
 
     PlayerSpriteBuffer.init(MaxSprites, {"jump_3.png", "jump_2.png"});
     PlayerSpriteBuffer.setShader(shader_handle);
+
 
     // Shape
     ShapeShaderProg = loadShaderProgram("basic.vert", "basic.geom", "shape.frag");
@@ -55,9 +72,6 @@ void WaywardGL::init(int width, int height) {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_BLEND);
 }
 
 void WaywardGL::render() {
@@ -79,18 +93,7 @@ void WaywardGL::deinit() {
     // Clean up resources
 }
 
-unsigned int WaywardGL::addSprite(float x, float y, float w, float h) {
-    return PlayerSpriteBuffer.addSprite(x, y, w, h);
-}
-
-void WaywardGL::updateSpritePos(unsigned int sprite_handle, float x, float y) {
-    int sprite_index = sprite_handle * PlayerSpriteBuffer.VBOLen;
-    PlayerSpriteBuffer.vertices[sprite_index] = x;
-    PlayerSpriteBuffer.vertices[sprite_index + 1] = y;
-}
-
-void WaywardGL::updateSpriteTexture(unsigned int sprite_handle, unsigned int texture_handle) {
-}
+SpriteBuffer *WaywardGL::spriteBuffer() { return &PlayerSpriteBuffer; }
 
 unsigned int WaywardGL::addShape(float x, float y, float w, float h) {
     if (ShapeIndex >= MaxShapes) {

@@ -4,15 +4,20 @@ layout (triangle_strip, max_vertices=4) out;
 
 in VS_OUT {
 	vec2 size;
+    int texture;
 } gs_in[];
 
 out GS_OUT {
 	vec2 texCoord;
 } gs_out;
 
+flat out int fs_texture;
+
 void main() {
+    fs_texture = gs_in[0].texture;
 	vec4 pos = gl_in[0].gl_Position;
 	vec2 spriteSize = vec2(gs_in[0].size.x / 2.0, gs_in[0].size.y / 2.0);
+    int texture = gs_in[0].texture;
 
     gl_Position = pos + vec4(-spriteSize.x, -spriteSize.y, 0.0, 0.0);
 	gs_out.texCoord = vec2(0.0, 0.0);

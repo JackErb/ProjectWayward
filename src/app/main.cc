@@ -126,7 +126,7 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
     );
   #endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -149,19 +149,16 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
         printSdlError("GL Context could not be created.");
         return false;
     }
-    SDL_GL_MakeCurrent(*window, *gl_context);
-
-    // enable VSync
-    SDL_GL_SetSwapInterval(1);
 
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         cerr << "Couldn't initialize glad" << endl;
         return false;
     }
-    
+    SDL_GL_MakeCurrent(*window, *gl_context);
+    SDL_GL_SetSwapInterval(1);
     glViewport(0, 0, WIDTH, HEIGHT);
-    glEnable(GL_MULTISAMPLE);
 
+    cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;
     cout << "SDL & OpenGL succesfully initialized" << endl; 
     return true; 
 }

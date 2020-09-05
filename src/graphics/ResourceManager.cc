@@ -20,7 +20,6 @@ unsigned char *loadPng(string file_name, int *width, int *height) {
     string file_path = resourcePath() + file_name;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(file_path.c_str(), width, height, &num_channels, STBI_rgb_alpha);
-    cout << file_name << " dim: " << *width << ", " << *height << endl;
     return data;
 }
 

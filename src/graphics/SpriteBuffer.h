@@ -14,13 +14,19 @@ struct SpriteBuffer {
 
     int index = 0;
     float *vertices = nullptr;
+    int   *textures = nullptr;
+
+    const int VerticesLen = 4;
+    const int TexturesLen = 1;
 
     void init(int max, std::vector<std::string> texture_files);
     void setShader(unsigned int shader_handle);
     void updateBuffer();
     void render(WaywardGL::DisplayData d);
 
-    unsigned int addSprite(float x, float y, float w, float h);
+    unsigned int addSprite(float x, float y, float w, float h, int t);
+    void setSpritePos(unsigned int sprite_handle, float x, float y);
+    void setSpriteTexture(unsigned int sprite_handle, int t);
 
     static const int VBOLen = 4;
 };
