@@ -13,8 +13,8 @@ using std::string;
 
 void SpriteBuffer::init(int max, vector<string> texture_files) {
     MaxSprites = max;
-    vertices = new float[max * VerticesLen];
-    textures = new int[max * TexturesLen];
+    vertices = new float[MaxSprites * VerticesLen];
+    textures = new int[MaxSprites * TexturesLen];
 
     TextureArray = WaywardGL::loadTextures(texture_files);
 
@@ -25,15 +25,19 @@ void SpriteBuffer::init(int max, vector<string> texture_files) {
     // Bind buffers
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, MaxSprites * (4 * sizeof(float) + 1 * sizeof(int)), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MaxSprites * (VerticesLen * sizeof(float) + TexturesLen * sizeof(int)), NULL, GL_DYNAMIC_DRAW);
 
     // Create vertex attributes
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, VerticesLen * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, VerticesLen * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, 1 * sizeof(int), (void*)(MaxSprites * 4 * sizeof(float)));
+
+    long pointer = MaxSprites * VerticesLen * sizeof(float);
+    glVertexAttribIPointer(2, 1, GL_INT, TexturesLen * sizeof(int), (void*)pointer);
     glEnableVertexAttribArray(2);
+    glVertexAttribIPointer(3, 1, GL_INT, TexturesLen * sizeof(int), (void*)(pointer + 1 * sizeof(int)));
+    glEnableVertexAttribArray(3);
 
     // Unbind buffer
     glBindVertexArray(0);
@@ -57,6 +61,7 @@ unsigned int SpriteBuffer::addSprite(float x, float y, float w, float h, int t) 
 
     int text_index = index * TexturesLen;
     textures[text_index] = t;
+    textures[text_index+1] = 1;
 
     index += 1;
     return index - 1;
@@ -71,6 +76,11 @@ void SpriteBuffer::setSpritePos(unsigned int sprite_handle, float x, float y) {
 void SpriteBuffer::setSpriteTexture(unsigned int sprite_handle, int t) {
     int text_index = sprite_handle * TexturesLen;
     textures[text_index] = t;
+}
+
+void SpriteBuffer::setSpriteDir(unsigned int sprite_handle, int dir) {
+    int text_index = sprite_handle * TexturesLen;
+    textures[text_index+1] = dir;
 }
 
 void SpriteBuffer::updateBuffer() {
@@ -93,6 +103,7 @@ void SpriteBuffer::render(WaywardGL::DisplayData d) {
     glUniform2f(glGetUniformLocation(ShaderProg, "screenSize"), d.WindowWidth, d.WindowHeight);
     glUniform2f(glGetUniformLocation(ShaderProg, "cameraPos"), d.CameraX, d.CameraY);
     glUniform1f(glGetUniformLocation(ShaderProg, "screenScale"), d.WindowScale);
-    glUniform1i(glGetUniformLocation(ShaderProg, "textures"), 0);
     glDrawArrays(GL_POINTS, 0, index);
+
+    glBindVertexArray(0);
 }

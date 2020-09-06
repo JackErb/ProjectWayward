@@ -13,6 +13,7 @@ struct FixedPoint {
     float toFloat() const;
 
     /* Static members */
+    static FixedPoint ZERO;
     static FixedPoint MIN;
     static FixedPoint MAX;
     static FixedPoint PI;
@@ -27,6 +28,8 @@ FixedPoint fp_atan2(const FixedPoint &y, const FixedPoint &x);
 FixedPoint fp_sqrt(const FixedPoint &n);
 FixedPoint fp_min(const FixedPoint &n1, const FixedPoint &n2);
 FixedPoint fp_max(const FixedPoint &n1, const FixedPoint &n2);
+FixedPoint fp_abs(const FixedPoint &n);
+FixedPoint fp_sign(const FixedPoint &n);
 
 struct Vector2D {
     Vector2D() : x(), y() {}

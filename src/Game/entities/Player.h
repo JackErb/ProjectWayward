@@ -13,7 +13,9 @@ class Player: public Entity {
     void tick();
     void handleCollision(Entity *e, const Vector2D &pv);
 
-    int frame = 0;
-    int test = 0;
+    void switchState(PlayerState *new_state);
+    void updateSprite();
+
     PlayerState *state;
+    const PlayerInput *input;
 };

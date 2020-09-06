@@ -18,7 +18,9 @@ using std::vector;
 
 GameController::GameController() {
     player_input.gc_index = 0;
-    entities.push_back(new Player());
+    Player *player = new Player();
+    player->data.position.y = FixedPoint::fromInt(4000);
+    entities.push_back(player);
 
     entities.push_back(new Chunk(0, -1500, 8000, 5000));
 
@@ -38,13 +40,19 @@ GameController::~GameController() {
 
 }
 
+static bool tick_ = true;
 
 void GameController::pretick() {
     player_input.tick();
+    tick_ = player_input.isPressed(Button_Attack, false);
+    tick_ = tick_ || player_input.isPressed(Button_Other);
+
+    if (!tick_) return;
     entities[0]->processInput(player_input);
 }
 
 void GameController::tick() {
+    if (!tick_) return;
     for (Entity *entity : entities) {
         entity->tick();
     }
@@ -56,7 +64,7 @@ void GameController::tick() {
 
             Vector2D pv;
             bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
-            if (true) {
+            if (collision) {
                 e1->handleCollision(e2, pv);
                 e2->handleCollision(e1, -pv);
             }
@@ -65,5 +73,7 @@ void GameController::tick() {
 }
 
 void GameController::render() {
-
+    for (Entity *entity : entities) {
+        entity->updateSprite();
+    }
 }

@@ -1,5 +1,7 @@
-set(SOURCES GameController.h GameController.cc entities/Entity.h entities/Player.h entities/Player.cc
-			Input.h Input.cc state/PlayerState.h state/GroundedState.h state/GroundedState.cc
-			PhysicsEngine.h PhysicsEngine.cc entities/Chunk.h entities/Chunk.cc)
+set(SOURCES GameController.h GameController.cc Input.h Input.cc 
+            entities/Entity.h entities/Entity.cc entities/Player.h entities/Player.cc entities/Chunk.h entities/Chunk.cc
+            state/PlayerState.h state/PlayerState.cc state/GroundedState.h state/GroundedState.cc
+            state/AirborneState.h state/AirborneState.cc
+			PhysicsEngine.h PhysicsEngine.cc)
 
 add_library(ww_game STATIC ${SOURCES})

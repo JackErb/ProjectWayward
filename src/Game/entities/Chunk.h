@@ -11,6 +11,7 @@ class Chunk: public Entity {
     Chunk(int x, int y, int w, int h);
 
     void tick();
+    void updateSprite() {}
 };
 
 #endif  /* Chunk_h */

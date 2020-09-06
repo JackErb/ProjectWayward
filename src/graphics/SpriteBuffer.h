@@ -17,7 +17,7 @@ struct SpriteBuffer {
     int   *textures = nullptr;
 
     const int VerticesLen = 4;
-    const int TexturesLen = 1;
+    const int TexturesLen = 2;
 
     void init(int max, std::vector<std::string> texture_files);
     void setShader(unsigned int shader_handle);
@@ -27,6 +27,7 @@ struct SpriteBuffer {
     unsigned int addSprite(float x, float y, float w, float h, int t);
     void setSpritePos(unsigned int sprite_handle, float x, float y);
     void setSpriteTexture(unsigned int sprite_handle, int t);
+    void setSpriteDir(unsigned int sprite_handle, int dir);
 
     static const int VBOLen = 4;
 };

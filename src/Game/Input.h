@@ -10,8 +10,10 @@ enum ButtonState {
 };
 
 enum ButtonAction {
-    Jump, Attack
+    Button_Jump, Button_Attack, Button_Other
 };
+
+static const ButtonAction Actions[] = {Button_Jump, Button_Attack, Button_Other};
 
 typedef struct _SDL_GameController SDL_GameController;
 
@@ -20,11 +22,16 @@ struct StickState {
     FixedPoint y;
     FixedPoint angle;
     FixedPoint hyp;
+
+
+    static const FixedPoint DEADZONE;
 };
 
 struct PlayerInput {
     void updateButtonsState();
     void tick();
+
+    bool isPressed(ButtonAction action, bool orHeld=true) const;
 
     int frame = 0;
     int gc_index;

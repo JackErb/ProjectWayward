@@ -4,14 +4,20 @@
 struct PlayerInput;
 class Player;
 
+typedef enum StateType {
+    State_Grounded, State_Airborne
+} StateType;
 
 class PlayerState {
   public:
     PlayerState() {}
-    ~PlayerState() {}
+    virtual ~PlayerState() {}
 
-    virtual void processInput(const PlayerInput &input) = 0;
+    virtual void pretick() = 0;
     virtual void tick() = 0;
+    virtual void switchState(PlayerState *new_state);
+
+    virtual StateType type() = 0;
 
     Player *player;
 };

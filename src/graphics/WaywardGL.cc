@@ -30,30 +30,18 @@ static int ShapeIndex = 0;
 static unsigned int ShapeVBO;
 static unsigned int ShapeShaderProg;
 
-void GLAPIENTRY
-MessageCallback( GLenum source,
-                 GLenum type,
-                 GLuint id,
-                 GLenum severity,
-                 GLsizei length,
-                 const GLchar* message,
-                 const void* userParam )
-{
-  cout << source << endl;
-}
-
-
 void WaywardGL::init(int width, int height) {
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
 
     Display.WindowWidth = width;
     Display.WindowHeight = height;
-    Display.WindowScale = 0.25;
+    Display.WindowScale = 0.2;
 
     unsigned int shader_handle = loadShaderProgram("basic.vert", "basic.geom", "basic.frag");
 
-    PlayerSpriteBuffer.init(MaxSprites, {"jump_3.png", "jump_2.png"});
+    PlayerSpriteBuffer.init(MaxSprites, {"jump_0.png", "jump_1.png", "jump_2.png", "jump_3.png",
+                                         "land_0.png", "land_1.png", "land_2.png", "land_3.png"});
     PlayerSpriteBuffer.setShader(shader_handle);
 
 
@@ -75,10 +63,9 @@ void WaywardGL::init(int width, int height) {
 }
 
 void WaywardGL::render() {
-    Display.CameraX = -PlayerSpriteBuffer.vertices[0];
-    Display.CameraY = -PlayerSpriteBuffer.vertices[1];
+    Display.CameraX = 0;//-PlayerSpriteBuffer.vertices[0];
+    Display.CameraY = -4000;//-PlayerSpriteBuffer.vertices[1];
 
-    PlayerSpriteBuffer.updateBuffer();
     PlayerSpriteBuffer.render(Display);
 
     glBindVertexArray(ShapeVAO);

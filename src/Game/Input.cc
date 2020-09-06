@@ -10,24 +10,28 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+const FixedPoint StickState::DEADZONE = FixedPoint::fromFloat(0.2f);
+
 StickState readStickInput(SDL_GameController *gc) {
     StickState stick;
     int x = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTX);
     int y = SDL_GameControllerGetAxis(gc, SDL_CONTROLLER_AXIS_LEFTY);
-    stick.x = FixedPoint::fromFloat((double)x / 32767.0);
-    stick.y = FixedPoint::fromFloat((double)y / 32767.0);
-    stick.hyp = fp_sqrt(x * x + y * y);
-    stick.angle = fp_atan2(y, x);
+    stick.x = FixedPoint::fromFloat((float)x / 32767.f);
+    stick.y = FixedPoint::fromFloat((float)y / 32767.f);
+    stick.hyp = fp_sqrt(stick.x * stick.x + stick.y * stick.y);
+    stick.angle = fp_atan2(stick.y, stick.x);
 
     return stick;
 }
 
 bool isButtonPressed(ButtonAction b, SDL_GameController *gc) {
     switch (b) {
-    case Jump:
+    case Button_Jump:
         return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_A) == 1;
-    case Attack:
-        return false;
+    case Button_Attack:
+        return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_B) == 1;
+    case Button_Other:
+        return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_X) == 1;
     }
 }
 
@@ -68,12 +72,11 @@ void PlayerInput::tick() {
         stick = readStickInput(gc);
         
         // Read button inputs
-        const ButtonAction actions[] = {Jump, Attack};
-        for (ButtonAction b : actions) {
+        for (ButtonAction b : Actions) {
             bool pressed = isButtonPressed(b, gc);
             bool contains = buttons.find(b) != buttons.end();
             if (pressed && !contains) {
-                cout << "Pressed!" << endl;
+                buttons[b] = ButtonState::Pressed;
             } else if (!pressed && contains) {
                 buttons[b] = ButtonState::Released;
             }
@@ -84,4 +87,13 @@ void PlayerInput::tick() {
         }
     }
     frame++;
+}
+
+bool PlayerInput::isPressed(ButtonAction action, bool orHeld) const {
+    auto res = buttons.find(action);
+    if (res == buttons.end()) return false;
+
+    ButtonState state = res->second;
+    bool held = orHeld ? state == ButtonState::Held : false;
+    return held || state == ButtonState::Pressed;
 }

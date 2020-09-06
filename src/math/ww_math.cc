@@ -4,6 +4,7 @@
 #include "vector_overloads.h"
 #include <iostream>
 #include <limits.h>
+#include <cstdlib>
 #include <math.h>
 
 using std::cout;
@@ -22,10 +23,10 @@ Vector2D geometric_center(const Polygon &p) {
         return v;
     }
 
-    Vector2D center = {0, 0};
+    Vector2D center = {{0}, {0}};
     for (auto it = p.begin(); it != p.end(); it++) {
-        center.x = center.x + it->x;
-        center.y = center.y + it->y;
+        center.x += it->x;
+        center.y += it->y;
     }
 
     FixedPoint size = FixedPoint::fromInt(p.size());
@@ -54,6 +55,7 @@ FixedPoint dot(const Vector2D &v1, const Vector2D &v2) {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
+FixedPoint FixedPoint::ZERO = FixedPoint(0);
 FixedPoint FixedPoint::MIN = FixedPoint(LLONG_MIN);
 FixedPoint FixedPoint::MAX = FixedPoint(LLONG_MAX);
 FixedPoint FixedPoint::PI = FixedPoint::fromFloat(3.14159);
@@ -93,4 +95,12 @@ FixedPoint fp_min(const FixedPoint &n1, const FixedPoint &n2) {
 
 FixedPoint fp_max(const FixedPoint &n1, const FixedPoint &n2) {
     return n1 > n2 ? n1 : n2;
+}
+
+FixedPoint fp_abs(const FixedPoint &n) {
+    return FixedPoint(abs(n.n));
+}
+
+FixedPoint fp_sign(const FixedPoint &n) {
+    return n.n < 0 ? FixedPoint::fromInt(-1) : FixedPoint::fromInt(1);
 }
