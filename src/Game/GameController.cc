@@ -46,6 +46,7 @@ void GameController::pretick() {
     player_input.tick();
     tick_ = player_input.isPressed(Button_Attack, false);
     tick_ = tick_ || player_input.isPressed(Button_Other);
+    tick_ = true;
 
     if (!tick_) return;
     entities[0]->processInput(player_input);

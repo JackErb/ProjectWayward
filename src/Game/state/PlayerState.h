@@ -1,8 +1,11 @@
 #ifndef PlayerState_h
 #define PlayerState_h
 
+#include <ww_math.h>
+
 struct PlayerInput;
 class Player;
+class Entity;
 
 typedef enum StateType {
     State_Grounded, State_Airborne
@@ -15,8 +18,9 @@ class PlayerState {
 
     virtual void pretick() = 0;
     virtual void tick() = 0;
-    virtual void switchState(PlayerState *new_state);
+    virtual void handleCollision(Entity *entity, const Vector2D &pv) = 0;
 
+    virtual void switchState(PlayerState *new_state);
     virtual StateType type() = 0;
 
     Player *player;

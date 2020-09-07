@@ -26,7 +26,7 @@ Player::Player() {
 void Player::processInput(const PlayerInput &input) {
     this->input = &input;
     
-    if (input.stick.hyp > StickState::DEADZONE) {
+    if (input.stick.hyp > StickState::DEADZONE && state->type() == State_Grounded) {
         data.dir = input.stick.x >= 0 ? Dir_Right : Dir_Left;
     }
 
@@ -42,10 +42,13 @@ void Player::handleCollision(Entity *e, const Vector2D &pv) {
     if (pv.x == 0 && pv.y > 0) {
         data.velocity.y = 0;
         if (state->type() == State_Airborne) {
+            data.velocity.x = 0;
             GroundedState *landing_lag = new GroundedState(this, Grounded_Land);
             state->switchState(landing_lag);
         }
     }
+
+    state->handleCollision(e, pv);
 }
 
 void Player::switchState(PlayerState *new_state) {

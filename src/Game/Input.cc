@@ -10,7 +10,25 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-const FixedPoint StickState::DEADZONE = FixedPoint::fromFloat(0.2f);
+const FixedPoint StickState::DEADZONE = FixedPoint::fromFloat(0.15f);
+
+
+bool StickState::inDir(StickState::StickDir dir) const {
+    if (hyp <= StickState::DEADZONE) return false;
+    const FixedPoint PI_4   = FixedPoint::PI / FixedPoint::fromFloat(4);
+    const FixedPoint PI_3_4 = PI_4 * FixedPoint::fromInt(3);
+
+    switch (dir) {
+      case Down:
+        return angle >= -PI_3_4 && angle <= -PI_4;
+      case Up:
+        return angle <= PI_3_4 && angle >= PI_4;
+      case Left:
+        return angle >= PI_3_4 || angle <= -PI_3_4;
+      case Right:
+        return angle >= -PI_4 && angle <= PI_4;
+    }
+}
 
 StickState readStickInput(SDL_GameController *gc) {
     StickState stick;
@@ -26,11 +44,11 @@ StickState readStickInput(SDL_GameController *gc) {
 
 bool isButtonPressed(ButtonAction b, SDL_GameController *gc) {
     switch (b) {
-    case Button_Jump:
+      case Button_Jump:
         return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_A) == 1;
-    case Button_Attack:
+      case Button_Attack:
         return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_B) == 1;
-    case Button_Other:
+      case Button_Other:
         return SDL_GameControllerGetButton(gc, SDL_CONTROLLER_BUTTON_X) == 1;
     }
 }
@@ -96,4 +114,12 @@ bool PlayerInput::isPressed(ButtonAction action, bool orHeld) const {
     ButtonState state = res->second;
     bool held = orHeld ? state == ButtonState::Held : false;
     return held || state == ButtonState::Pressed;
+}
+
+bool PlayerInput::isReleased(ButtonAction action) const {
+    auto res = buttons.find(action);
+    if (res == buttons.end()) return false;
+
+    ButtonState state = res->second;
+    return state == ButtonState::Released;
 }

@@ -2,6 +2,7 @@
 #include <WaywardGL.h>
 #include <ww_math.h>
 #include <ww_generator.h>
+#include "ShapeBuffer.h"
 
 using std::vector;
 
@@ -15,7 +16,7 @@ Chunk::Chunk(ChunkData chunk_data) {
             if (chunk_data.tiles[x][y].type == Tile_Static) {
                 float tile_x = chunk_x + tile_w * x;
                 float tile_y = chunk_y + tile_h * y;
-                unsigned int handle = WaywardGL::addShape(tile_x, tile_y, tile_w, tile_h);
+                //unsigned int handle = WaywardGL::addShape(tile_x, tile_y, tile_w, tile_h);
             }
         }
     }
@@ -30,7 +31,7 @@ Chunk::Chunk(ChunkData chunk_data) {
 Chunk::Chunk(int x, int y, int w, int h) {
     data.position = Vector2D(FixedPoint::fromInt(x), FixedPoint::fromInt(y));
     
-    sprite_handle = WaywardGL::addShape(x, y, w, h);
+    sprite_handle = WaywardGL::shapeBuffer()->addShape(x, y, w, h);
    
     vector<Polygon> polygons;
     polygons.push_back(poly_square(0,0,w,h));

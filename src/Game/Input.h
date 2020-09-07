@@ -23,6 +23,10 @@ struct StickState {
     FixedPoint angle;
     FixedPoint hyp;
 
+    enum StickDir {
+        Down, Left, Right, Up
+    };
+    bool inDir(StickDir dir) const;
 
     static const FixedPoint DEADZONE;
 };
@@ -32,6 +36,7 @@ struct PlayerInput {
     void tick();
 
     bool isPressed(ButtonAction action, bool orHeld=true) const;
+    bool isReleased(ButtonAction action) const;
 
     int frame = 0;
     int gc_index;

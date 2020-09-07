@@ -15,7 +15,8 @@ AirborneState::AirborneState(Player *player, AirborneAction action) {
     this->player = player;
     this->data.action = action;
     this->data.frame = 0;
-    this->data.accel_x = FixedPoint::ZERO;
+    this->data.jumps = 1;
+    this->data.fastfall = false;
 }
 
 void AirborneState::switchActionState(AirborneAction action) {
@@ -34,26 +35,51 @@ void AirborneState::pretick() {
 
 void AirborneState::tick() {
     const PlayerInput *input = player->input;
+    FixedPoint hyp = input->stick.hyp;
+
+    if (input->stick.inDir(StickState::Down)) {
+        data.fastfall = true;
+    }
 
     switch(data.action) {
       case Airborne_Neutral: {
-        if (input->stick.hyp > StickState::DEADZONE) {
-            data.accel_x += input->stick.x * attr.airAccel;
-            player->data.velocity.x += data.accel_x;
+        if (hyp > StickState::DEADZONE) {
+            FixedPoint accel_x = input->stick.x * attr.airAccel;
+            player->data.velocity.x += accel_x;   
         }
         break;
       }
     }
 
+
+    // Vectorand cap air speed
     FixedPoint vx = player->data.velocity.x;
-    if (fp_abs(vx) > attr.maxAirSpeed)
+    if (fp_abs(vx) > attr.maxAirSpeed) {
         player->data.velocity.x = fp_sign(vx) * attr.maxAirSpeed;
-           
-    player->data.position += player->data.velocity;
-    player->data.velocity.x *= attr.friction;
+    }
+
+    // Double jump
+    if (data.jumps > 0 && input->isPressed(Button_Jump, false)) {
+        data.jumps--;
+        player->data.velocity.y = attr.doubleJump;
+    }
+    
+    // Apply gravity and limit fall speed
     player->data.velocity.y -= attr.gravity;
+    FixedPoint maxFall = data.fastfall ? attr.maxFastFall : attr.maxFall;
+    if (player->data.velocity.y < maxFall) {
+        player->data.velocity.y = maxFall;
+    }
+
+    player->data.position += player->data.velocity;
+    // Only apply friction if player is not vectoring 
+    if (hyp <= StickState::DEADZONE) player->data.velocity.x *= attr.airFriction;
 
     data.frame += 1;
+}
+
+void AirborneState::handleCollision(Entity *entity, const Vector2D &pv) {
+
 }
 
 void AirborneState::switchState(PlayerState *new_state) {

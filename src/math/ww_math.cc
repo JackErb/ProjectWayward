@@ -58,7 +58,7 @@ FixedPoint dot(const Vector2D &v1, const Vector2D &v2) {
 FixedPoint FixedPoint::ZERO = FixedPoint(0);
 FixedPoint FixedPoint::MIN = FixedPoint(LLONG_MIN);
 FixedPoint FixedPoint::MAX = FixedPoint(LLONG_MAX);
-FixedPoint FixedPoint::PI = FixedPoint::fromFloat(3.14159);
+FixedPoint FixedPoint::PI = FixedPoint::fromFloat(3.14159f);
 
 int FixedPoint::BASE = 4;
 int FixedPoint::MULT = 10000;
