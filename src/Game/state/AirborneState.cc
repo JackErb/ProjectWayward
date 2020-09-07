@@ -15,7 +15,7 @@ AirborneState::AirborneState(Player *player, AirborneAction action) {
     this->player = player;
     this->data.action = action;
     this->data.frame = 0;
-    this->data.jumps = 1;
+    this->data.jumps = 6;
     this->data.fastfall = false;
 }
 

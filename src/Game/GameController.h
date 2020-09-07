@@ -18,6 +18,7 @@ class GameController {
   private:
     PlayerInput player_input;
     std::vector<Entity*> entities;
+    std::vector<Entity*> stage_entities;
 };
 
 #endif  /* GameController_h */

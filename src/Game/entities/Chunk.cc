@@ -3,6 +3,7 @@
 #include <ww_math.h>
 #include <ww_generator.h>
 #include "ShapeBuffer.h"
+#include "SpriteBuffer.h"
 
 using std::vector;
 
@@ -31,7 +32,7 @@ Chunk::Chunk(ChunkData chunk_data) {
 Chunk::Chunk(int x, int y, int w, int h) {
     data.position = Vector2D(FixedPoint::fromInt(x), FixedPoint::fromInt(y));
     
-    sprite_handle = WaywardGL::shapeBuffer()->addShape(x, y, w, h);
+    sprite_handle = WaywardGL::tileBuffer()->addSprite(x, y, w, h, 1);
    
     vector<Polygon> polygons;
     polygons.push_back(poly_square(0,0,w,h));

@@ -36,23 +36,21 @@ void WaywardGL::init(int width, int height) {
     Display.WindowHeight = height;
     Display.WindowScale = 0.2;
 
-    unsigned int shader_handle = loadShaderProgram("basic.vert", "basic.geom", "basic.frag");
-
     PlayerSpriteBuffer.init(MaxSprites, {"jump_0.png", "jump_1.png", "jump_2.png", "jump_3.png",
                                          "land_0.png", "land_1.png", "land_2.png", "land_3.png"});
-    PlayerSpriteBuffer.setShader(shader_handle);
+    PlayerSpriteBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "basic.frag"));
 
     TileSpriteBuffer.init(MaxTiles, {"tile_grass.png", "tile_grass2.png",
                                      "tile_sand.png", "tile_dirt.png"});
-    TileSpriteBuffer.setShader(shader_handle);
+    TileSpriteBuffer.setShader(loadShaderProgram("tile.vert", "basic.geom", "basic.frag"));
 
     ShapeDisplayBuffer.init(MaxShapes);
     ShapeDisplayBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "shape.frag"));
 }
 
 void WaywardGL::render() {
-    Display.CameraX = 0;//-PlayerSpriteBuffer.vertices[0];
-    Display.CameraY = -4000;//-PlayerSpriteBuffer.vertices[1];
+    Display.CameraX = -PlayerSpriteBuffer.vertices[0];
+    Display.CameraY = -PlayerSpriteBuffer.vertices[1];
 
     PlayerSpriteBuffer.render(Display);
     TileSpriteBuffer.render(Display);

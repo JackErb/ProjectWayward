@@ -38,8 +38,9 @@ int main(int, char**) {
 
     WaywardGL::init(WIDTH, HEIGHT);
 
-    long subFrameCount = 0;
-    long frameCount = 0;
+    long fc_game = 0;
+    long fc_render = 0;
+    long fc_total = 0;
     int frame = 0;
 
     GameController controller;
@@ -57,6 +58,8 @@ int main(int, char**) {
 
         controller.pretick();
         controller.tick();
+        auto now = Timer::now();
+        fc_game += duration_cast<microseconds>(now-start).count();
         controller.render();
 
         GLenum error;
@@ -65,8 +68,8 @@ int main(int, char**) {
         }
 
         WaywardGL::render();
-        auto now = Timer::now();
-        subFrameCount += duration_cast<microseconds>(now - start).count();
+        now = Timer::now();
+        fc_render += duration_cast<microseconds>(now - start).count();
     
         SDL_GL_SwapWindow(window);
 
@@ -80,13 +83,17 @@ int main(int, char**) {
             now = Timer::now();
         }
         
-        frameCount += duration_cast<microseconds>(now - start).count();
+        fc_total += duration_cast<microseconds>(now - start).count();
         frame++;
         const int printInterval = 150;
         if (frame % printInterval == 0) {
-            cout << "Average frame time: " << frameCount / printInterval << endl;
-            cout << "\tSubframe time: " << subFrameCount / printInterval << endl;
-            frameCount = subFrameCount = 0;
+            fc_total /= printInterval;
+            fc_game /= printInterval;
+            fc_render /= printInterval;
+            cout << "Average frame time: " << fc_total << endl;
+            cout << "\tRender time: " << (fc_render - fc_game) << endl;
+            cout << "\tGame time: " << fc_game << endl;
+            fc_total = fc_render = fc_game = 0;
         }
     }
 
@@ -155,7 +162,7 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
         return false;
     }
     SDL_GL_MakeCurrent(*window, *gl_context);
-    SDL_GL_SetSwapInterval(1);
+    //SDL_GL_SetSwapInterval(1);
     glViewport(0, 0, WIDTH, HEIGHT);
 
     cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;

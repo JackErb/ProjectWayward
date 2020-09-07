@@ -7,6 +7,7 @@
 #include <TextureLoader.h>
 #include <iostream>
 #include <ww_math.h>
+#include <ww_memory.h>
 #include <ww_generator.h>
 #include <WaywardGL.h>
 #include <vector>
@@ -16,13 +17,22 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
+StackAllocator alloc(100000);
+
 GameController::GameController() {
     player_input.gc_index = 0;
-    Player *player = new Player();
+    Player *player = alloc.allocate<Player>();
     player->data.position.y = FixedPoint::fromInt(4000);
     entities.push_back(player);
 
-    entities.push_back(new Chunk(0, -1500, 8000, 5000));
+    for (int x = 0; x < 30; x++) {
+        for (int y = 0; y < 30; y++) {
+            int n = 800;
+            void *ptr = alloc.raw_allocate<Player>();
+            Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
+            stage_entities.push_back(chunk);
+        }
+    }
 
     /*GenOptions::init();
     GeneratorOptions opt = GenOptions::TestCaveGen;
@@ -58,11 +68,8 @@ void GameController::tick() {
         entity->tick();
     }
 
-    for (int i = 0; i < entities.size()-1; i++) {
-        Entity *e1 = entities[i];
-        for (int j = i+1; j < entities.size(); j++) {
-            Entity *e2 = entities[j];
-
+    for (Entity *e1 : entities) {
+        for (Entity *e2 : stage_entities) {
             Vector2D pv;
             bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
             if (collision) {
@@ -75,6 +82,10 @@ void GameController::tick() {
 
 void GameController::render() {
     for (Entity *entity : entities) {
+        entity->updateSprite();
+    }
+
+    for (Entity *entity : stage_entities) {
         entity->updateSprite();
     }
 }

@@ -21,15 +21,7 @@ class Entity {
     virtual void handleCollision(Entity *e, const Vector2D &pv) {}
 
     Vector2D position() const { return data.position; }
-    std::vector<Polygon> polygons() const {
-        std::vector<Polygon> polys(hurtboxes[data.hurtbox_handle]);
-        if (data.dir == Dir_Right) {
-            for (Polygon &poly : polys)
-                for (Vector2D &vec : poly)
-                    vec.x = -vec.x;
-        }
-        return hurtboxes[data.hurtbox_handle];
-    }
+    std::vector<Polygon> polygons() const;
 
     virtual void updateSprite() = 0;
 

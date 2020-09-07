@@ -8,6 +8,10 @@ target_include_directories(glad PUBLIC include/)
 set(SOURCES app/main.cc app/resource_path.cc include/SDL.h include/stb_image.h util/timer.h util/timer.cc)
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
+# Optimization
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2")
+#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O2")
+
 if (APPLE)
     add_executable(wayward MACOSX_BUNDLE ${SOURCES} ${RES_SOURCES})
     set_source_files_properties(${RES_SOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION resources/)
@@ -24,7 +28,7 @@ add_subdirectory(game)
 
 target_link_libraries(ww_generator ww_math)
 target_link_libraries(ww_graphics ww_memory ${SDL_LIBS} ${OPENGL_gl_LIBRARY})
-target_link_libraries(ww_game ww_graphics ww_math ww_generator ${SDL_LIBS})
+target_link_libraries(ww_game ww_graphics ww_memory ww_math ww_generator ${SDL_LIBS})
 target_link_libraries(wayward ww_game ww_math)
 
 target_include_directories(ww_generator PUBLIC include/)
