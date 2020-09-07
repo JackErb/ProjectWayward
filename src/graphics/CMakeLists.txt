@@ -1,6 +1,6 @@
 set(SOURCES TextureLoader.cc SpriteBuffer.h SpriteBuffer.cc
             WaywardGL.h WaywardGL.cc Shader.h Shader.cc ResourceManager.h
-            ResourceManager.cc)
+            ResourceManager.cc ShapeBuffer.h ShapeBuffer.cc)
 
 add_library(ww_graphics STATIC ${SOURCES})
 

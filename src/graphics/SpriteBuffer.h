@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-struct SpriteBuffer {
+typedef struct SpriteBuffer {
     unsigned int ShaderProg;
     unsigned int VAO;
     unsigned int VBO;
@@ -28,8 +28,6 @@ struct SpriteBuffer {
     void setSpritePos(unsigned int sprite_handle, float x, float y);
     void setSpriteTexture(unsigned int sprite_handle, int t);
     void setSpriteDir(unsigned int sprite_handle, int dir);
-
-    static const int VBOLen = 4;
-};
+} SpriteBuffer;
 
 #endif  /* SpriteRenderer_h */

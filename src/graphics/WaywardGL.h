@@ -4,7 +4,8 @@
 #include <string>
 #include <unordered_map>
 
-struct SpriteBuffer;
+typedef struct SpriteBuffer SpriteBuffer;
+typedef struct ShapeBuffer ShapeBuffer;
 
 namespace WaywardGL {
 
@@ -20,10 +21,9 @@ void init(int width, int height);
 void render();
 void deinit();
 
-unsigned int addShape(float x, float y, float w, float h);
-void updateShapePos(unsigned int shape_handle, float x, float y);
-
 SpriteBuffer *spriteBuffer();
+SpriteBuffer *tileBuffer();
+ShapeBuffer  *shapeBuffer();
 }
 
 #endif  /* WaywardGL_h */
