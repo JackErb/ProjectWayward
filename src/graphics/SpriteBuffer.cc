@@ -11,7 +11,8 @@
 using std::vector;
 using std::string;
 
-void SpriteBuffer::init(int max, vector<string> texture_files) {
+void SpriteBuffer::init(int max, std::string id, vector<string> texture_files) {
+    this->id = id;
     MaxSprites = max;
     vertices = new float[MaxSprites * VerticesLen];
     textures = new int[MaxSprites * TexturesLen];
@@ -50,7 +51,7 @@ void SpriteBuffer::setShader(unsigned int shader_handle) {
 
 unsigned int SpriteBuffer::addSprite(float x, float y, float w, float h, int t) {
     if (index >= MaxSprites) {
-        std::cerr << "Ran out of sprite space WaywardGL" << std::endl;
+        std::cerr << "Ran out of sprite space : " << id << std::endl;
         exit(1);
     }
     int vert_index = index * VerticesLen;

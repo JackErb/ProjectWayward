@@ -70,7 +70,7 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     // Check if there is a separating axis along each orthogonal
     vector<Vector2D> push_vectors;
     for (const auto &vec : orthogonals) {
-        auto res = is_separating_axis(vec, p1, pos1, p2, pos2);
+        auto res = is_separating_axis(unit_vec(vec), p1, pos1, p2, pos2);
         if (res.first) {
             // The polygons do not collide
             return make_pair(false, Vector2D());

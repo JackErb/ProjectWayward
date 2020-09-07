@@ -25,8 +25,8 @@ GameController::GameController() {
     player->data.position.y = FixedPoint::fromInt(4000);
     entities.push_back(player);
 
-    for (int x = 0; x < 30; x++) {
-        for (int y = 0; y < 30; y++) {
+    for (int x = 0; x < 20; x++) {
+        for (int y = 0; y < 5; y++) {
             int n = 800;
             void *ptr = alloc.raw_allocate<Player>();
             Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);

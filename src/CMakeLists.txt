@@ -1,5 +1,6 @@
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(OpenGL REQUIRED)
 add_library(glad util/glad.c)
@@ -9,8 +10,12 @@ set(SOURCES app/main.cc app/resource_path.cc include/SDL.h include/stb_image.h u
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
 # Optimization
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O2")
-#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O2")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3")
+
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    message("Debug build.")
+endif()
 
 if (APPLE)
     add_executable(wayward MACOSX_BUNDLE ${SOURCES} ${RES_SOURCES})

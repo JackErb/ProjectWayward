@@ -16,10 +16,12 @@ typedef struct SpriteBuffer {
     float *vertices = nullptr;
     int   *textures = nullptr;
 
+    std::string id;
+
     const int VerticesLen = 4;
     const int TexturesLen = 2;
 
-    void init(int max, std::vector<std::string> texture_files);
+    void init(int max, std::string id, std::vector<std::string> texture_files);
     void setShader(unsigned int shader_handle);
     void updateBuffer();
     void render(WaywardGL::DisplayData d);

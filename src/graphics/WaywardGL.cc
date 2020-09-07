@@ -22,7 +22,7 @@ static DisplayData Display;
 static const int MaxSprites = 100;
 static SpriteBuffer PlayerSpriteBuffer;
 
-static const int MaxTiles = 3000;
+static const int MaxTiles = 12000;
 static SpriteBuffer TileSpriteBuffer;
 
 static const int MaxShapes = 5000;
@@ -36,12 +36,14 @@ void WaywardGL::init(int width, int height) {
     Display.WindowHeight = height;
     Display.WindowScale = 0.2;
 
-    PlayerSpriteBuffer.init(MaxSprites, {"jump_0.png", "jump_1.png", "jump_2.png", "jump_3.png",
-                                         "land_0.png", "land_1.png", "land_2.png", "land_3.png"});
+    PlayerSpriteBuffer.init(MaxSprites, "PlayerSpriteBuffer",
+                            {"jump_0.png", "jump_1.png", "jump_2.png", "jump_3.png",
+                             "land_0.png", "land_1.png", "land_2.png", "land_3.png"});
     PlayerSpriteBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "basic.frag"));
 
-    TileSpriteBuffer.init(MaxTiles, {"tile_grass.png", "tile_grass2.png",
-                                     "tile_sand.png", "tile_dirt.png"});
+    TileSpriteBuffer.init(MaxTiles, "TileSpriteBuffer",
+                          {"tile_grass.png", "tile_grass2.png",
+                           "tile_sand.png", "tile_dirt.png"});
     TileSpriteBuffer.setShader(loadShaderProgram("tile.vert", "basic.geom", "basic.frag"));
 
     ShapeDisplayBuffer.init(MaxShapes);

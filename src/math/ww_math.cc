@@ -23,7 +23,7 @@ Vector2D geometric_center(const Polygon &p) {
         return v;
     }
 
-    Vector2D center = {{0}, {0}};
+    Vector2D center = {FixedPoint::ZERO, FixedPoint::ZERO};
     for (auto it = p.begin(); it != p.end(); it++) {
         center.x += it->x;
         center.y += it->y;

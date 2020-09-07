@@ -10,11 +10,12 @@ void Entity::updateSprite() {
 }
 
 std::vector<Polygon> Entity::polygons() const {
+    // TODO: Somehow cache this?
     std::vector<Polygon> polys(hurtboxes[data.hurtbox_handle]);
     if (data.dir == Dir_Right) {
         for (Polygon &poly : polys)
             for (Vector2D &vec : poly)
                 vec.x = -vec.x;
     }
-    return hurtboxes[data.hurtbox_handle];
+    return polys;
 }
