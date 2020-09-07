@@ -14,14 +14,3 @@ StackAllocator::StackAllocator(int size) {
 StackAllocator::~StackAllocator() {
 	delete[] pool_head;
 }
-
-void* StackAllocator::allocate(int size) {
-	if ((free_chunk + size) - pool_head >= pool_size) {
-		cerr << "FATAL ERROR: Ran out of memory in StackAllocator" << endl;
-		exit(1);
-	}
-
-	char* ptr = free_chunk;
-	free_chunk += size;
-	return ptr;
-}
