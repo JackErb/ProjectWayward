@@ -3,11 +3,18 @@
 
 #include "Entity.h"
 
+struct Vector2D;
+
 class Explosive: public Entity {
-    Explosive();
+  public:
+    Explosive(const Vector2D &position);
     ~Explosive();
 
-    void 
-}
+    void tick();
+    void handleCollision(Entity *e, const Vector2D &pv);
+
+    void updateSprite();   
+    void removeSprite();
+};
 
 #endif

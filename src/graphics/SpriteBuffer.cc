@@ -65,22 +65,25 @@ unsigned int SpriteBuffer::addSprite(float x, float y, float w, float h, int t) 
     textures[text_index+1] = 1;
 
     index += 1;
-    return index - 1;
+
+    int handle = index - 1;
+    handle_to_index[handle] = index - 1;
+    return handle;
 }
 
 void SpriteBuffer::setSpritePos(unsigned int sprite_handle, float x, float y) {
-    int vert_index = sprite_handle * VerticesLen;
+    int vert_index = handle_to_index[sprite_handle] * VerticesLen;
     vertices[vert_index]   = x;
     vertices[vert_index+1] = y;
 }
 
 void SpriteBuffer::setSpriteTexture(unsigned int sprite_handle, int t) {
-    int text_index = sprite_handle * TexturesLen;
+    int text_index = handle_to_index[sprite_handle] * TexturesLen;
     textures[text_index] = t;
 }
 
 void SpriteBuffer::setSpriteDir(unsigned int sprite_handle, int dir) {
-    int text_index = sprite_handle * TexturesLen;
+    int text_index = handle_to_index[sprite_handle] * TexturesLen;
     textures[text_index+1] = dir;
 }
 
@@ -107,4 +110,29 @@ void SpriteBuffer::render(WaywardGL::DisplayData d) {
     glDrawArrays(GL_POINTS, 0, index);
 
     glBindVertexArray(0);
+}
+
+void SpriteBuffer::removeSprite(unsigned int sprite_handle) {
+   // index -= 1;
+    int sprite_index = handle_to_index[sprite_handle];
+
+    float *vert_index_ptr = &vertices[sprite_index * VerticesLen];
+    float *vert_end_ptr = &vertices[index * VerticesLen];
+    for (int i = 0; i < VerticesLen; i++) {
+        vert_index_ptr[i] = 0.f;//vert_end_ptr[i];
+    }
+
+
+    int *text_index_ptr = &textures[sprite_index * TexturesLen];
+    int *text_end_ptr = &textures[index * TexturesLen];
+    for (int i = 0; i < TexturesLen; i++) {
+        text_index_ptr[i] = -1;//text_end_ptr[i];
+    }
+
+    // Update handle to index mapping
+    for (auto it = handle_to_index.begin(); it != handle_to_index.end(); it++) {
+        if (it->second == index) {
+            //handle_to_index[it->first] = sprite_handle;
+        }
+    }
 }

@@ -13,10 +13,12 @@ class Player: public Entity {
     void processInput(const PlayerInput &input);
     void tick();
     void handleCollision(Entity *e, const Vector2D &pv);
+    void handleHit(Entity *e, const Vector2D &pv);
 
-    void test() { std::cout << "Test " << std::endl; }
     void switchState(PlayerState *new_state);
+
     void updateSprite();
+    void removeSprite();
 
     PlayerState *state;
     const PlayerInput *input;

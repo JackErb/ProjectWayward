@@ -23,14 +23,14 @@ GameController::GameController() {
     player_input.gc_index = 0;
     Player *player = alloc.allocate<Player>();
     player->data.position.y = FixedPoint::fromInt(4000);
-    entities.push_back(player);
+    addEntity(player);
 
     for (int x = 0; x < 20; x++) {
-        for (int y = 0; y < 5; y++) {
+        for (int y = 0; y < 20; y++) {
             int n = 800;
-            void *ptr = alloc.raw_allocate<Player>();
+            void *ptr = alloc.raw_allocate<Chunk>();
             Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
-            stage_entities.push_back(chunk);
+            addEntity(chunk);
         }
     }
 
@@ -68,13 +68,32 @@ void GameController::tick() {
         entity->tick();
     }
 
+    Vector2D pv;
     for (Entity *e1 : entities) {
-        for (Entity *e2 : stage_entities) {
-            Vector2D pv;
-            bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
-            if (collision) {
+        /* Hurtbox collisions */
+        int hurtbox_mask = e1->data.hurtbox_bitmask;
+        if (!hurtbox_mask || e1->data.hurtbox_handle == -1) goto hitbox_check;
+        for (Entity *e2 : entities) {
+            if (e1 == e2) continue;
+            int bitmask = e2->data.bitmask;
+            if (hurtbox_mask & bitmask) {
+                bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
+                if (!collision) continue;
                 e1->handleCollision(e2, pv);
                 e2->handleCollision(e1, -pv);
+            }
+        }
+
+      hitbox_check:
+        int hitbox_mask = e1->data.hitbox_bitmask;
+        if (!hitbox_mask || e1->data.hitbox_handle == -1) continue;
+        for (Entity *e2 : entities) {
+            if (e1 == e2) continue;
+            int bitmask = e2->data.bitmask;
+            if (hitbox_mask & bitmask) {
+                bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &pv);
+                if (!collision) continue;
+                e2->handleHit(e1, pv);
             }
         }
     }
@@ -84,8 +103,23 @@ void GameController::render() {
     for (Entity *entity : entities) {
         entity->updateSprite();
     }
+}
 
-    for (Entity *entity : stage_entities) {
-        entity->updateSprite();
+void GameController::addEntity(Entity *entity) {
+    entity->gc = this;
+    entities.push_back(entity);
+}
+
+void GameController::removeEntity(Entity *entity) {
+    entity->removeSprite();
+
+    vector<Entity*> updated_entities;
+    for (Entity *e : entities) {
+        if (e != entity) updated_entities.push_back(e);
     }
+    entities = updated_entities;
+}
+
+StackAllocator *GameController::allocator() {
+    return &alloc;
 }

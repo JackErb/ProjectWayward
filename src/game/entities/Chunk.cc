@@ -4,11 +4,15 @@
 #include <ww_generator.h>
 #include "ShapeBuffer.h"
 #include "SpriteBuffer.h"
+#include "GameController.h"
+#include <cstdlib>
 
 using std::vector;
+using std::cout;
+using std::endl;
 
 Chunk::Chunk(ChunkData chunk_data) {
-    int chunk_x = chunk_data.chunk_x - 600;
+    /*int chunk_x = chunk_data.chunk_x - 600;
     int chunk_y = chunk_data.chunk_y - 1000;
     int tile_w = chunk_data.tile_w;
     int tile_h = chunk_data.tile_h;
@@ -27,18 +31,48 @@ Chunk::Chunk(ChunkData chunk_data) {
     polygons.push_back(poly_square(0, 0, 1, 1));
     hurtboxes.push_back(polygons);
     data.hurtbox_handle = 0;
+    data.hitbox_handle = -1;
+    data.bitmask = Bitmask::Stage;*/
 }
 
 Chunk::Chunk(int x, int y, int w, int h) {
     data.position = Vector2D(FixedPoint::fromInt(x), FixedPoint::fromInt(y));
-    
-    sprite_handle = WaywardGL::tileBuffer()->addSprite(x, y, w, h, 1);
+
+    int texture = rand() % 3;
+    sprite_handle = WaywardGL::tileBuffer()->addSprite(x, y, w, h, texture);
    
     vector<Polygon> polygons;
     polygons.push_back(poly_square(0,0,w,h));
     hurtboxes.push_back(polygons);
     data.hurtbox_handle = 0;
+    
+    data.hitbox_handle = -1;
+    data.bitmask = Bitmask::Stage;
+    data.hurtbox_bitmask |= Bitmask::Player;
 }
 
 void Chunk::tick() {
+    data.position += data.velocity;
+    Vector2D pos = data.position;
+    float x = pos.x.toFloat(), y = pos.y.toFloat();
+    WaywardGL::tileBuffer()->setSpritePos(sprite_handle, x, y);
+}
+
+void Chunk::handleCollision(Entity *e, const Vector2D &pv) {
+    //data.velocity.y = FixedPoint::fromInt(40);
+    //gc->removeEntity(this);
+}
+
+void Chunk::handleHit(Entity *e, const Vector2D &pv) {
+    gc->removeEntity(this);
+}
+
+void Chunk::updateSprite() {
+    Vector2D pos = data.position;
+    float x = pos.x.toFloat(), y = pos.y.toFloat();
+    WaywardGL::tileBuffer()->setSpritePos(sprite_handle, x, y);
+}
+
+void Chunk::removeSprite() {
+    WaywardGL::tileBuffer()->removeSprite(sprite_handle);
 }

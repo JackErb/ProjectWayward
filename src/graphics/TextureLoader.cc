@@ -48,7 +48,7 @@ unsigned int WaywardGL::loadTextures(vector<string> file_names) {
 
     int depth = file_names.size();
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
+    
     depth = 0;
     for (string file_name : file_names) {
         int width_, height_;
@@ -62,7 +62,6 @@ unsigned int WaywardGL::loadTextures(vector<string> file_names) {
         freePng(data);
         depth += 1;
     }
-    glTexImage3DMultisample(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, 4, GL_RGBA, width, height, depth, GL_TRUE);
     glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);

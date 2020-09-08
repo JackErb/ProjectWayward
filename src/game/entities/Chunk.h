@@ -11,7 +11,13 @@ class Chunk: public Entity {
     Chunk(int x, int y, int w, int h);
 
     void tick();
-    void updateSprite() {}
+    void handleCollision(Entity *e, const Vector2D &pv);
+    void handleHit(Entity *e, const Vector2D &pv);
+
+    void updateSprite();
+    void removeSprite();
+
+    bool test = false;
 };
 
 #endif  /* Chunk_h */

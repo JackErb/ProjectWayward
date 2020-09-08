@@ -33,4 +33,8 @@ inline Vector2D &operator*=(Vector2D &v, const FixedPoint &n) {
     return v;
 }
 
+inline Vector2D orthogonal(const Vector2D &v) {
+    return Vector2D(-v.y, v.x);
+}
+
 #endif  /* vector_overloads_h */

@@ -14,6 +14,7 @@ struct Vector2D;
 
 namespace PhysicsEngine {
     bool checkCollision(const Entity *e1, const Entity* e2, Vector2D *pv);
+    bool checkHitboxCollision(const Entity *e1, const Entity *e2, Vector2D *pv);
 };
 
 #endif /* PhysicsEngine_hpp */

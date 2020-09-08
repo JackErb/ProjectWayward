@@ -38,6 +38,8 @@ int main(int, char**) {
 
     WaywardGL::init(WIDTH, HEIGHT);
 
+    cout << "Threads " << std::thread::hardware_concurrency() << endl;
+
     long fc_game = 0;
     long fc_render = 0;
     long fc_total = 0;
@@ -75,7 +77,7 @@ int main(int, char**) {
 
         now = Timer::now();
         while (duration_cast<microseconds>(now - start).count() < 14000) {
-            std::this_thread::sleep_for(milliseconds(1));
+            std::this_thread::sleep_for(microseconds(500));
             now = Timer::now();
         }
 
@@ -162,7 +164,7 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
         return false;
     }
     SDL_GL_MakeCurrent(*window, *gl_context);
-    //SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(1);
     glViewport(0, 0, WIDTH, HEIGHT);
 
     cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;

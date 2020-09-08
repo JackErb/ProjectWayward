@@ -5,6 +5,7 @@
 #include "Input.h"
 
 class Entity;
+struct StackAllocator;
 
 class GameController {
   public:
@@ -15,10 +16,13 @@ class GameController {
     void tick();
     void render();
 
+    StackAllocator *allocator();
+    void addEntity(Entity *entity);
+    void removeEntity(Entity *entity);
+
   private:
     PlayerInput player_input;
     std::vector<Entity*> entities;
-    std::vector<Entity*> stage_entities;
 };
 
 #endif  /* GameController_h */

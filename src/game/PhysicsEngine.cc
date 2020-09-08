@@ -26,8 +26,22 @@ pair<bool, Vector2D>
                        const Polygon &p2, const Vector2D &pos2);
 
 bool PhysicsEngine::checkCollision(const Entity *e1, const Entity *e2, Vector2D *pv) {
-    for (const Polygon& p1 : e1->polygons()) {
-        for (const Polygon& p2 : e2->polygons()) {
+    for (const Polygon& p1 : e1->polygons_hurt()) {
+        for (const Polygon& p2 : e2->polygons_hurt()) {
+            auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
+            if (collision.first) {
+                *pv = collision.second;
+                return true;
+            }
+        }
+    }
+    *pv = Vector2D();
+    return false;
+}
+
+bool PhysicsEngine::checkHitboxCollision(const Entity *e1, const Entity *e2, Vector2D *pv) {
+    for (const Polygon& p1 : e1->polygons_hit()) {
+        for (const Polygon& p2 : e2->polygons_hurt()) {
             auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
             if (collision.first) {
                 *pv = collision.second;
@@ -44,21 +58,16 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     // Separating Axis Theorem
     if (p1.size() == 2 && p2.size() == 2) {
         // They are both circles
-        FixedPoint x1 = p1[0].x;
-        FixedPoint x2 = p2[0].x;
-
-        Vector2D c1 = Vector2D(x1, p1[0].y) + pos1;
-        Vector2D c2 = Vector2D(x2, p2[0].y) + pos2;
-
-        FixedPoint xx = c2.x - c1.x;
-        FixedPoint yy = c2.y - c1.y;
-        FixedPoint dist = xx * xx + yy * yy;
+        Vector2D c1 = p1[0] + pos1, c2 = p2[0] + pos2;
+        FixedPoint x = c2.x - c1.x, y = c2.y - c1.y;
+        FixedPoint dist = x * x + y * y;
         FixedPoint rad = p1[1].x + p2[1].x;
-        // TODO: Calculate push vec
         if (dist < rad * rad) {
-            return {true, {0,0}};
+            // TODO: Calculate push vec
+            Vector2D pv;
+            return {true, pv};
         }
-        return {false, {0,0}};
+        return {false, Vector2D()};
     } else if (p2.size() == 2) {
         // Call with circle in first parameter
         return checkPolyCollision(p2, pos2, p1, pos1);
@@ -69,22 +78,20 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     
     // Check if there is a separating axis along each orthogonal
     vector<Vector2D> push_vectors;
-    for (const auto &vec : orthogonals) {
+    Vector2D min_pv;
+    for (const Vector2D &vec : orthogonals) {
         auto res = is_separating_axis(unit_vec(vec), p1, pos1, p2, pos2);
         if (res.first) {
             // The polygons do not collide
             return make_pair(false, Vector2D());
         } else {
-            push_vectors.push_back(res.second);
+            FixedPoint min_dot = dot(min_pv, min_pv);
+            Vector2D pv = res.second;
+            if (min_dot == FixedPoint::ZERO || dot(pv, pv) < min_dot)
+                min_pv = pv;
         }
     }
 
-    Vector2D min_pv = push_vectors[0];
-    for (int i = 1; i < push_vectors.size(); i++) {
-        Vector2D pv = push_vectors[i];
-        if (dot(pv, pv) < dot(min_pv, min_pv)) min_pv = pv;
-    }
-    
     // Check that the push vector is pointing the right direction
     Vector2D displacement = (geometric_center(p2) + pos2) - (geometric_center(p1) + pos1);
     if (dot(displacement, min_pv) > 0) {
@@ -99,52 +106,42 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
 vector<Vector2D> get_orthogonals(const Polygon &p1, const Polygon &p2) {
     vector<Vector2D> res;
     
-    int n = p1.size();
-    if (n == 2) {
+    int p1_size = p1.size();
+    if (p1_size == 2) {
         // p1 is a circle
-        
-        // The closest point in p2 to p1
-        FixedPoint x1 = p1[0].x;
 
-        Vector2D vec;
-        FixedPoint dist = FixedPoint::MAX;
-        int i = 0;
+        // Find the closest point in p2 to p1
+        Vector2D point;
+        FixedPoint min_dist = FixedPoint::MAX;
         for (Vector2D v : p2) {
-            FixedPoint xx = v.x - x1;
-            FixedPoint yy = v.y - p1[0].y;
-            FixedPoint d = xx * xx + yy * yy;
-            if (d < dist) {
-                dist = d;
-                vec = v;
+            FixedPoint x = v.x - p1[0].x;
+            FixedPoint y = v.y - p1[0].y;
+            FixedPoint dist = x * x + y * y;
+            if (dist < min_dist) {
+                min_dist = dist;
+                point = v;
             }
-            i++;
         }
-        res.push_back(Vector2D(vec.x, vec.y) - Vector2D(x1, p1[0].y));
-        res.push_back({-res[0].y,res[0].x});
+        // The axis between center of the circle and the closest
+        // point in p2
+        Vector2D axis = point - p1[0];
+        res.push_back(axis);
+        res.push_back(orthogonal(axis));
     } else {
-        // Get the edge vectors
-        for (int i = 0; i < n; i++) {
-            Vector2D pp1 = p1[(i+1) % n];
-            Vector2D pp2 = p1[i];
-            res.push_back(pp1 - pp2);
+        // Get the edge vector
+        for (int i = 0; i < p1_size; i++) {
+            Vector2D axis = p1[(i+1) % p1_size] - p1[i];
+            res.push_back(orthogonal(axis));
         }
     }
     
     // Get the edge vectors
-    long n2 = p2.size();
-    for (int i = 0; i < n2; i++) {
-        Vector2D pp1 = p2[(i+1) % n];
-        Vector2D pp2 = p2[i];
-        res.push_back(pp1 - pp2);
+    int p2_size = p2.size();
+    for (int i = 0; i < p2_size; i++) {
+        Vector2D axis = p2[(i+1) % p2_size] - p2[i];
+        res.push_back(orthogonal(axis));
     }
-    
-    // Calculate their orthogonal
-    for (int i = 0; i < res.size(); i++) {
-        FixedPoint x = res[i].x, y = res[i].y;
-        res[i].x = -y;
-        res[i].y = x;
-    }
-    
+
     return res;
 }
 
@@ -163,8 +160,9 @@ pair<bool, Vector2D> is_separating_axis(const Vector2D &axis,
     if (p1.size() == 2) {
         // p1 is a circle
         FixedPoint proj = dot(axis, p1[0] + pos1);
-        min1 = proj - p1[1].x;
-        max1 = proj + p1[1].x;
+        FixedPoint radius = p1[1].x;
+        min1 = proj - radius;
+        max1 = proj + radius;
     } else {
         for (const Vector2D &vert : p1) {
             FixedPoint proj = dot(axis, vert + pos1);

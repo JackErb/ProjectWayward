@@ -41,7 +41,7 @@ struct Vector2D {
 
 typedef std::vector<Vector2D> Polygon;
 Polygon poly_square(int nx, int ny, int nw, int nh);
-
+Polygon poly_circle(int nx, int ny, int nr);
 
 Vector2D unit_vec(const Vector2D &v);
 FixedPoint dot(const Vector2D &v1, const Vector2D &v2);

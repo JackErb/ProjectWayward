@@ -51,6 +51,17 @@ Polygon poly_square(int nx, int ny, int nw, int nh) {
     return poly;
 }
 
+Polygon poly_circle(int nx, int ny, int nr) {
+    Polygon poly;
+
+    FixedPoint x = FixedPoint::fromInt(nx),
+               y = FixedPoint::fromInt(ny),
+               r = FixedPoint::fromInt(nr);
+    poly.push_back(Vector2D(x, y));
+    poly.push_back(Vector2D(r, 0));
+    return poly;
+}
+
 FixedPoint dot(const Vector2D &v1, const Vector2D &v2) {
     return v1.x * v2.x + v1.y * v2.y;
 }

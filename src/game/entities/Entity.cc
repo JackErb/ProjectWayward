@@ -2,6 +2,8 @@
 #include <WaywardGL.h>
 #include "SpriteBuffer.h"
 
+using std::vector;
+
 void Entity::updateSprite() {
     float x = data.position.x.toFloat();
     float y = data.position.y.toFloat();
@@ -9,13 +11,26 @@ void Entity::updateSprite() {
     WaywardGL::spriteBuffer()->setSpriteDir(sprite_handle, data.dir == Dir_Right ? 1 : 0);
 }
 
-std::vector<Polygon> Entity::polygons() const {
+void flipPolys(vector<Polygon> *polys) {
+    for (Polygon & poly : *polys)
+        for (Vector2D &vec : poly)
+            vec.x = -vec.x;
+}
+
+vector<Polygon> Entity::polygons_hurt() const {
     // TODO: Somehow cache this?
-    std::vector<Polygon> polys(hurtboxes[data.hurtbox_handle]);
+    vector<Polygon> polys(hurtboxes[data.hurtbox_handle]);
     if (data.dir == Dir_Right) {
-        for (Polygon &poly : polys)
-            for (Vector2D &vec : poly)
-                vec.x = -vec.x;
+        flipPolys(&polys);
+    }
+    return polys;
+}
+
+vector<Polygon> Entity::polygons_hit() const {
+    // TODO: Somehow cache this?
+    vector<Polygon> polys(hitboxes[data.hitbox_handle]);
+    if (data.dir == Dir_Right) {
+        flipPolys(&polys);
     }
     return polys;
 }
