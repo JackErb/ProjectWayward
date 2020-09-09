@@ -9,10 +9,12 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <algorithm>
 
 using std::thread;
 using std::vector;
 using std::queue;
+using std::sort;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -23,13 +25,14 @@ using PhysicsMultithreader::JobReturn;
 
 static vector<thread> ThreadPool;
 
-static mutex QueueMutex;
-static queue<Entity*> Queue;
-static condition_variable QueueCondition;
+static mutex JobMutex;
+static queue<Entity*> JobQueue;
+static condition_variable JobCondition;
 
 static mutex BatchMutex;
 static unique_lock<mutex> BatchLock(BatchMutex, std::defer_lock);
 static condition_variable BatchCondition;
+
 static mutex ReturnQueueMutex;
 static queue<JobReturn> ReturnQueue;
 
@@ -38,32 +41,36 @@ GameController *MainGameController;
 bool finished_batch = false;
 bool terminate_pool = false;
 
+int thread_execution_count;
+
 void blockForJob() {
     while (true) {
         Entity *entity;
-        bool finished = false;
         {
-            unique_lock<mutex> lock(QueueMutex);
-            QueueCondition.wait(lock, []{ return !Queue.empty() || terminate_pool; });
-            entity = Queue.front();
-            Queue.pop();
-
-            if (Queue.size() == 0) finished = true;
+            unique_lock<mutex> lock(JobMutex);
+            JobCondition.wait(lock, []{ return !JobQueue.empty() || terminate_pool; });
+            entity = JobQueue.front();
+            JobQueue.pop();
         }
+        JobCondition.notify_one();
         
         vector<JobReturn> collisions = MainGameController->runCollisionChecks(entity);
         if (collisions.size() != 0) {
-            unique_lock<mutex> lock(ReturnQueueMutex);
+            unique_lock<mutex> lock(JobMutex);
             for (const JobReturn &ret : collisions) {
                 ReturnQueue.push(ret);
             }
         }
 
-        if (finished) {
-            // Yield control back to the main thread; this batch is finished.
-            BatchLock.unlock();
-            finished_batch = true;
-            BatchCondition.notify_all();
+        {
+            unique_lock<mutex> lock(JobMutex);
+            thread_execution_count--;
+            if (thread_execution_count == 0) {
+                // Yield control back to the main thread; this batch is finished.
+                BatchLock.unlock();
+                finished_batch = true;
+                BatchCondition.notify_all();
+            }
         }
     }
 }
@@ -84,28 +91,38 @@ void PhysicsMultithreader::runJobs(vector<Entity*> entities, GameController *gc)
     BatchLock.lock();
     MainGameController = gc;
     {
-        unique_lock<mutex> lock(QueueMutex);
+        unique_lock<mutex> lock(JobMutex);
         for (Entity *entity : entities) {
-            Queue.push(entity);
+            JobQueue.push(entity);
         }
+        thread_execution_count = entities.size();
     }
-    QueueCondition.notify_one();
+    JobCondition.notify_one();
 
     unique_lock<mutex> batch_lock(BatchMutex);
     BatchCondition.wait(batch_lock, []{ return finished_batch; });
 
+    vector<JobReturn> results;
     while (ReturnQueue.size() != 0) {
         JobReturn ret = ReturnQueue.front();
         ReturnQueue.pop();
 
+        results.push_back(ret);
+    }
+
+    sort(results.begin(), results.end(), [](const auto &lhs, const auto &rhs) {
+        return rhs.e1 < rhs.e2;
+    });    
+    for (JobReturn ret : results) {
         Vector2D pv;
+        
         if (ret.type == 0) {
             if (PhysicsEngine::checkCollision(ret.e1, ret.e2, &pv)) {
                 ret.e1->handleCollision(ret.e2, pv);
             }
         } else if (ret.type == 1) {
             if (PhysicsEngine::checkHitboxCollision(ret.e1, ret.e2, &pv)) {
-                ret.e1->handleHit(ret.e2, pv);
+                ret.e2->handleHit(ret.e1, pv);
             }
         }
     }

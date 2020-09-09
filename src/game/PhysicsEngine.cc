@@ -79,16 +79,19 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
     // Check if there is a separating axis along each orthogonal
     vector<Vector2D> push_vectors;
     Vector2D min_pv;
+    FixedPoint min_dot = FixedPoint::MAX;
     for (const Vector2D &vec : orthogonals) {
         auto res = is_separating_axis(unit_vec(vec), p1, pos1, p2, pos2);
         if (res.first) {
             // The polygons do not collide
             return make_pair(false, Vector2D());
         } else {
-            FixedPoint min_dot = dot(min_pv, min_pv);
             Vector2D pv = res.second;
-            if (min_dot == FixedPoint::ZERO || dot(pv, pv) < min_dot)
+            FixedPoint pv_dot = dot(pv, pv);
+            if (pv_dot < min_dot) {
+                min_dot = pv_dot;
                 min_pv = pv;
+            }
         }
     }
 

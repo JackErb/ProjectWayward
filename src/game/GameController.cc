@@ -27,8 +27,8 @@ GameController::GameController() {
     player->data.position.y = FixedPoint::fromInt(4000);
     addEntity(player);
 
-    for (int x = 0; x < 100; x++) {
-        for (int y = 0; y < 100; y++) {
+    for (int x = 0; x < 30; x++) {
+        for (int y = 0; y < 30; y++) {
             int n = 800;
             void *ptr = alloc.raw_allocate<Chunk>();
             Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
@@ -55,13 +55,11 @@ GameController::~GameController() {
 }
 
 static bool fbf_mode = false;
-static bool tick_ = true;
+static bool tick_;
 
 void GameController::pretick() {
     player_input.tick();
-    tick_ = player_input.isPressed(Button_Attack, false);
-    tick_ = tick_ || player_input.isPressed(Button_Other);
-    tick_ = tick_ || !fbf_mode;
+    tick_ = player_input.isPressed(Button_Other, false) || !fbf_mode;
 
     if (!tick_) return;
     entities[0]->processInput(player_input);

@@ -53,7 +53,7 @@ void Player::tick() {
 
 void Player::handleCollision(Entity *e, const Vector2D &pv) {
     data.position += pv;
-    if (pv.x == 0 && pv.y > 0) {
+    if (pv.x == 0 && pv.y > 0 && data.velocity.y < 0) {
         data.velocity.y = 0;
         if (state->type() == State_Airborne) {
             data.velocity.x = 0;
