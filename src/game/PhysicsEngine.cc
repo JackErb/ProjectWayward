@@ -6,8 +6,6 @@
 #include <limits>
 #include <algorithm>
 #include <ww_math.h>
-#include <WaywardGL.h>
-#include <SpriteBuffer.h>
 
 using std::pair;
 using std::make_pair;

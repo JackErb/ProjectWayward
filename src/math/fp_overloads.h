@@ -1,7 +1,7 @@
 #ifndef fp_overloads_h
 #define fp_overloads_h
 
-
+#include "ww_math.h"
 
 /* Operator overrides */
 
@@ -18,13 +18,11 @@ inline FixedPoint operator/(const FixedPoint &v1, const FixedPoint &v2) {
         std::cerr << "ERROR DIVIDE BY 0" << std::endl;
         return FixedPoint(0);
     }
-    long long rn = v1.n * FixedPoint::MULT / v2.n;
-    return FixedPoint(rn);
+    return FixedPoint(v1.n * FP_MULT / v2.n);
 }
 
 inline FixedPoint operator*(const FixedPoint &v1, const FixedPoint &v2) {
-    long long rn = v1.n * v2.n / FixedPoint::MULT;
-    return FixedPoint(rn);
+    return FixedPoint(v1.n * v2.n / FP_MULT);
 }
 
 inline bool operator<(const FixedPoint& v1, const FixedPoint& v2) {
@@ -56,7 +54,7 @@ inline FixedPoint &operator+=(FixedPoint &v1, const FixedPoint &v2) {
 }
 
 inline FixedPoint &operator*=(FixedPoint &v1, const FixedPoint &v2) {
-    v1.n = v1.n * v2.n / FixedPoint::MULT;
+    v1.n = v1.n * v2.n / FP_MULT;
     return v1;
 }
 

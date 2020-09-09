@@ -6,7 +6,7 @@
 #include "PhysicsMultithreader.h"
 
 class Entity;
-struct StackAllocator;
+class StackAllocator;
 
 class GameController {
   public:

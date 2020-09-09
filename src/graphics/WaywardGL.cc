@@ -22,7 +22,7 @@ static DisplayData Display;
 static const int MaxSprites = 100;
 static SpriteBuffer PlayerSpriteBuffer;
 
-static const int MaxTiles = 20000;
+static const int MaxTiles = 100000;
 static SpriteBuffer TileSpriteBuffer;
 
 static const int MaxShapes = 5000;

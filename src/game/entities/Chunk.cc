@@ -43,8 +43,10 @@ Chunk::Chunk(int x, int y, int w, int h) {
    
     addHurtbox(poly_square(0,0,w,h));
     data.hurtbox_handle = 0;
-    
+    data.hurtbox_bitmask = Bitmask::None;
+
     data.hitbox_handle = -1;
+    data.hitbox_bitmask = Bitmask::None;
     data.bitmask = Bitmask::Stage;
 }
 

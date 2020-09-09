@@ -113,6 +113,7 @@ void SpriteBuffer::render(WaywardGL::DisplayData d) {
 }
 
 void SpriteBuffer::removeSprite(unsigned int sprite_handle) {
+    // TODO: UPDATE THIS TO ACTUALLY REMOVE SPRITE
    // index -= 1;
     int sprite_index = handle_to_index[sprite_handle];
 

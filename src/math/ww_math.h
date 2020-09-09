@@ -4,6 +4,9 @@
 #include <vector>
 #include <iostream>
 
+#define FP_BASE 4
+#define FP_MULT 10000
+
 struct FixedPoint {
   public:
     FixedPoint() : n(0) {}
@@ -18,8 +21,6 @@ struct FixedPoint {
     static FixedPoint MAX;
     static FixedPoint PI;
 
-    static int BASE;
-    static int MULT;
     static FixedPoint fromInt(int n);
     static FixedPoint fromFloat(float n);
 };

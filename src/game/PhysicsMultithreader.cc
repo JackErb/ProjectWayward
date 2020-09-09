@@ -11,6 +11,7 @@
 #include <queue>
 #include <algorithm>
 #include <map>
+#include <atomic>
 
 using std::thread;
 using std::vector;
@@ -24,6 +25,7 @@ using std::map;
 using std::unique_lock;
 using std::condition_variable;
 using PhysicsMultithreader::JobReturn;
+using std::atomic;
 
 static vector<thread> ThreadPool;
 
@@ -43,30 +45,39 @@ GameController *MainGameController;
 bool finished_batch = false;
 bool terminate_pool = false;
 
-int thread_execution_count;
+atomic<int> thread_execution_count;
 
 void blockForJob() {
+    const int jobs_len = 100;
+    int job_idx;
+    Entity *jobs[jobs_len];
     while (true) {
-        Entity *entity;
         {
             unique_lock<mutex> lock(JobMutex);
             JobCondition.wait(lock, []{ return !JobQueue.empty() || terminate_pool; });
-            entity = JobQueue.front();
-            JobQueue.pop();
+            job_idx = 0;
+            while (!JobQueue.empty() && job_idx < jobs_len) {
+                jobs[job_idx] = JobQueue.front();
+                JobQueue.pop();
+                job_idx++;
+            }
         }
         JobCondition.notify_one();
         
-        vector<JobReturn> collisions = MainGameController->runCollisionChecks(entity);
-        if (collisions.size() != 0) {
-            unique_lock<mutex> lock(JobMutex);
-            for (const JobReturn &ret : collisions) {
-                ReturnQueue.push(ret);
+        for (int i = 0; i < job_idx; i++) {
+            Entity *entity = jobs[i];
+            vector<JobReturn> collisions = MainGameController->runCollisionChecks(entity);
+            if (collisions.size() != 0) {
+                unique_lock<mutex> lock(ReturnQueueMutex);
+                for (const JobReturn &ret : collisions) {
+                    ReturnQueue.push(ret);
+                }
             }
         }
 
         {
-            unique_lock<mutex> lock(JobMutex);
-            thread_execution_count--;
+            unique_lock<mutex> lock(ReturnQueueMutex);
+            thread_execution_count -= job_idx;
             if (thread_execution_count == 0) {
                 // Yield control back to the main thread; this batch is finished.
                 BatchLock.unlock();

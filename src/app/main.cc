@@ -76,8 +76,8 @@ int main(int, char**) {
         SDL_GL_SwapWindow(window);
 
         now = Timer::now();
-        while (duration_cast<microseconds>(now - start).count() < 14000) {
-            std::this_thread::sleep_for(microseconds(500));
+        while (duration_cast<microseconds>(now - start).count() < 13000) {
+            std::this_thread::sleep_for(milliseconds(1));
             now = Timer::now();
         }
 
