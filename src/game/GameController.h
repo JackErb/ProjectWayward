@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Input.h"
+#include "PhysicsMultithreader.h"
 
 class Entity;
 struct StackAllocator;
@@ -19,6 +20,8 @@ class GameController {
     StackAllocator *allocator();
     void addEntity(Entity *entity);
     void removeEntity(Entity *entity);
+
+    std::vector<PhysicsMultithreader::JobReturn> runCollisionChecks(Entity *entity);
 
   private:
     PlayerInput player_input;

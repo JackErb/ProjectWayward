@@ -48,19 +48,14 @@ Chunk::Chunk(int x, int y, int w, int h) {
     
     data.hitbox_handle = -1;
     data.bitmask = Bitmask::Stage;
-    data.hurtbox_bitmask |= Bitmask::Player;
 }
 
 void Chunk::tick() {
-    data.position += data.velocity;
-    Vector2D pos = data.position;
-    float x = pos.x.toFloat(), y = pos.y.toFloat();
-    WaywardGL::tileBuffer()->setSpritePos(sprite_handle, x, y);
+
 }
 
 void Chunk::handleCollision(Entity *e, const Vector2D &pv) {
-    //data.velocity.y = FixedPoint::fromInt(40);
-    //gc->removeEntity(this);
+    // data.velocity.y = FixedPoint::fromFloat(40.f);
 }
 
 void Chunk::handleHit(Entity *e, const Vector2D &pv) {
@@ -75,4 +70,5 @@ void Chunk::updateSprite() {
 
 void Chunk::removeSprite() {
     WaywardGL::tileBuffer()->removeSprite(sprite_handle);
+    sprite_handle = -1;
 }

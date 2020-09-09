@@ -12,9 +12,16 @@ void Entity::updateSprite() {
 }
 
 void flipPolys(vector<Polygon> *polys) {
-    for (Polygon & poly : *polys)
-        for (Vector2D &vec : poly)
+    for (Polygon & poly : *polys) {
+        if (poly.size() == 2) {
+            // Special case for circles
+            poly[0].x = -poly[0].x;
+            continue;
+        }
+        for (Vector2D &vec : poly) {
             vec.x = -vec.x;
+        }
+    }
 }
 
 vector<Polygon> Entity::polygons_hurt() const {

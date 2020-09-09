@@ -3,11 +3,12 @@
 #include "Player.h"
 #include "Chunk.h"
 #include "PhysicsEngine.h"
+#include "PhysicsMultithreader.h"
 
 #include <TextureLoader.h>
 #include <iostream>
 #include <ww_math.h>
-#include <ww_memory.h>
+#include <StackAllocator.h>
 #include <ww_generator.h>
 #include <WaywardGL.h>
 #include <vector>
@@ -16,8 +17,9 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
+using PhysicsMultithreader::JobReturn;
 
-StackAllocator alloc(100000);
+StackAllocator alloc(10000000);
 
 GameController::GameController() {
     player_input.gc_index = 0;
@@ -25,14 +27,16 @@ GameController::GameController() {
     player->data.position.y = FixedPoint::fromInt(4000);
     addEntity(player);
 
-    for (int x = 0; x < 20; x++) {
-        for (int y = 0; y < 20; y++) {
+    for (int x = 0; x < 100; x++) {
+        for (int y = 0; y < 100; y++) {
             int n = 800;
             void *ptr = alloc.raw_allocate<Chunk>();
             Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
             addEntity(chunk);
         }
     }
+
+    PhysicsMultithreader::init();
 
     /*GenOptions::init();
     GeneratorOptions opt = GenOptions::TestCaveGen;
@@ -50,13 +54,14 @@ GameController::~GameController() {
 
 }
 
+static bool fbf_mode = false;
 static bool tick_ = true;
 
 void GameController::pretick() {
     player_input.tick();
     tick_ = player_input.isPressed(Button_Attack, false);
     tick_ = tick_ || player_input.isPressed(Button_Other);
-    tick_ = true;
+    tick_ = tick_ || !fbf_mode;
 
     if (!tick_) return;
     entities[0]->processInput(player_input);
@@ -68,35 +73,7 @@ void GameController::tick() {
         entity->tick();
     }
 
-    Vector2D pv;
-    for (Entity *e1 : entities) {
-        /* Hurtbox collisions */
-        int hurtbox_mask = e1->data.hurtbox_bitmask;
-        if (!hurtbox_mask || e1->data.hurtbox_handle == -1) goto hitbox_check;
-        for (Entity *e2 : entities) {
-            if (e1 == e2) continue;
-            int bitmask = e2->data.bitmask;
-            if (hurtbox_mask & bitmask) {
-                bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
-                if (!collision) continue;
-                e1->handleCollision(e2, pv);
-                e2->handleCollision(e1, -pv);
-            }
-        }
-
-      hitbox_check:
-        int hitbox_mask = e1->data.hitbox_bitmask;
-        if (!hitbox_mask || e1->data.hitbox_handle == -1) continue;
-        for (Entity *e2 : entities) {
-            if (e1 == e2) continue;
-            int bitmask = e2->data.bitmask;
-            if (hitbox_mask & bitmask) {
-                bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &pv);
-                if (!collision) continue;
-                e2->handleHit(e1, pv);
-            }
-        }
-    }
+    PhysicsMultithreader::runJobs(entities, this);
 }
 
 void GameController::render() {
@@ -118,6 +95,51 @@ void GameController::removeEntity(Entity *entity) {
         if (e != entity) updated_entities.push_back(e);
     }
     entities = updated_entities;
+}
+
+vector<JobReturn> GameController::runCollisionChecks(Entity *e1) {
+    Vector2D pv;
+    vector<JobReturn> collisions;
+
+    /* Hurtbox collisions */
+    int hurtbox_mask = e1->data.hurtbox_bitmask;
+    if (hurtbox_mask != 0 && e1->data.hurtbox_handle != -1) {
+        for (Entity *e2 : entities) {
+            if (e1 == e2) continue;
+            int bitmask = e2->data.bitmask;
+            if (hurtbox_mask & bitmask) {
+                bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
+                if (!collision) continue;
+
+                JobReturn ret;
+                ret.e1 = e1;
+                ret.e2 = e2;
+                ret.type = 0;
+                ret.pv = pv;
+                collisions.push_back(ret);
+            }
+        }
+    }
+
+    int hitbox_mask = e1->data.hitbox_bitmask;
+    if (hitbox_mask != 0 && e1->data.hitbox_handle != -1) {
+        for (Entity *e2 : entities) {
+            if (e1 == e2) continue;
+            int bitmask = e2->data.bitmask;
+            if (hitbox_mask & bitmask) {
+                bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &pv);
+                if (!collision) continue;
+
+                JobReturn ret;
+                ret.e1 = e1;
+                ret.e2 = e2;
+                ret.type = 1;
+                ret.pv = pv;
+                collisions.push_back(ret);
+            }
+        }
+    }
+    return collisions;
 }
 
 StackAllocator *GameController::allocator() {

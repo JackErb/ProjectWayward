@@ -7,7 +7,7 @@
 #include <iostream>
 #include "GameController.h"
 #include "Explosive.h"
-#include <ww_memory.h>
+#include <StackAllocator.h>
 
 using std::cout;
 using std::cerr;

@@ -33,9 +33,10 @@ void Explosive::tick() {
     if (data.frame == 60) {
         // Explode!
         data.hitbox_handle = 0;
-    } else if (data.frame == 65) {
+    } else if (data.frame == 61) {
         data.hitbox_handle = -1;
     }
+
 
     data.velocity.y -= FixedPoint::fromFloat(4.f);
     data.position += data.velocity;

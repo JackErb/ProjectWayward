@@ -6,7 +6,7 @@ find_package(OpenGL REQUIRED)
 add_library(glad util/glad.c)
 target_include_directories(glad PUBLIC include/)
 
-set(SOURCES app/main.cc app/resource_path.cc include/SDL.h include/stb_image.h util/timer.h util/timer.cc)
+set(SOURCES app/main.cc app/resource_path.cc include/SDL.h include/stb_image.h)
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
 # Optimization
@@ -26,15 +26,15 @@ if (APPLE)
 endif()
 
 add_subdirectory(math)
-add_subdirectory(memory)
+add_subdirectory(util)
 add_subdirectory(generator)
 add_subdirectory(graphics)
 add_subdirectory(game)
 
 target_link_libraries(ww_generator ww_math)
-target_link_libraries(ww_graphics ww_memory ${SDL_LIBS} ${OPENGL_gl_LIBRARY})
-target_link_libraries(ww_game ww_graphics ww_memory ww_math ww_generator ${SDL_LIBS})
-target_link_libraries(wayward ww_game ww_math)
+target_link_libraries(ww_graphics ${SDL_LIBS} ${OPENGL_gl_LIBRARY})
+target_link_libraries(ww_game ww_graphics ww_util ww_math ww_generator ${SDL_LIBS})
+target_link_libraries(wayward ww_game ww_math ww_util)
 
 target_include_directories(ww_generator PUBLIC include/)
 target_include_directories(ww_graphics PUBLIC include/)
