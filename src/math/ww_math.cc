@@ -35,6 +35,16 @@ Vector2D geometric_center(const Polygon &p) {
     return center;
 }
 
+FixedPoint fp_dist(const Vector2D &v1, const Vector2D &v2) {
+    return fp_sqrt(fp_distsqr(v1, v2));
+}
+
+FixedPoint fp_distsqr(const Vector2D &v1, const Vector2D &v2) {
+    FixedPoint x = v1.x - v2.x;
+    FixedPoint y = v1.y - v2.y;
+    return x * x + y * y;
+}
+
 Polygon poly_square(int nx, int ny, int nw, int nh) {
     Polygon poly;
 

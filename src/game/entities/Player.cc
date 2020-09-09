@@ -18,9 +18,7 @@ using std::vector;
 Player::Player() {
     sprite_handle = WaywardGL::spriteBuffer()->addSprite(0, 0, 1500, 1700, 0);
 
-    vector<Polygon> polygons;
-    polygons.push_back(poly_square(0, 0, 1000, 1600));
-    hurtboxes.push_back(polygons);
+    addHurtbox(poly_square(0, 0, 1000, 1600));
     data.hurtbox_handle = 0;
 
     data.hitbox_handle = -1;

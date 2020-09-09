@@ -13,6 +13,12 @@ typedef enum EntityDirection {
     Dir_Left, Dir_Right
 } EntityDirection;
 
+struct CollisionBox {
+    std::vector<Polygon> polys;
+    std::vector<Circle> bounds;
+    EntityDirection dir;
+};
+
 class Entity {
   public:
     Entity() {}
@@ -27,17 +33,23 @@ class Entity {
 
     // Getters
     Vector2D position() const { return data.position; }
-    std::vector<Polygon> polygons_hurt() const;
-    std::vector<Polygon> polygons_hit() const;
+    const CollisionBox *polygons_hurt();
+    const CollisionBox *polygons_hit();
 
     // Graphics processing
     unsigned int sprite_handle;
     virtual void updateSprite() = 0;
     virtual void removeSprite() = 0;
 
+
+    void addHurtbox(const Polygon &hurtbox);
+    void addHurtbox(const std::vector<Polygon> &hurtbox);
+    void addHitbox(const Polygon &hitbox);
+    void addHitbox(const std::vector<Polygon> &hitbox);
+
     // Possible polygon configurations for this entity
-    std::vector<std::vector<Polygon>> hurtboxes;
-    std::vector<std::vector<Polygon>> hitboxes;
+    std::vector<CollisionBox> hurtboxes;
+    std::vector<CollisionBox> hitboxes;
 
     GameController *gc;
 

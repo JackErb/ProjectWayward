@@ -10,6 +10,7 @@
 #include <condition_variable>
 #include <queue>
 #include <algorithm>
+#include <map>
 
 using std::thread;
 using std::vector;
@@ -19,6 +20,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::mutex;
+using std::map;
 using std::unique_lock;
 using std::condition_variable;
 using PhysicsMultithreader::JobReturn;
@@ -102,27 +104,44 @@ void PhysicsMultithreader::runJobs(vector<Entity*> entities, GameController *gc)
     unique_lock<mutex> batch_lock(BatchMutex);
     BatchCondition.wait(batch_lock, []{ return finished_batch; });
 
-    vector<JobReturn> results;
+    map<Entity*, vector<JobReturn>> results;
     while (ReturnQueue.size() != 0) {
         JobReturn ret = ReturnQueue.front();
         ReturnQueue.pop();
 
-        results.push_back(ret);
+        results[ret.e1].push_back(ret);
     }
 
-    sort(results.begin(), results.end(), [](const auto &lhs, const auto &rhs) {
-        return rhs.e1 < rhs.e2;
-    });    
-    for (JobReturn ret : results) {
-        Vector2D pv;
-        
-        if (ret.type == 0) {
-            if (PhysicsEngine::checkCollision(ret.e1, ret.e2, &pv)) {
-                ret.e1->handleCollision(ret.e2, pv);
+    // Apply collisions
+
+
+    // First apply horizontal pvs
+    Vector2D pv;
+    for (auto it = results.begin(); it != results.end(); it++) {
+        vector<JobReturn> collisions = it->second;
+        for (JobReturn ret : collisions) {
+            if (ret.type == 0 && ret.pv.y == 0) {
+                // Collision pushing in horizontal direction
+                if (PhysicsEngine::checkCollision(ret.e1, ret.e2, &pv)) {
+                    ret.e1->handleCollision(ret.e2, pv);
+                }
             }
-        } else if (ret.type == 1) {
-            if (PhysicsEngine::checkHitboxCollision(ret.e1, ret.e2, &pv)) {
-                ret.e2->handleHit(ret.e1, pv);
+        }
+    }
+
+    // Now apply the rest of the pvs (if still colliding)
+    for (auto it = results.begin(); it != results.end(); it++) {
+        vector<JobReturn> collisions = it->second;
+        for (JobReturn ret : collisions) {
+            if (ret.type == 0) {
+                // Collision pushing in horizontal direction
+                if (PhysicsEngine::checkCollision(ret.e1, ret.e2, &pv)) {
+                    ret.e1->handleCollision(ret.e2, pv);
+                }
+            } else {
+                if (PhysicsEngine::checkHitboxCollision(ret.e1, ret.e2, &pv)) {
+                    ret.e2->handleHit(ret.e1, pv);
+                }
             }
         }
     }

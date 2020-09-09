@@ -12,14 +12,10 @@ Explosive::Explosive(const Vector2D &pos) {
     sprite_handle = WaywardGL::shapeBuffer()->addShape(x, y, w, h);
     data.position = pos;
 
-    vector<Polygon> polys;
-    polys.push_back(poly_square(0, 0, w, h));
-    hurtboxes.push_back(polys);
+    addHurtbox(poly_square(0, 0, w, h));
     data.hurtbox_handle = 0;
 
-    vector<Polygon> hitbox;
-    hitbox.push_back(poly_circle(0, 0, 3000));
-    hitboxes.push_back(hitbox);
+    addHitbox(poly_circle(0, 0, 3000));
     data.hitbox_handle = -1;
 
     data.hurtbox_bitmask |= Bitmask::Stage;

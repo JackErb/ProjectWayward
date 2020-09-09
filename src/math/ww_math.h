@@ -39,6 +39,11 @@ struct Vector2D {
     FixedPoint y;
 };
 
+struct Circle {
+    Vector2D position;
+    FixedPoint radius;
+};
+
 typedef std::vector<Vector2D> Polygon;
 Polygon poly_square(int nx, int ny, int nw, int nh);
 Polygon poly_circle(int nx, int ny, int nr);
@@ -46,5 +51,7 @@ Polygon poly_circle(int nx, int ny, int nr);
 Vector2D unit_vec(const Vector2D &v);
 FixedPoint dot(const Vector2D &v1, const Vector2D &v2);
 Vector2D geometric_center(const Polygon &p);
+FixedPoint fp_dist(const Vector2D &v1, const Vector2D &v2);
+FixedPoint fp_distsqr(const Vector2D &v1, const Vector2D &v2);
 
 #endif  /* WWMath_h */

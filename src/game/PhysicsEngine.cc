@@ -6,6 +6,8 @@
 #include <limits>
 #include <algorithm>
 #include <ww_math.h>
+#include <WaywardGL.h>
+#include <SpriteBuffer.h>
 
 using std::pair;
 using std::make_pair;
@@ -15,8 +17,11 @@ using std::min;
 using std::max;
 using std::vector;
 
+bool checkBoundsCollision(const Circle &c1, const Vector2D &pos1,
+                          const Circle &c2, const Vector2D &pos2);
+
 pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
-                                           const Polygon &p2, const Vector2D &pos2);
+                                        const Polygon &p2, const Vector2D &pos2);
 
 vector<Vector2D> get_orthogonals(const Polygon &p1, const Polygon &p2);
 
@@ -25,9 +30,40 @@ pair<bool, Vector2D>
                        const Polygon &p1, const Vector2D &pos1,
                        const Polygon &p2, const Vector2D &pos2);
 
-bool PhysicsEngine::checkCollision(const Entity *e1, const Entity *e2, Vector2D *pv) {
-    for (const Polygon& p1 : e1->polygons_hurt()) {
-        for (const Polygon& p2 : e2->polygons_hurt()) {
+bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, Vector2D *pv) {
+    const CollisionBox *hurtbox_e1 = e1->polygons_hurt();
+    const CollisionBox *hurtbox_e2 = e2->polygons_hurt();
+
+    Vector2D pos_e1 = e1->position();
+    Vector2D pos_e2 = e2->position();
+
+    for (int i = 0; i < hurtbox_e1->polys.size(); i++) {
+        for (int j = 0; j < hurtbox_e2->polys.size(); j++) {
+            // Bounds check before more expensive polygon check
+            bool bounds_check = checkBoundsCollision(hurtbox_e1->bounds[i], pos_e1,
+                                                     hurtbox_e2->bounds[j], pos_e2);
+            if (!bounds_check) {
+                continue;
+            }
+
+            auto collision = checkPolyCollision(hurtbox_e1->polys[i], pos_e1,
+                                                hurtbox_e2->polys[j], pos_e2);
+            if (collision.first) {
+                *pv = collision.second;
+                return true;
+            }
+        }
+    }
+    *pv = Vector2D();
+    return false;
+}
+
+bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, Vector2D *pv) {
+    const CollisionBox *hitbox_e1 = e1->polygons_hit();
+    const CollisionBox *hurtbox_e2 = e2->polygons_hurt();
+
+    for (const Polygon &p1 : hitbox_e1->polys) {
+        for (const Polygon &p2 : hurtbox_e2->polys) {
             auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
             if (collision.first) {
                 *pv = collision.second;
@@ -39,18 +75,13 @@ bool PhysicsEngine::checkCollision(const Entity *e1, const Entity *e2, Vector2D 
     return false;
 }
 
-bool PhysicsEngine::checkHitboxCollision(const Entity *e1, const Entity *e2, Vector2D *pv) {
-    for (const Polygon& p1 : e1->polygons_hit()) {
-        for (const Polygon& p2 : e2->polygons_hurt()) {
-            auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
-            if (collision.first) {
-                *pv = collision.second;
-                return true;
-            }
-        }
-    }
-    *pv = Vector2D();
-    return false;
+bool checkBoundsCollision(const Circle &c1, const Vector2D &pos1,
+                          const Circle &c2, const Vector2D &pos2) {
+    Vector2D center1 = c1.position + pos1;
+    Vector2D center2 = c2.position + pos2;
+
+    FixedPoint total_radius = c1.radius * c1.radius + c2.radius * c2.radius;
+    return fp_distsqr(center1, center2) < total_radius;
 }
 
 pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,

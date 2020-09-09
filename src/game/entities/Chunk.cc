@@ -41,9 +41,7 @@ Chunk::Chunk(int x, int y, int w, int h) {
     int texture = rand() % 3;
     sprite_handle = WaywardGL::tileBuffer()->addSprite(x, y, w, h, texture);
    
-    vector<Polygon> polygons;
-    polygons.push_back(poly_square(0,0,w,h));
-    hurtboxes.push_back(polygons);
+    addHurtbox(poly_square(0,0,w,h));
     data.hurtbox_handle = 0;
     
     data.hitbox_handle = -1;
