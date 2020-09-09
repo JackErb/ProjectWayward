@@ -1,4 +1,11 @@
 rm -rf build/
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+
+CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Debug"
+
+if [ "$1" == "xcode" ]; then
+    CMAKE_FLAGS="$CMAKE_FLAGS -G Xcode"
+fi
+
+cmake .. $CMAKE_FLAGS
