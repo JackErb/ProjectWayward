@@ -6,6 +6,7 @@
 
 typedef struct SpriteBuffer SpriteBuffer;
 typedef struct ShapeBuffer ShapeBuffer;
+typedef struct MetaballBuffer MetaballBuffer;
 
 namespace WaywardGL {
 
@@ -21,9 +22,10 @@ void init(int width, int height);
 void render();
 void deinit();
 
-SpriteBuffer *spriteBuffer();
-SpriteBuffer *tileBuffer();
-ShapeBuffer  *shapeBuffer();
+SpriteBuffer   *spriteBuffer();
+SpriteBuffer   *tileBuffer();
+ShapeBuffer    *shapeBuffer();
+MetaballBuffer *waterBuffer();
 }
 
 #endif  /* WaywardGL_h */

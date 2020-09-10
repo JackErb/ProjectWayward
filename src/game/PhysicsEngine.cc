@@ -29,39 +29,38 @@ pair<bool, Vector2D>
                        const Polygon &p2, const Vector2D &pos2);
 
 bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, Vector2D *pv) {
-    const CollisionBox *hurtbox_e1 = e1->polygons_hurt();
-    const CollisionBox *hurtbox_e2 = e2->polygons_hurt();
+    const CollisionBox &hurtbox_e1 = e1->polygons_hurt();
+    const CollisionBox &hurtbox_e2 = e2->polygons_hurt();
 
     Vector2D pos_e1 = e1->position();
     Vector2D pos_e2 = e2->position();
 
-    for (int i = 0; i < hurtbox_e1->polys.size(); i++) {
-        for (int j = 0; j < hurtbox_e2->polys.size(); j++) {
+    for (int i = 0; i < hurtbox_e1.polys.size(); i++) {
+        for (int j = 0; j < hurtbox_e2.polys.size(); j++) {
             // Bounds check before more expensive polygon check
-            bool bounds_check = checkBoundsCollision(hurtbox_e1->bounds[i], pos_e1,
-                                                     hurtbox_e2->bounds[j], pos_e2);
+            bool bounds_check = checkBoundsCollision(hurtbox_e1.bounds[i], pos_e1,
+                                                     hurtbox_e2.bounds[j], pos_e2);
             if (!bounds_check) {
                 continue;
             }
 
-            auto collision = checkPolyCollision(hurtbox_e1->polys[i], pos_e1,
-                                                hurtbox_e2->polys[j], pos_e2);
+            auto collision = checkPolyCollision(hurtbox_e1.polys[i], pos_e1,
+                                                hurtbox_e2.polys[j], pos_e2);
             if (collision.first) {
                 *pv = collision.second;
                 return true;
             }
         }
     }
-    *pv = Vector2D();
     return false;
 }
 
 bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, Vector2D *pv) {
-    const CollisionBox *hitbox_e1 = e1->polygons_hit();
-    const CollisionBox *hurtbox_e2 = e2->polygons_hurt();
+    const CollisionBox &hitbox_e1 = e1->polygons_hit();
+    const CollisionBox &hurtbox_e2 = e2->polygons_hurt();
 
-    for (const Polygon &p1 : hitbox_e1->polys) {
-        for (const Polygon &p2 : hurtbox_e2->polys) {
+    for (const Polygon &p1 : hitbox_e1.polys) {
+        for (const Polygon &p2 : hurtbox_e2.polys) {
             auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
             if (collision.first) {
                 *pv = collision.second;
@@ -69,7 +68,6 @@ bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, Vector2D *pv) {
             }
         }
     }
-    *pv = Vector2D();
     return false;
 }
 

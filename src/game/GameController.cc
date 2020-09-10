@@ -12,6 +12,8 @@
 #include <ww_generator.h>
 #include <WaywardGL.h>
 #include <vector>
+#include <MetaballBuffer.h>
+#include "../math/random.h"
 
 using std::cout;
 using std::cerr;
@@ -27,27 +29,43 @@ GameController::GameController() {
     player->data.position.y = FixedPoint::fromInt(4000);
     addEntity(player);
 
-    for (int x = 0; x < 30; x++) {
-        for (int y = 0; y < 30; y++) {
+    int size = 800;
+    for (int x = 0; x < 40; x++) {
+        for (int y = 0; y < 40; y++) {
+            int chunkx = (x - 20) * size;
+            int chunky = (y - 10) * size;
+
+            if (chunkx <= size * 5 && chunkx >= size * -5
+             && chunky > 0 && chunky <= size * 6) {
+                continue;
+            }
+
+
+            void *ptr = alloc.raw_allocate<Chunk>();
+            Chunk *chunk = new(ptr) Chunk(chunkx, chunky, size, size);
+            addEntity(chunk);
+        }
+    }
+
+    /*for (int x = 0; x < 40; x++) {
+        for (int y = 0; y < 70; y++) {
             int n = 800;
             void *ptr = alloc.raw_allocate<Chunk>();
             Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
             addEntity(chunk);
         }
+    }*/
+
+    Random r(100);
+    for (int i = 0; i < num_water; i++) {
+        WaterBall water;
+        water.handle = WaywardGL::waterBuffer()->addMetaball(0, 0, r.rand(700,1300));
+        water.vel.x = FixedPoint::fromInt(r.rand(-60, 60));
+        water.vel.y = FixedPoint::fromInt(r.rand(-60, 60));
+        this->water[i] = water;
     }
 
     PhysicsMultithreader::init();
-
-    /*GenOptions::init();
-    GeneratorOptions opt = GenOptions::TestCaveGen;
-    opt.mapWidth = 6;
-    opt.mapHeight = 5;
-    LevelData level_data = WWGenerator::generateLevel(opt);
-    for (vector<ChunkData> chunk_row : level_data.chunks) {
-        for (ChunkData chunk_data : chunk_row) {
-            entities.push_back(new Chunk(chunk_data));           
-        }
-    }*/
 }
 
 GameController::~GameController() {
@@ -71,6 +89,18 @@ void GameController::tick() {
         entity->tick();
     }
 
+    for (int i = 0; i < num_water; i++) {
+        WaterBall &water = this->water[i];
+        water.pos += water.vel;
+        if (fp_abs(water.pos.x) > FixedPoint::fromInt(8000)) {
+            water.vel.x = -water.vel.x;
+        }
+        if (fp_abs(water.pos.y) > FixedPoint::fromInt(8000)) {
+            water.vel.y = -water.vel.y;
+        }
+        WaywardGL::waterBuffer()->setMetaballPos(water.handle, water.pos.x.toFloat(), water.pos.y.toFloat());
+    }
+    
     PhysicsMultithreader::runJobs(entities, this);
 }
 
@@ -109,11 +139,7 @@ vector<JobReturn> GameController::runCollisionChecks(Entity *e1) {
                 bool collision = PhysicsEngine::checkCollision(e1, e2, &pv);
                 if (!collision) continue;
 
-                JobReturn ret;
-                ret.e1 = e1;
-                ret.e2 = e2;
-                ret.type = 0;
-                ret.pv = pv;
+                JobReturn ret = {e1, e2, 0, pv};
                 collisions.push_back(ret);
             }
         }
@@ -128,11 +154,7 @@ vector<JobReturn> GameController::runCollisionChecks(Entity *e1) {
                 bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &pv);
                 if (!collision) continue;
 
-                JobReturn ret;
-                ret.e1 = e1;
-                ret.e2 = e2;
-                ret.type = 1;
-                ret.pv = pv;
+                JobReturn ret = {e1, e2, 1, pv};
                 collisions.push_back(ret);
             }
         }

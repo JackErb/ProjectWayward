@@ -33,8 +33,8 @@ class Entity {
 
     // Getters
     Vector2D position() const { return data.position; }
-    const CollisionBox *polygons_hurt();
-    const CollisionBox *polygons_hit();
+    const CollisionBox &polygons_hurt();
+    const CollisionBox &polygons_hit();
 
     // Graphics processing
     unsigned int sprite_handle;

@@ -4,6 +4,7 @@
 #include <vector>
 #include "Input.h"
 #include "PhysicsMultithreader.h"
+#include "fluids/WaterBall.h"
 
 class Entity;
 class StackAllocator;
@@ -26,6 +27,9 @@ class GameController {
   private:
     PlayerInput player_input;
     std::vector<Entity*> entities;
+ 
+    static constexpr int num_water = 11;
+    WaterBall water[num_water];
 };
 
 #endif  /* GameController_h */

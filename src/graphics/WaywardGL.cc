@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "SpriteBuffer.h"
 #include "ShapeBuffer.h"
+#include "MetaballBuffer.h"
 
 #include <glad/glad.h>
 #include <string>
@@ -28,6 +29,9 @@ static SpriteBuffer TileSpriteBuffer;
 static const int MaxShapes = 5000;
 static ShapeBuffer ShapeDisplayBuffer;
 
+static const int MaxWaterMetaballs = 100;
+static MetaballBuffer WaterBuffer;
+
 void WaywardGL::init(int width, int height) {
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
@@ -48,6 +52,9 @@ void WaywardGL::init(int width, int height) {
 
     ShapeDisplayBuffer.init(MaxShapes);
     ShapeDisplayBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "shape.frag"));
+
+    WaterBuffer.init(MaxWaterMetaballs, "WaterBuffer");
+    WaterBuffer.setShader(loadShaderProgram("metaball.vert", "metaball.frag"));
 }
 
 void WaywardGL::render() {
@@ -57,6 +64,7 @@ void WaywardGL::render() {
     PlayerSpriteBuffer.render(Display);
     TileSpriteBuffer.render(Display);
     ShapeDisplayBuffer.render(Display);
+    WaterBuffer.render(Display);
 }
 
 void WaywardGL::deinit() {
@@ -66,3 +74,4 @@ void WaywardGL::deinit() {
 SpriteBuffer *WaywardGL::spriteBuffer() { return &PlayerSpriteBuffer; }
 SpriteBuffer *WaywardGL::  tileBuffer() { return &TileSpriteBuffer; }
 ShapeBuffer  *WaywardGL:: shapeBuffer() { return &ShapeDisplayBuffer; }
+MetaballBuffer *WaywardGL::waterBuffer() { return &WaterBuffer; }

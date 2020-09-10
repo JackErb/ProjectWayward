@@ -32,18 +32,7 @@ unsigned int loadShader(const string &file_name, GLenum shader_type) {
     return vertexShader;
 }
 
-
-unsigned int loadShaderProgram(const string &vert, const string &geom, const string &frag) {
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    
-    unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
-    unsigned int geomShader = loadShader(geom, GL_GEOMETRY_SHADER);
-    unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, geomShader);
-    glAttachShader(shaderProgram, fragmentShader);
+void linkProgram(unsigned int shaderProgram) {
     glLinkProgram(shaderProgram);
 
     int success;
@@ -56,7 +45,36 @@ unsigned int loadShaderProgram(const string &vert, const string &geom, const str
     } else {
         cout << "Shader succesfully compiled" << endl;
     }
+}
+
+unsigned int loadShaderProgram(const string &vert, const string &frag) {
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
     
+    unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
+    unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
+
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    linkProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    
+    return shaderProgram;
+}
+
+unsigned int loadShaderProgram(const string &vert, const string &geom, const string &frag) {
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+    
+    unsigned int vertexShader = loadShader(vert, GL_VERTEX_SHADER);
+    unsigned int geomShader = loadShader(geom, GL_GEOMETRY_SHADER);
+    unsigned int fragmentShader = loadShader(frag, GL_FRAGMENT_SHADER);
+
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, geomShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    linkProgram(shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(geomShader);
     glDeleteShader(fragmentShader);

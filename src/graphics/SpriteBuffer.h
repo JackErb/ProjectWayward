@@ -10,8 +10,8 @@ typedef struct SpriteBuffer {
     unsigned int ShaderProg;
     unsigned int VAO;
     unsigned int VBO;
-    int MaxSprites;
     unsigned int TextureArray;
+    int MaxSprites;
 
     int index = 0;
     float *vertices = nullptr;

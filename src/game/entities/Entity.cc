@@ -12,8 +12,8 @@ void Entity::updateSprite() {
     WaywardGL::spriteBuffer()->setSpriteDir(sprite_handle, data.dir == Dir_Right ? 1 : 0);
 }
 
-void flipPolys(CollisionBox *box) {
-    for (Polygon &poly : box->polys) {
+void flipPolys(CollisionBox &box) {
+    for (Polygon &poly : box.polys) {
         if (poly.size() == 2) {
             // Special case for circles
             poly[0].x = -poly[0].x;
@@ -24,33 +24,25 @@ void flipPolys(CollisionBox *box) {
         }
     }
 
-    for (Circle &bound : box->bounds) {
+    for (Circle &bound : box.bounds) {
         bound.position.x = -bound.position.x;
     }
 }
 
-const CollisionBox *Entity::polygons_hurt() {
-    // TODO: Somehow cache this?
-    auto iter = hurtboxes.begin();
-    iter += data.hurtbox_handle;
-
-    CollisionBox *box = &(*iter);
-    if (data.dir != box->dir) {
+const CollisionBox& Entity::polygons_hurt() {
+    CollisionBox &box = hurtboxes[data.hurtbox_handle];
+    if (data.dir != box.dir) {
         flipPolys(box);
-        box->dir = data.dir;
+        box.dir = data.dir;
     }
     return box;
 }
 
-const CollisionBox *Entity::polygons_hit() {
-    // TODO: Somehow cache this?
-    auto iter = hitboxes.begin();
-    iter += data.hitbox_handle;
-
-    CollisionBox *box = &(*iter);
-    if (data.dir != box->dir) {
+const CollisionBox& Entity::polygons_hit() {
+    CollisionBox &box = hitboxes[data.hitbox_handle];
+    if (data.dir != box.dir) {
         flipPolys(box);
-        box->dir = data.dir;
+        box.dir = data.dir;
     }
     return box;
 }
