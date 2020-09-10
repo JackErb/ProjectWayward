@@ -4,8 +4,6 @@
 #include <glad/glad.h>
 #include <SDL.h>
 #include <GameController.h>
-#include <Renderer.h>
-#include <TextureLoader.h>
 #include <WaywardGL.h>
 
 #include <iostream>

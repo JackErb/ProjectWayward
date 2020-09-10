@@ -27,16 +27,13 @@ endif()
 
 add_subdirectory(math)
 add_subdirectory(util)
-add_subdirectory(generator)
 add_subdirectory(graphics)
 add_subdirectory(game)
 
-target_link_libraries(ww_generator ww_math)
 target_link_libraries(ww_graphics ${SDL_LIBS} ${OPENGL_gl_LIBRARY})
-target_link_libraries(ww_game ww_graphics ww_util ww_math ww_generator ${SDL_LIBS})
+target_link_libraries(ww_game ww_graphics ww_util ww_math ${SDL_LIBS})
 target_link_libraries(wayward ww_game ww_math ww_util)
 
-target_include_directories(ww_generator PUBLIC include/)
 target_include_directories(ww_graphics PUBLIC include/)
 target_include_directories(ww_game PUBLIC game/ game/entities/ game/state/ graphics/ include/ util/)
 target_include_directories(wayward PUBLIC game/ math/ graphics/ include/ util/)

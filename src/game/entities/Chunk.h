@@ -7,7 +7,6 @@ struct ChunkData;
 
 class Chunk: public Entity {
   public:
-    Chunk(ChunkData chunk_data);
     Chunk(int x, int y, int w, int h);
 
     void tick();
