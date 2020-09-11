@@ -53,7 +53,7 @@ void GroundedState::pretick() {
 
             FixedPoint vx = dir * attr.maxAirSpeed;
             FixedPoint vy = data.shorthop ? attr.shortJump : attr.fullJump;
-            player->data.velocity.y = vy;
+            player->data.velocity = {vx, vy};
             player->switchState(new AirborneState(player, Airborne_Neutral));
             return;
         }

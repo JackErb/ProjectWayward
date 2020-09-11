@@ -121,3 +121,7 @@ FixedPoint fp_abs(const FixedPoint &n) {
 FixedPoint fp_sign(const FixedPoint &n) {
     return n.n < 0 ? FixedPoint::fromInt(-1) : FixedPoint::fromInt(1);
 }
+
+FixedPoint fp_magnitude(const Vector2D &v) {
+    return fp_sqrt(v.x * v.x + v.y * v.y);
+}

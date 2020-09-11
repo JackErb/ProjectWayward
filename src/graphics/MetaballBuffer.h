@@ -23,6 +23,7 @@ typedef struct MetaballBuffer {
 
     unsigned int addMetaball(float x, float y, float r);
     void setMetaballPos(unsigned int handle, float x, float y);
+    void setMetaballRadius(unsigned int handle, float r);
 } MetaballBuffer;
 
 #endif  /* MetaballBuffer_h */

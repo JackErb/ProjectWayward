@@ -4,9 +4,9 @@
 #include <vector>
 #include "Input.h"
 #include "PhysicsMultithreader.h"
-#include "fluids/WaterBall.h"
 
 class Entity;
+class WaterEntity;
 class StackAllocator;
 
 class GameController {
@@ -19,6 +19,7 @@ class GameController {
     void render();
 
     StackAllocator *allocator();
+    void addWaterEntity(WaterEntity *entity);
     void addEntity(Entity *entity);
     void removeEntity(Entity *entity);
 
@@ -27,9 +28,7 @@ class GameController {
   private:
     PlayerInput player_input;
     std::vector<Entity*> entities;
- 
-    static constexpr int num_water = 11;
-    WaterBall water[num_water];
+    std::vector<WaterEntity*> water_entities;
 };
 
 #endif  /* GameController_h */

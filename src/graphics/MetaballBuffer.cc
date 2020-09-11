@@ -72,3 +72,7 @@ void MetaballBuffer::setMetaballPos(unsigned int handle, float x, float y) {
     MetaballData[handle*DataLen + 0] = x;
     MetaballData[handle*DataLen + 1] = y;
 }
+
+void MetaballBuffer::setMetaballRadius(unsigned int handle, float r) {
+    MetaballData[handle*DataLen + 2] = r;
+}

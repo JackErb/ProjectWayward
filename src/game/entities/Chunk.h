@@ -10,8 +10,8 @@ class Chunk: public Entity {
     Chunk(int x, int y, int w, int h);
 
     void tick();
-    void handleCollision(Entity *e, const Vector2D &pv);
-    void handleHit(Entity *e, const Vector2D &pv);
+    void handleCollision(Entity *e, const Vector2D &pv, int bitmask);
+    void handleHit(Entity *e, const Vector2D &pv, int bitmask);
 
     void updateSprite();
     void removeSprite();

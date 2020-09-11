@@ -15,11 +15,13 @@ struct JobReturn {
 
     // 0 for hurtbox, 1 for hitbox;
     short type;
+    int bitmask;
     Vector2D pv;
 };
 
 void init();
 void runJobs(std::vector<Entity*> entities, GameController *gc);
+void shutdown();
 
 };
 

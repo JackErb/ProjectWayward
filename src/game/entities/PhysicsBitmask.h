@@ -4,9 +4,10 @@
 namespace Bitmask {
 enum Bitmask {
     None      = 0,
-    Stage     = 1,
-    Player    = 2,
-    Explosive = 4
+    Stage     = 1 << 1,
+    Player    = 1 << 2,
+    Explosive = 1 << 3,
+    Water     = 1 << 4
 };
 }
 

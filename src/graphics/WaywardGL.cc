@@ -29,7 +29,7 @@ static SpriteBuffer TileSpriteBuffer;
 static const int MaxShapes = 5000;
 static ShapeBuffer ShapeDisplayBuffer;
 
-static const int MaxWaterMetaballs = 100;
+static const int MaxWaterMetaballs = 400;
 static MetaballBuffer WaterBuffer;
 
 void WaywardGL::init(int width, int height) {
@@ -38,7 +38,7 @@ void WaywardGL::init(int width, int height) {
 
     Display.WindowWidth = width;
     Display.WindowHeight = height;
-    Display.WindowScale = 0.2;
+    Display.WindowScale = 0.15;
 
     PlayerSpriteBuffer.init(MaxSprites, "PlayerSpriteBuffer",
                             {"jump_0.png", "jump_1.png", "jump_2.png", "jump_3.png",
@@ -61,10 +61,10 @@ void WaywardGL::render() {
     Display.CameraX = -PlayerSpriteBuffer.vertices[0];
     Display.CameraY = -PlayerSpriteBuffer.vertices[1];
 
+    WaterBuffer.render(Display);
     PlayerSpriteBuffer.render(Display);
     TileSpriteBuffer.render(Display);
     ShapeDisplayBuffer.render(Display);
-    WaterBuffer.render(Display);
 }
 
 void WaywardGL::deinit() {

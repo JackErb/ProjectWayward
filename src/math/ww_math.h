@@ -54,5 +54,6 @@ FixedPoint dot(const Vector2D &v1, const Vector2D &v2);
 Vector2D geometric_center(const Polygon &p);
 FixedPoint fp_dist(const Vector2D &v1, const Vector2D &v2);
 FixedPoint fp_distsqr(const Vector2D &v1, const Vector2D &v2);
+FixedPoint fp_magnitude(const Vector2D &v);
 
 #endif  /* WWMath_h */

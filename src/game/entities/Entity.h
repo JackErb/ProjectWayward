@@ -27,9 +27,8 @@ class Entity {
     // Game processing
     virtual void processInput(const PlayerInput &input) {}
     virtual void tick() = 0;
-    virtual void handleCollision(Entity *e, const Vector2D &pv) {}
-    virtual void handleHit(Entity *e, const Vector2D &pv) {}
-
+    virtual void handleCollision(Entity *e, const Vector2D &pv, int bitmask) {}
+    virtual void handleHit(Entity *e, const Vector2D &pv, int bitmask) {}
 
     // Getters
     Vector2D position() const { return data.position; }

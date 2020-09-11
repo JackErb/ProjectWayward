@@ -24,14 +24,22 @@ void main(){
         float dx = mb.x - frag_pos.x;
         float dy = mb.y - frag_pos.y;
         float r = mb.z;
-        v += r*r/(dx*dx + dy*dy);
+        v = r*r/(dx*dx + dy*dy);
+        if (v > 1.0 && v < 1.1) { 
+            FragColor=vec4(0.2,0.3,0.7,lerp(v,1.0,1.1,0.6,0.95));
+            return;
+        }
     }
+
+    FragColor=vec4(0,0,0,0);
+    /*if (v > 1.1) {
+        FragColor = vec4(0.2, 0.3, 0.7, 1.0);
+    } else if (v > 1.0) {
+        FragColor = vec4(0.5, 0.5, 0.8, lerp(v, 1.0, 1.1, 0.0, 1.0));
     
-    if (v >= 1.1) {
-        FragColor = vec4(0.2, 0.3, 0.9, 0.9);
-    } else if (v > 1.0 && v < 1.1) {
-        FragColor = vec4(0.1, 0.1, 0.7, lerp(v, 1.0, 1.1, 0.5, 0.9));
+    if (v > 1.0 && v < 1.1) {
+        FragColor = vec4(0.2, 0.3, 0.7, lerp(v, 1.0, 1.1, 0.7, 1.0));
     } else {
         FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-    }
+    }*/
 }

@@ -8,6 +8,7 @@
 #include "GameController.h"
 #include "Explosive.h"
 #include <StackAllocator.h>
+#include <WaterEntity.h>
 
 using std::cout;
 using std::cerr;
@@ -42,6 +43,14 @@ void Player::processInput(const PlayerInput &input) {
         gc->addEntity(explosive);
     }
 
+    if (input.isPressed(Button_Other, false)) {
+        void *ptr = gc->allocator()->raw_allocate<WaterEntity>();
+        WaterEntity *water = new(ptr) WaterEntity(0, 0, 360);
+        water->data.position = data.position;
+        water->data.velocity = data.velocity;
+        gc->addWaterEntity(water);
+    }
+
     state->pretick();
 }
 
@@ -49,7 +58,7 @@ void Player::tick() {
     state->tick();
 }
 
-void Player::handleCollision(Entity *e, const Vector2D &pv) {
+void Player::handleCollision(Entity *e, const Vector2D &pv, int bitmask) {
     data.position += pv;
     if (pv.x == 0 && pv.y > 0 && data.velocity.y < 0) {
         data.velocity.y = 0;
@@ -63,7 +72,7 @@ void Player::handleCollision(Entity *e, const Vector2D &pv) {
     state->handleCollision(e, pv);
 }
 
-void Player::handleHit(Entity *e, const Vector2D &pv) {
+void Player::handleHit(Entity *e, const Vector2D &pv, int bitmask) {
 
 }
 

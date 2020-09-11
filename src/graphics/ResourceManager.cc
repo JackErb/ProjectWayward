@@ -46,8 +46,7 @@ char *loadTextFile(string file_name, int *length) {
     file.seekg(0, std::ios::beg); 
  
     // Read the file 
-    char *shaderSource; 
-    char *source = new char[*length]; 
+    char *source = new char[*length];
     file.read(source, *length); 
     file.close();
     return source;

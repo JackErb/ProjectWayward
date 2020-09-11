@@ -87,11 +87,12 @@ pair<bool, Vector2D> checkPolyCollision(const Polygon &p1, const Vector2D &pos1,
         // They are both circles
         Vector2D c1 = p1[0] + pos1, c2 = p2[0] + pos2;
         FixedPoint x = c2.x - c1.x, y = c2.y - c1.y;
-        FixedPoint dist = x * x + y * y;
+        FixedPoint dist = fp_sqrt(x * x + y * y);
         FixedPoint rad = p1[1].x + p2[1].x;
-        if (dist < rad * rad) {
+        if (dist < rad) {
             // TODO: Calculate push vec
-            Vector2D pv;
+            FixedPoint magnitude = rad - dist;
+            Vector2D pv = unit_vec(c1 - c2) * magnitude;
             return {true, pv};
         }
         return {false, Vector2D()};
@@ -216,6 +217,6 @@ pair<bool, Vector2D> is_separating_axis(const Vector2D &axis,
         Vector2D push_vector(axis * (d / dot(axis, axis) + epsilon));
         return make_pair(false, push_vector);
     } else {
-        return make_pair(true, Vector2D(FixedPoint(0),FixedPoint(0)));
+        return make_pair(true, Vector2D());
     }
 }

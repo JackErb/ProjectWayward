@@ -13,12 +13,22 @@ inline Vector2D operator-(const Vector2D &v1, const Vector2D &v2) {
     return Vector2D(v1.x - v2.x, v1.y - v2.y);
 }
 
-inline Vector2D operator*(const Vector2D &v, const FixedPoint n) {
+inline Vector2D operator*(const Vector2D &v, const FixedPoint &n) {
     return Vector2D(v.x * n, v.y * n);
 }
 
-inline Vector2D operator/(const Vector2D &v, const FixedPoint n) {
+inline Vector2D operator/(const Vector2D &v, const FixedPoint &n) {
     return Vector2D(v.x / n, v.y / n);
+}
+
+inline Vector2D operator*(const FixedPoint &n, const Vector2D &v) {
+    return v * n;
+}
+
+inline Vector2D &operator-=(Vector2D &v1, const Vector2D &v2) {
+    v1.x -= v2.x;
+    v1.y -= v2.y;
+    return v1;
 }
 
 inline Vector2D &operator+=(Vector2D &v1, const Vector2D &v2) {
