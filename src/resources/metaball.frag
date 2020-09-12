@@ -2,7 +2,7 @@
 out vec4 FragColor;
 
 uniform int metaballsSize;
-uniform vec3 metaballs[100];
+uniform vec3 metaballs[400];
 
 uniform vec2 screenSize;
 uniform vec2 cameraPos;
@@ -28,9 +28,9 @@ void main(){
     }
     
     if (v >= 1.1) {
-        FragColor = vec4(0.2, 0.3, 0.9, 0.9);
+        FragColor = vec4(0.2, 0.3, 0.9, 0.5);
     } else if (v > 1.0 && v < 1.1) {
-        FragColor = vec4(0.1, 0.1, 0.7, lerp(v, 1.0, 1.1, 0.5, 0.9));
+        FragColor = vec4(0.1, 0.1, 0.7, lerp(v, 1.0, 1.1, 0.4, 0.5));
     } else {
         FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }

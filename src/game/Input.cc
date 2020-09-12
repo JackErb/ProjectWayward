@@ -13,7 +13,7 @@ using std::endl;
 const FixedPoint StickState::DEADZONE = FixedPoint::fromFloat(0.15f);
 
 
-bool StickState::inDir(StickState::StickDir dir) const {
+bool StickState::inDir(Direction dir) const {
     if (hyp <= StickState::DEADZONE) return false;
     const FixedPoint PI_4   = FixedPoint::PI / FixedPoint::fromFloat(4);
     const FixedPoint PI_3_4 = PI_4 * FixedPoint::fromInt(3);

@@ -9,6 +9,7 @@
 #include "Explosive.h"
 #include <StackAllocator.h>
 #include <WaterEntity.h>
+#include <Input.h>
 
 using std::cout;
 using std::cerr;
@@ -19,10 +20,12 @@ using std::vector;
 Player::Player() {
     sprite_handle = WaywardGL::spriteBuffer()->addSprite(0, 0, 1500, 1700, 0);
 
-    addHurtbox(poly_square(0, 0, 1000, 1600));
+    addHurtbox(poly_square(0, 0, 1000, 1500));
     data.hurtbox_handle = 0;
 
+    addHitbox(poly_square(-900, 200, 600, 600));
     data.hitbox_handle = -1;
+    data.hitbox_bitmask |= Bitmask::Stage;
 
     data.hurtbox_bitmask |= Bitmask::Stage;
     data.bitmask = Bitmask::Player;
@@ -38,14 +41,20 @@ void Player::processInput(const PlayerInput &input) {
     }
 
     if (input.isPressed(Button_Attack, false)) {
-        void *ptr = gc->allocator()->raw_allocate<Explosive>();
-        Explosive *explosive = new(ptr) Explosive(data.position);
-        gc->addEntity(explosive);
+        if (input.stick.inDir(Down)) {
+            void *ptr = gc->allocator()->raw_allocate<Explosive>();
+            Explosive *explosive = new(ptr) Explosive(data.position);
+            gc->addEntity(explosive);
+        } else {
+            data.hitbox_handle = 0;
+        }
+    } else {
+        data.hitbox_handle = -1;
     }
 
     if (input.isPressed(Button_Other, false)) {
         void *ptr = gc->allocator()->raw_allocate<WaterEntity>();
-        WaterEntity *water = new(ptr) WaterEntity(0, 0, 360);
+        WaterEntity *water = new(ptr) WaterEntity(0, 0, 290);
         water->data.position = data.position;
         water->data.velocity = data.velocity;
         gc->addWaterEntity(water);
@@ -67,6 +76,10 @@ void Player::handleCollision(Entity *e, const Vector2D &pv, int bitmask) {
             GroundedState *landing_lag = new GroundedState(this, Grounded_Land);
             state->switchState(landing_lag);
         }
+    }
+
+    if (pv.x == 0 && pv.y < 0) {
+        data.velocity.y = 0;
     }
 
     state->handleCollision(e, pv);

@@ -46,10 +46,10 @@ void GroundedState::pretick() {
         break;
       case Grounded_Jumpsquat:
         if (input->isReleased(Button_Jump)) data.shorthop = true;
-        if (data.frame == 4) {
+        if (data.frame == 8) {
             int dir = 0;
-            if (input->stick.inDir(StickState::Left)) dir = -1;
-            if (input->stick.inDir(StickState::Right)) dir = 1;
+            if (input->stick.inDir(Left)) dir = -1;
+            if (input->stick.inDir(Right)) dir = 1;
 
             FixedPoint vx = dir * attr.maxAirSpeed;
             FixedPoint vy = data.shorthop ? attr.shortJump : attr.fullJump;
@@ -59,7 +59,7 @@ void GroundedState::pretick() {
         }
         break;
       case Grounded_Land:
-        if (data.frame == 4) {
+        if (data.frame == 8) {
             switchActionState(Grounded_Neutral);
         }
     }
@@ -80,16 +80,17 @@ void GroundedState::tick() {
       case Grounded_Dash: {
         FixedPoint vx = input->stick.x;
         player->data.velocity.x = vx * attr.dashSpeed;
+        WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, 8 + (data.frame / 5)  % 10);
         break;
       }
       case Grounded_Jumpsquat: {
         int frame = data.frame;
-        WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, frame);
+        WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, frame / 2);
         break;
       }
       case Grounded_Land: {
         int frame = data.frame;
-        WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, 4 + frame);
+        WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, 4 + frame / 2);
         break;
       }
     }

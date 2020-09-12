@@ -111,10 +111,6 @@ void PhysicsMultithreader::shutdown() {
     }
 }
 
-typedef enum Direction {
-    Down, Up, Left, Right
-} Direction;
-
 bool inDirection(FixedPoint angle, Direction dir) {
     const FixedPoint PI_4   = FixedPoint::PI / FixedPoint::fromFloat(4);
     const FixedPoint PI_3_4 = PI_4 * FixedPoint::fromInt(3);

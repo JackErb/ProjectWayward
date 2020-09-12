@@ -36,9 +36,9 @@ void WaterEntity::tick() {
 
     if (data.frame % 30 == 0) {
         collision_count /= 30;
-        FixedPoint radius = FixedPoint::fromFloat(r + collision_count * 80.f);
+        FixedPoint radius = FixedPoint::fromFloat(r + collision_count * 40.f);
         hurtboxes[0].polys[0][1].x = radius;
-        hurtboxes[0].bounds[0].radius = radius;
+        hurtboxes[0].bounds[0].radius = radius * FixedPoint::fromFloat(1.8f);
         collision_count = 0;
     }
 
@@ -48,11 +48,11 @@ void WaterEntity::tick() {
 void WaterEntity::handleCollision(Entity *entity, const Vector2D &pv, int bitmask) {
     if (bitmask & Bitmask::Stage) {
         data.position += pv;
-        data.velocity = FixedPoint::fromFloat(-0.3) * data.velocity;
+        data.velocity = FixedPoint::fromFloat(-0.6) * data.velocity;
         if (pv.x == FixedPoint::ZERO) apply_gravity = false;
     } else if (bitmask & Bitmask::Player) {
-        Vector2D vel = unit_vec(pv - entity->data.velocity);
-        data.velocity += unit_vec(vel) * FixedPoint::fromFloat(10);
+        Vector2D vel = unit_vec(data.position - entity->data.position);
+        data.velocity += unit_vec(vel) * FixedPoint::fromFloat(5);
     }
 }
 

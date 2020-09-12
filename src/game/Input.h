@@ -17,16 +17,17 @@ static const ButtonAction Actions[] = {Button_Jump, Button_Attack, Button_Other}
 
 typedef struct _SDL_GameController SDL_GameController;
 
+
+typedef enum Direction {
+    Down, Left, Right, Up
+} Direction;
+
 struct StickState {
     FixedPoint x;
     FixedPoint y;
     FixedPoint angle;
     FixedPoint hyp;
-
-    enum StickDir {
-        Down, Left, Right, Up
-    };
-    bool inDir(StickDir dir) const;
+    bool inDir(Direction dir) const;
 
     static const FixedPoint DEADZONE;
 };

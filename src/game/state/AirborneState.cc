@@ -37,7 +37,7 @@ void AirborneState::tick() {
     const PlayerInput *input = player->input;
     FixedPoint hyp = input->stick.hyp;
 
-    if (input->stick.inDir(StickState::Down)) {
+    if (input->stick.inDir(Down)) {
         data.fastfall = true;
     }
 
@@ -52,7 +52,7 @@ void AirborneState::tick() {
     }
 
 
-    // Vectorand cap air speed
+    // Cap air speed
     FixedPoint vx = player->data.velocity.x;
     if (fp_abs(vx) > attr.maxAirSpeed) {
         player->data.velocity.x = fp_sign(vx) * attr.maxAirSpeed;

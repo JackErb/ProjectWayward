@@ -61,10 +61,10 @@ class Entity {
 
         // Hurtboxes
         int hurtbox_bitmask = 0;
-        int hurtbox_handle;
+        int hurtbox_handle = -1;
         // Hitboxes
         int hitbox_bitmask = 0;
-        int hitbox_handle;
+        int hitbox_handle = -1;
         // The physics type of this entity
         Bitmask::Bitmask bitmask = Bitmask::None;
 

@@ -28,7 +28,7 @@ GameController::GameController() {
     player->data.position.y = FixedPoint::fromInt(4000);
     addEntity(player);
 
-    int size = 1200;
+    int size = 750;
     for (int x = 0; x < 40; x++) {
         for (int y = 0; y < 40; y++) {
             int chunkx = (x - 20) * size;
@@ -88,7 +88,7 @@ void GameController::tick() {
             if (PhysicsEngine::checkCollision(e1, e2, &pv)) {
                 Vector2D swap = e1->data.velocity;
 
-                FixedPoint mult = FixedPoint::fromFloat(0.9);
+                FixedPoint mult = FixedPoint::fromFloat(0.6);
                 FixedPoint diff = FixedPoint::fromFloat(1.0) - mult;
                 e1->data.velocity = mult * e2->data.velocity + diff * swap;
                 e2->data.velocity = mult * swap + diff * e2->data.velocity;
