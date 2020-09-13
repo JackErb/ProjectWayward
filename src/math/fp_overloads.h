@@ -63,4 +63,9 @@ inline FixedPoint &operator-=(FixedPoint &v1, const FixedPoint &v2) {
     return v1;
 }
 
+inline FixedPoint &operator/=(FixedPoint &v1, const FixedPoint &v2) {
+    v1.n = v1.n * FP_MULT / v2.n;
+    return v1;
+}
+
 #endif  /* fp_overloads_h */

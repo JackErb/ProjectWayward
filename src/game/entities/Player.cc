@@ -67,7 +67,9 @@ void Player::tick() {
     state->tick();
 }
 
-void Player::handleCollision(Entity *e, const Vector2D &pv, int bitmask) {
+void Player::handleCollision(const CollisionManifold &manifold) {
+    const Vector2D &pv = manifold.pv;
+
     data.position += pv;
     if (pv.x == 0 && pv.y > 0 && data.velocity.y < 0) {
         data.velocity.y = 0;
@@ -79,13 +81,14 @@ void Player::handleCollision(Entity *e, const Vector2D &pv, int bitmask) {
     }
 
     if (pv.x == 0 && pv.y < 0) {
-        data.velocity.y = 0;
+        // head bonk on the ceiling
+        data.velocity.y /= FixedPoint::fromInt(2);
     }
 
-    state->handleCollision(e, pv);
+    state->handleCollision(manifold);
 }
 
-void Player::handleHit(Entity *e, const Vector2D &pv, int bitmask) {
+void Player::handleHit(const CollisionManifold &manifold) {
 
 }
 

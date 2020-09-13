@@ -3,9 +3,8 @@
 
 #include <ww_math.h>
 
-struct PlayerInput;
 class Player;
-class Entity;
+struct CollisionManifold;
 
 typedef enum StateType {
     State_Grounded, State_Airborne
@@ -18,7 +17,7 @@ class PlayerState {
 
     virtual void pretick() = 0;
     virtual void tick() = 0;
-    virtual void handleCollision(Entity *entity, const Vector2D &pv) = 0;
+    virtual void handleCollision(const CollisionManifold &manifold) = 0;
 
     virtual void switchState(PlayerState *new_state);
     virtual StateType type() = 0;

@@ -11,7 +11,7 @@ class Explosive: public Entity {
     ~Explosive();
 
     void tick();
-    void handleCollision(Entity *e, const Vector2D &pv, int bitmask);
+    void handleCollision(const CollisionManifold &manifold);
 
     void updateSprite();   
     void removeSprite();

@@ -28,7 +28,7 @@ pair<bool, Vector2D>
                        const Polygon &p1, const Vector2D &pos1,
                        const Polygon &p2, const Vector2D &pos2);
 
-bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, Vector2D *pv) {
+bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, CollisionManifold *manifold) {
     const CollisionBox &hurtbox_e1 = e1->polygons_hurt();
     const CollisionBox &hurtbox_e2 = e2->polygons_hurt();
 
@@ -47,7 +47,8 @@ bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, Vector2D *pv) {
             auto collision = checkPolyCollision(hurtbox_e1.polys[i], pos_e1,
                                                 hurtbox_e2.polys[j], pos_e2);
             if (collision.first) {
-                *pv = collision.second;
+                PolyData poly1 = hurtbox_e1.poly_data[i], poly2 = hurtbox_e2.poly_data[j];
+                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hurtbox, 0};
                 return true;
             }
         }
@@ -55,15 +56,17 @@ bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, Vector2D *pv) {
     return false;
 }
 
-bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, Vector2D *pv) {
+bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, CollisionManifold *manifold) {
     const CollisionBox &hitbox_e1 = e1->polygons_hit();
     const CollisionBox &hurtbox_e2 = e2->polygons_hurt();
 
-    for (const Polygon &p1 : hitbox_e1.polys) {
-        for (const Polygon &p2 : hurtbox_e2.polys) {
-            auto collision = checkPolyCollision(p1, e1->position(), p2, e2->position());
+    for (int i = 0; i < hitbox_e1.polys.size(); i++) {
+        for (int j = 0; j < hurtbox_e2.polys.size(); j++) {
+            auto collision = checkPolyCollision(hitbox_e1.polys[i], e1->position(),
+                                                hurtbox_e2.polys[j], e2->position());
             if (collision.first) {
-                *pv = collision.second;
+                PolyData poly1 = hitbox_e1.poly_data[i], poly2 = hurtbox_e2.poly_data[j];
+                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hitbox, 0};
                 return true;
             }
         }

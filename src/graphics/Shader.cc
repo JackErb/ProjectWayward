@@ -17,6 +17,8 @@ unsigned int loadShader(const string &file_name, GLenum shader_type) {
     glShaderSource(vertexShader, 1, &shaderSource, &length);
     glCompileShader(vertexShader);
 
+    delete[] shaderSource;
+
     int success;
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -27,8 +29,6 @@ unsigned int loadShader(const string &file_name, GLenum shader_type) {
     } else {
         cout << "Shader: " << file_name << " succesfully compiled" << endl;
     }
-
-    free(shaderSource);
     return vertexShader;
 }
 

@@ -59,7 +59,7 @@ void GroundedState::pretick() {
         }
         break;
       case Grounded_Land:
-        if (data.frame == 8) {
+        if (data.frame == 5) {
             switchActionState(Grounded_Neutral);
         }
     }
@@ -101,7 +101,9 @@ void GroundedState::tick() {
     data.frame += 1;
 }
 
-void GroundedState::handleCollision(Entity *entity, const Vector2D &pv) {
+void GroundedState::handleCollision(const CollisionManifold &manifold) {
+    const Vector2D &pv = manifold.pv;
+
     if (pv.x == 0 && pv.y > 0) {
         data.grounded = true;       
     }

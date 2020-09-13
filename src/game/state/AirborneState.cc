@@ -78,7 +78,7 @@ void AirborneState::tick() {
     data.frame += 1;
 }
 
-void AirborneState::handleCollision(Entity *entity, const Vector2D &pv) {
+void AirborneState::handleCollision(const CollisionManifold &manifold) {
 
 }
 

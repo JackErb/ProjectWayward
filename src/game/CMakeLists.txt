@@ -4,6 +4,7 @@ set(SOURCES GameController.h GameController.cc Input.h Input.cc
             state/PlayerState.h state/PlayerState.cc state/GroundedState.h state/GroundedState.cc
             state/AirborneState.h state/AirborneState.cc
 			fluids/WaterEntity.h fluids/WaterEntity.cc
-            PhysicsEngine.h PhysicsEngine.cc PhysicsMultithreader.h PhysicsMultithreader.cc)
+            PhysicsEngine.h PhysicsEngine.cc PhysicsMultithreader.h PhysicsMultithreader.cc
+            PhysicsController.h PhysicsController.cc)
 
 add_library(ww_game STATIC ${SOURCES})

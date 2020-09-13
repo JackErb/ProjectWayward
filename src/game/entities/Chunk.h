@@ -10,13 +10,11 @@ class Chunk: public Entity {
     Chunk(int x, int y, int w, int h);
 
     void tick();
-    void handleCollision(Entity *e, const Vector2D &pv, int bitmask);
-    void handleHit(Entity *e, const Vector2D &pv, int bitmask);
+    void handleCollision(const CollisionManifold &manifold);
+    void handleHit(const CollisionManifold &manifold);
 
     void updateSprite();
     void removeSprite();
-
-    bool test = false;
 };
 
 #endif  /* Chunk_h */

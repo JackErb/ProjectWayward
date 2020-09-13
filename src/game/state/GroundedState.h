@@ -24,7 +24,7 @@ class GroundedState: public PlayerState {
 
     void pretick();
     void tick();
-    void handleCollision(Entity *entity, const Vector2D &pv);
+    void handleCollision(const CollisionManifold &manifold);
 
     void switchState(PlayerState *new_state);
     void switchActionState(GroundedAction action);

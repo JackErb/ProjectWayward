@@ -38,7 +38,9 @@ void Explosive::tick() {
     data.position += data.velocity;
 }
 
-void Explosive::handleCollision(Entity *entity, const Vector2D &pv, int bitmask) {
+void Explosive::handleCollision(const CollisionManifold &manifold) {
+    const Vector2D &pv = manifold.pv;
+
     data.position += pv;
     if (pv.x == 0 && pv.y > 0) data.velocity.y = 0;
 }

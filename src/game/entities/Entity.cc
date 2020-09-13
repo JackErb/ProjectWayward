@@ -5,13 +5,6 @@
 using std::vector;
 using std::iterator;
 
-void Entity::updateSprite() {
-    float x = data.position.x.toFloat();
-    float y = data.position.y.toFloat();
-    WaywardGL::spriteBuffer()->setSpritePos(sprite_handle, x, y);
-    WaywardGL::spriteBuffer()->setSpriteDir(sprite_handle, data.dir == Dir_Right ? 1 : 0);
-}
-
 void flipPolys(CollisionBox &box) {
     for (Polygon &poly : box.polys) {
         if (poly.size() == 2) {
@@ -49,9 +42,8 @@ const CollisionBox& Entity::polygons_hit() {
 
 Circle getBounds(const Polygon &poly) {
     Vector2D center = geometric_center(poly);
-    
     FixedPoint max_dist = FixedPoint::ZERO;
-    for (const Vector2D &vec: poly) {
+    for (const Vector2D &vec : poly) {
         FixedPoint dist = fp_dist(vec, center);
         if (dist > max_dist) {
             max_dist = dist;
@@ -73,12 +65,15 @@ void Entity::addHurtbox(const Polygon &hurtbox) {
 
 void Entity::addHurtbox(const vector<Polygon> &hurtbox) {
     vector<Circle> bounds;
+    vector<PolyData> poly_data;
     for (const Polygon &poly : hurtbox) {
         bounds.push_back(getBounds(poly));
+        poly_data.push_back(PolyData());
     }
 
     CollisionBox box;
     box.polys = hurtbox;
+    box.poly_data = poly_data;
     box.bounds = bounds;
     box.dir = Dir_Left;
     hurtboxes.push_back(box);
@@ -92,12 +87,15 @@ void Entity::addHitbox(const Polygon &hitbox) {
 
 void Entity::addHitbox(const vector<Polygon> &hitbox) {
     vector<Circle> bounds;
+    vector<PolyData> poly_data;
     for (const Polygon &poly : hitbox) {
         bounds.push_back(getBounds(poly));
+        poly_data.push_back(PolyData());
     }
 
     CollisionBox box;
     box.polys = hitbox;
+    box.poly_data = poly_data;
     box.bounds = bounds;
     box.dir = Dir_Left;
     hitboxes.push_back(box);

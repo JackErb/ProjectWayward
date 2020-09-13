@@ -29,11 +29,11 @@ void Chunk::tick() {
 
 }
 
-void Chunk::handleCollision(Entity *e, const Vector2D &pv, int bitmask) {
+void Chunk::handleCollision(const CollisionManifold &manifold) {
     // data.velocity.y = FixedPoint::fromFloat(40.f);
 }
 
-void Chunk::handleHit(Entity *e, const Vector2D &pv, int bitmask) {
+void Chunk::handleHit(const CollisionManifold &manifold) {
     gc->removeEntity(this);
 }
 

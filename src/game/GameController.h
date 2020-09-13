@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Input.h"
-#include "PhysicsMultithreader.h"
+#include "PhysicsController.h"
 
 class Entity;
 class WaterEntity;
@@ -23,12 +23,11 @@ class GameController {
     void addEntity(Entity *entity);
     void removeEntity(Entity *entity);
 
-    std::vector<PhysicsMultithreader::JobReturn> runCollisionChecks(Entity *entity);
-
-  private:
-    PlayerInput player_input;
+    PhysicsController physics;
     std::vector<Entity*> entities;
     std::vector<WaterEntity*> water_entities;
+
+    PlayerInput player_input;
 };
 
 #endif  /* GameController_h */

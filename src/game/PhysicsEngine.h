@@ -10,11 +10,11 @@ using std::cout;
 using std::endl;
 
 class Entity;
-struct Vector2D;
+struct CollisionManifold;
 
 namespace PhysicsEngine {
-    bool checkCollision(Entity *e1, Entity *e2, Vector2D *pv);
-    bool checkHitboxCollision(Entity *e1, Entity *e2, Vector2D *pv);
+    bool checkCollision(Entity *e1, Entity *e2, CollisionManifold *pv);
+    bool checkHitboxCollision(Entity *e1, Entity *e2, CollisionManifold *pv);
 };
 
 #endif /* PhysicsEngine_hpp */

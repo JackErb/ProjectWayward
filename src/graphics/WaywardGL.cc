@@ -43,7 +43,6 @@ vector<string> animationFileNames(vector<pair<string, int>> files) {
         int count = pair.second;
         for (int i = 0; i < count; i++) {
             string file_name = name + "_" + std::to_string(i) + ".png";
-            cout << file_name << endl;
             res.push_back(file_name);
         }
     }

@@ -5,19 +5,10 @@
 #include <ww_math.h>
 #include <vector>
 #include "PhysicsBitmask.h"
+#include "PhysicsTypes.h"
 
 struct PlayerInput;
 class GameController;
-
-typedef enum EntityDirection {
-    Dir_Left, Dir_Right
-} EntityDirection;
-
-struct CollisionBox {
-    std::vector<Polygon> polys;
-    std::vector<Circle> bounds;
-    EntityDirection dir;
-};
 
 class Entity {
   public:
@@ -27,8 +18,8 @@ class Entity {
     // Game processing
     virtual void processInput(const PlayerInput &input) {}
     virtual void tick() = 0;
-    virtual void handleCollision(Entity *e, const Vector2D &pv, int bitmask) {}
-    virtual void handleHit(Entity *e, const Vector2D &pv, int bitmask) {}
+    virtual void handleCollision(const CollisionManifold &manifold) {}
+    virtual void handleHit(const CollisionManifold &manifold) {}
 
     // Getters
     Vector2D position() const { return data.position; }
