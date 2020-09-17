@@ -21,7 +21,7 @@ Chunk::Chunk(int x, int y, int w, int h) {
     data.hurtbox_bitmask = Bitmask::None;
 
     data.hitbox_handle = -1;
-    data.hitbox_bitmask = Bitmask::None;
+    data.hitbox_bitmask = Bitmask::Explosive | Bitmask::Player;
     data.bitmask = Bitmask::Stage;
 }
 
@@ -34,7 +34,9 @@ void Chunk::handleCollision(const CollisionManifold &manifold) {
 }
 
 void Chunk::handleHit(const CollisionManifold &manifold) {
-    gc->removeEntity(this);
+    if (manifold.mask & (Bitmask::Explosive | Bitmask::Player)) {
+        gc->removeEntity(this);
+    }
 }
 
 void Chunk::updateSprite() {

@@ -48,7 +48,8 @@ bool PhysicsEngine::checkCollision(Entity *e1, Entity *e2, CollisionManifold *ma
                                                 hurtbox_e2.polys[j], pos_e2);
             if (collision.first) {
                 PolyData poly1 = hurtbox_e1.poly_data[i], poly2 = hurtbox_e2.poly_data[j];
-                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hurtbox, 0};
+                int mask = e1->data.hurtbox_bitmask & e2->data.bitmask;
+                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hurtbox, mask};
                 return true;
             }
         }
@@ -60,13 +61,23 @@ bool PhysicsEngine::checkHitboxCollision(Entity *e1, Entity *e2, CollisionManifo
     const CollisionBox &hitbox_e1 = e1->polygons_hit();
     const CollisionBox &hurtbox_e2 = e2->polygons_hurt();
 
+    Vector2D pos_e1 = e1->position();
+    Vector2D pos_e2 = e2->position();
+
     for (int i = 0; i < hitbox_e1.polys.size(); i++) {
         for (int j = 0; j < hurtbox_e2.polys.size(); j++) {
+            bool bounds_check = checkBoundsCollision(hitbox_e1.bounds[i], pos_e1,
+                                                     hurtbox_e2.bounds[j], pos_e2);
+            if (!bounds_check) {
+                continue;
+            }
+
             auto collision = checkPolyCollision(hitbox_e1.polys[i], e1->position(),
                                                 hurtbox_e2.polys[j], e2->position());
             if (collision.first) {
                 PolyData poly1 = hitbox_e1.poly_data[i], poly2 = hurtbox_e2.poly_data[j];
-                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hitbox, 0};
+                int mask = e1->data.bitmask & e2->data.hitbox_bitmask;
+                *manifold = {e1, e2, poly1, poly2, collision.second, CollisionManifold::Hitbox, mask};
                 return true;
             }
         }

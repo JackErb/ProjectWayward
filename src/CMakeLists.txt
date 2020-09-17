@@ -10,8 +10,9 @@ set(SOURCES app/main.cc app/resource_path.cc include/SDL.h include/stb_image.h)
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
 # Optimization
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3")
+set (OPTIMIZATION_FLAG "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPTIMIZATION_FLAG}")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OPTIMIZATION_FLAG}")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     message("Debug build.")

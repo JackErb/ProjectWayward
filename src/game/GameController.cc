@@ -5,6 +5,8 @@
 #include "PhysicsEngine.h"
 #include "PhysicsController.h"
 #include "WaterEntity.h"
+#include "CrushBlock.h"
+#include "ChunkController.h"
 
 #include <TextureLoader.h>
 #include <iostream>
@@ -12,7 +14,6 @@
 #include <StackAllocator.h>
 #include <WaywardGL.h>
 #include <vector>
-#include "../math/random.h"
 
 using std::cout;
 using std::cerr;
@@ -21,39 +22,28 @@ using std::vector;
 
 StackAllocator alloc(10000000);
 
-GameController::GameController() : physics(this) {
+const int map_w = 10;
+const int map_h = 10;
+const int chunk_w = 10;
+const int chunk_h = 10;
+const int tile_size = 900;
+
+MapDimensions map_dimensions = { map_w, map_h, chunk_w, chunk_h, tile_size };
+
+GameController::GameController() : physics(this), chunks(this, map_dimensions) {
+    physics.setChunkController(&chunks);
+    chunks.setPhysicsController(&physics);
+
     player_input.gc_index = 0;
     Player *player = alloc.allocate<Player>();
     player->data.position.y = FixedPoint::fromInt(4000);
     addEntity(player);
+    
+    chunks.generateMap(alloc);
 
-    int size = 750;
-    for (int x = 0; x < 40; x++) {
-        for (int y = 0; y < 40; y++) {
-            int chunkx = (x - 20) * size;
-            int chunky = (y - 10) * size;
-
-            if (chunkx <= size * 5 && chunkx >= size * -5
-             && chunky > 0 && chunky <= size * 6) {
-                continue;
-            }
-
-
-            void *ptr = alloc.raw_allocate<Chunk>();
-            Chunk *chunk = new(ptr) Chunk(chunkx, chunky, size, size);
-            addEntity(chunk);
-        }
-    }
-
-    /*for (int x = 0; x < 40; x++) {
-        for (int y = 0; y < 70; y++) {
-            int n = 800;
-            void *ptr = alloc.raw_allocate<Chunk>();
-            Chunk *chunk = new(ptr) Chunk((x - 7) * n - 1, -y * n - 1, n + 1, n + 1);
-            addEntity(chunk);
-        }
-    }*/
-
+    void *ptr = alloc.raw_allocate<CrushBlock>();
+    CrushBlock *crush = new(ptr) CrushBlock(4 * tile_size, 3 * tile_size, tile_size, tile_size);
+    addEntity(crush);
 }
 
 GameController::~GameController() {}
@@ -71,35 +61,35 @@ void GameController::pretick() {
 
 void GameController::tick() {
     if (!tick_) return;
+
     for (Entity *entity : entities) {
         entity->tick();
     }
 
-    physics.runCollisionChecks();
-
-    /*
     // TODO: Multithread this and move it to a better place
-    Vector2D pv;
+    CollisionManifold manifold;
     for (int i = 0; i < water_entities.size(); i++) {
         WaterEntity *e1 = water_entities[i];
         for (int j = i+1; j < water_entities.size(); j++) {
             WaterEntity *e2 = water_entities[j];
             // Run collision checks
-            if (PhysicsEngine::checkCollision(e1, e2, &pv)) {
+            if (PhysicsEngine::checkCollision(e1, e2, &manifold)) {
                 Vector2D swap = e1->data.velocity;
+                Vector2D pv = manifold.pv;
 
-                FixedPoint mult = FixedPoint::fromFloat(0.6);
+                FixedPoint mult = FixedPoint::fromFloat(0.9);
                 FixedPoint diff = FixedPoint::fromFloat(1.0) - mult;
                 e1->data.velocity = mult * e2->data.velocity + diff * swap;
                 e2->data.velocity = mult * swap + diff * e2->data.velocity;
                 e1->data.position += pv / FixedPoint::fromInt(2);
-                e2->data.position += -pv / FixedPoint::fromInt(2);
+                e2->data.position -= pv / FixedPoint::fromInt(2);
 
                 e1->collision_count++;
                 e2->collision_count++;
             }
         }
-    }*/
+    }
+    physics.runCollisionChecks();
 }
 
 void GameController::render() {
@@ -116,6 +106,10 @@ void GameController::addWaterEntity(WaterEntity *entity) {
 
 void GameController::addEntity(Entity *entity) {
     entity->gc = this;
+    entity->ID = entity_id;
+    entity_id += 1;
+
+    chunks.getChunk(0,0).entities.push_back(entity);
     entities.push_back(entity);
 }
 

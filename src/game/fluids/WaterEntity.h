@@ -9,7 +9,7 @@ class WaterEntity: public Entity {
     ~WaterEntity();
     
     void tick();
-    void handleCollision(Entity *entity, const Vector2D &pv, int bitmask);
+    void handleCollision(const CollisionManifold &manifold);
 
     void updateSprite();
     void removeSprite();

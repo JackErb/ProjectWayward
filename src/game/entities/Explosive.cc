@@ -3,6 +3,7 @@
 #include "ShapeBuffer.h"
 #include <vector>
 #include <ww_math.h>
+#include "GameController.h"
 
 using std::vector;
 
@@ -18,8 +19,8 @@ Explosive::Explosive(const Vector2D &pos) {
     addHitbox(poly_circle(0, 0, 3000));
     data.hitbox_handle = -1;
 
-    data.hurtbox_bitmask |= Bitmask::Stage;
-    data.hitbox_bitmask  |= Bitmask::Stage;
+    data.hurtbox_bitmask = Bitmask::Stage;
+    data.hitbox_bitmask  = Bitmask::None;
     data.bitmask = Bitmask::Explosive;
 }
 
@@ -43,6 +44,10 @@ void Explosive::handleCollision(const CollisionManifold &manifold) {
 
     data.position += pv;
     if (pv.x == 0 && pv.y > 0) data.velocity.y = 0;
+}
+
+void Explosive::handleHit(const CollisionManifold &manifold) {
+    gc->removeEntity(manifold.e2);   
 }
 
 void Explosive::updateSprite() {

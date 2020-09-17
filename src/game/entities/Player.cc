@@ -3,6 +3,7 @@
 #include <ww_math.h>
 #include <WaywardGL.h>
 #include "GroundedState.h"
+#include "AirborneState.h"
 #include "SpriteBuffer.h"
 #include <iostream>
 #include "GameController.h"
@@ -25,12 +26,12 @@ Player::Player() {
 
     addHitbox(poly_square(-900, 200, 600, 600));
     data.hitbox_handle = -1;
-    data.hitbox_bitmask |= Bitmask::Stage;
+    data.hitbox_bitmask = Bitmask::Stage;
 
-    data.hurtbox_bitmask |= Bitmask::Stage;
+    data.hurtbox_bitmask = Bitmask::Stage;
     data.bitmask = Bitmask::Player;
 
-    state = new GroundedState(this, Grounded_Neutral); 
+    state = new AirborneState(this, Airborne_Neutral);
 }
 
 void Player::processInput(const PlayerInput &input) {
@@ -74,6 +75,7 @@ void Player::handleCollision(const CollisionManifold &manifold) {
     if (pv.x == 0 && pv.y > 0 && data.velocity.y < 0) {
         data.velocity.y = 0;
         if (state->type() == State_Airborne) {
+            cout << "Landing lag" << endl;
             data.velocity.x = 0;
             GroundedState *landing_lag = new GroundedState(this, Grounded_Land);
             state->switchState(landing_lag);
@@ -89,7 +91,9 @@ void Player::handleCollision(const CollisionManifold &manifold) {
 }
 
 void Player::handleHit(const CollisionManifold &manifold) {
-
+    if (manifold.mask & Bitmask::Stage) {
+        manifold.e1->data.velocity.x = FixedPoint::fromFloat(-200.f);
+    }
 }
 
 void Player::switchState(PlayerState *new_state) {

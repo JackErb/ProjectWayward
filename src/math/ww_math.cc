@@ -84,6 +84,10 @@ float FixedPoint::toFloat() const {
     return (float)this->n / FP_MULT;
 }
 
+int FixedPoint::toInt() const {
+    return this->n / FP_MULT;
+}
+
 FixedPoint FixedPoint::fromFloat(float n) {
     return FixedPoint((int)(n * FP_MULT));
 }

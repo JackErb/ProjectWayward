@@ -27,16 +27,14 @@ WaterEntity::~WaterEntity() {
 }
 
 void WaterEntity::tick() {
-    //data.velocity.y = fp_sign(data.velocity.y) * fp_min(data.velocity.y, FixedPoint::fromInt(100));
     if (apply_gravity)
         data.velocity.y -= FixedPoint::fromFloat(4.f);
     data.position += data.velocity;
 
     data.frame++;
-
     if (data.frame % 30 == 0) {
         collision_count /= 30;
-        FixedPoint radius = FixedPoint::fromFloat(r + collision_count * 40.f);
+        FixedPoint radius = FixedPoint::fromFloat(r + collision_count * 10.f);
         hurtboxes[0].polys[0][1].x = radius;
         hurtboxes[0].bounds[0].radius = radius * FixedPoint::fromFloat(1.8f);
         collision_count = 0;
@@ -45,13 +43,16 @@ void WaterEntity::tick() {
     apply_gravity = true;
 }
 
-void WaterEntity::handleCollision(Entity *entity, const Vector2D &pv, int bitmask) {
-    if (bitmask & Bitmask::Stage) {
+void WaterEntity::handleCollision(const CollisionManifold &manifold) {
+    int mask = manifold.mask;
+    const Vector2D &pv = manifold.pv;
+    
+    if (mask & Bitmask::Stage) {
         data.position += pv;
         data.velocity = FixedPoint::fromFloat(-0.6) * data.velocity;
         if (pv.x == FixedPoint::ZERO) apply_gravity = false;
-    } else if (bitmask & Bitmask::Player) {
-        Vector2D vel = unit_vec(data.position - entity->data.position);
+    } else if (mask & Bitmask::Player) {
+        Vector2D vel = unit_vec(data.position - manifold.e2->data.position);
         data.velocity += unit_vec(vel) * FixedPoint::fromFloat(5);
     }
 }

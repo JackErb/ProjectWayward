@@ -1,6 +1,7 @@
 #include "PhysicsMultithreader.h"
 #include "PhysicsEngine.h"
 #include "PhysicsController.h"
+#include "ChunkController.h"
 #include "Entity.h"
 
 #include <thread>
@@ -12,6 +13,7 @@
 #include <algorithm>
 #include <map>
 #include <atomic>
+#include <utility>
 
 using std::thread;
 using std::vector;
@@ -25,11 +27,16 @@ using std::map;
 using std::unique_lock;
 using std::condition_variable;
 using std::atomic;
+using std::pair;
 
 static vector<thread> ThreadPool;
-
 static mutex JobMutex;
-static queue<Entity*> JobQueue;
+
+enum PhysicsJobType {
+    PhysicsJob_Partition, PhysicsJob_Collisions
+} JobType;
+
+static queue<pair<int, int>> JobQueue;
 static condition_variable JobCondition;
 
 static mutex BatchMutex;
@@ -39,6 +46,7 @@ static condition_variable BatchCondition;
 static mutex ReturnQueueMutex;
 static queue<CollisionManifold> ReturnQueue;
 
+ChunkController   *ChunkController;
 PhysicsController *PhysicsController;
 
 bool finished_batch = false;
@@ -47,38 +55,43 @@ bool terminate_pool = false;
 atomic<int> thread_execution_count;
 
 void blockForJob() {
-    const int jobs_len = 100;
-    int job_idx;
-    Entity *jobs[jobs_len];
     while (true) {
+        pair<int, int> chunk;
         {
             unique_lock<mutex> lock(JobMutex);
             JobCondition.wait(lock, []{ return !JobQueue.empty() || terminate_pool; });
             if (terminate_pool) return;
 
-            job_idx = 0;
-            while (!JobQueue.empty() && job_idx < jobs_len) {
-                jobs[job_idx] = JobQueue.front();
-                JobQueue.pop();
-                job_idx++;
-            }
+            chunk = JobQueue.front();
+            JobQueue.pop();
         }
         JobCondition.notify_one();
-        
-        for (int i = 0; i < job_idx; i++) {
-            Entity *entity = jobs[i];
-            vector<CollisionManifold> collisions = PhysicsController->runCollisionChecks(entity);
+
+        int x = chunk.first;
+        int y = chunk.second;
+
+        switch (JobType) {
+          /* PARTITIONING ENTITIES INTO CHUNKS */
+          case PhysicsJob_Partition:
+            ChunkController->updatePartitionForChunk(x, y);
+            break;
+
+          /* COLLISION CHECKS WITHIN CHUNKS */
+          case PhysicsJob_Collisions:
+            ChunkContainer &chunk = ChunkController->getChunk(x, y);
+            vector<CollisionManifold> collisions = PhysicsController->runCollisionChecks(chunk);
             if (collisions.size() != 0) {
                 unique_lock<mutex> lock(ReturnQueueMutex);
                 for (const CollisionManifold &ret : collisions) {
                     ReturnQueue.push(ret);
                 }
             }
+            break;
         }
 
         {
             unique_lock<mutex> lock(ReturnQueueMutex);
-            thread_execution_count -= job_idx;
+            thread_execution_count -= 1;
             if (thread_execution_count == 0) {
                 // Yield control back to the main thread; this batch is finished.
                 BatchLock.unlock();
@@ -110,26 +123,49 @@ void PhysicsMultithreader::shutdown() {
     }
 }
 
-map<Entity*, vector<CollisionManifold>> PhysicsMultithreader::run(vector<Entity*> entities, class PhysicsController *pc) {
+void execute_jobs() {
     BatchLock.lock();
-    PhysicsController = pc;
     {
         unique_lock<mutex> lock(JobMutex);
-        for (Entity *entity : entities) {
-            JobQueue.push(entity);
+
+        int width = ChunkController->width();
+        int height = ChunkController->height();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                JobQueue.push({x,y});
+            }
         }
-        thread_execution_count = entities.size();
+        thread_execution_count = width * height;
+        finished_batch = false;
     }
     JobCondition.notify_one();
 
-    unique_lock<mutex> batch_lock(BatchMutex);
-    BatchCondition.wait(batch_lock, []{ return finished_batch; });
+    // Wait for job to complete
+    unique_lock<mutex> lock(JobMutex);
+    BatchCondition.wait(lock, []{ return finished_batch; });
+}
+
+void PhysicsMultithreader::run_partitioning(class PhysicsController *pc, class ChunkController *cc) {
+    PhysicsController = pc;
+    ChunkController = cc;
+
+    JobType = PhysicsJob_Partition;
+    execute_jobs();
+}
+
+map<Entity*, vector<CollisionManifold>>
+      PhysicsMultithreader::run_collision_checks(class PhysicsController *pc, class ChunkController *cc) {
+    PhysicsController = pc;
+    ChunkController = cc;
+
+    // Check for collisions by chunk
+    JobType = PhysicsJob_Collisions;
+    execute_jobs();
 
     map<Entity*, vector<CollisionManifold>> results;
     while (ReturnQueue.size() != 0) {
         CollisionManifold ret = ReturnQueue.front();
         ReturnQueue.pop();
-
         results[ret.e1].push_back(ret);
     }
 

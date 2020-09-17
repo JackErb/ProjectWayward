@@ -8,11 +8,15 @@
 
 class Entity;
 class PhysicsController;
+class ChunkController;
 
 namespace PhysicsMultithreader {
 
 void init();
-std::map<Entity*, std::vector<CollisionManifold>> run(std::vector<Entity*> entities, PhysicsController *pc);
+
+void run_partitioning(PhysicsController *pc, ChunkController *cc);
+std::map<Entity*, std::vector<CollisionManifold>> run_collision_checks(PhysicsController *pc, ChunkController *cc);
+
 void shutdown();
 
 };

@@ -20,6 +20,7 @@ class Entity {
     virtual void tick() = 0;
     virtual void handleCollision(const CollisionManifold &manifold) {}
     virtual void handleHit(const CollisionManifold &manifold) {}
+    //virtual void onHit(const CollisionManifold &manifold) {}
 
     // Getters
     Vector2D position() const { return data.position; }
@@ -30,7 +31,6 @@ class Entity {
     unsigned int sprite_handle;
     virtual void updateSprite() = 0;
     virtual void removeSprite() = 0;
-
 
     void addHurtbox(const Polygon &hurtbox);
     void addHurtbox(const std::vector<Polygon> &hurtbox);
@@ -43,6 +43,8 @@ class Entity {
 
     GameController *gc;
 
+    unsigned int ID;
+
     // Game data
     struct GameData {
         Vector2D position;
@@ -53,11 +55,17 @@ class Entity {
         // Hurtboxes
         int hurtbox_bitmask = 0;
         int hurtbox_handle = -1;
+
         // Hitboxes
         int hitbox_bitmask = 0;
         int hitbox_handle = -1;
+        
         // The physics type of this entity
         Bitmask::Bitmask bitmask = Bitmask::None;
+
+        // Coordinates of chunk this entity is in
+        int chunk_x = -1;
+        int chunk_y = -1;
 
         unsigned int texture_handle;
     };

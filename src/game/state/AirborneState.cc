@@ -17,6 +17,8 @@ AirborneState::AirborneState(Player *player, AirborneAction action) {
     this->data.frame = 0;
     this->data.jumps = 100;
     this->data.fastfall = false;
+
+    WaywardGL::spriteBuffer()->setSpriteTexture(player->sprite_handle, 3);
 }
 
 void AirborneState::switchActionState(AirborneAction action) {
@@ -35,15 +37,14 @@ void AirborneState::pretick() {
 
 void AirborneState::tick() {
     const PlayerInput *input = player->input;
-    FixedPoint hyp = input->stick.hyp;
-
+    
     if (input->stick.inDir(Down)) {
         data.fastfall = true;
     }
 
     switch(data.action) {
       case Airborne_Neutral: {
-        if (hyp > StickState::DEADZONE) {
+        if (input->stick.hyp > StickState::DEADZONE) {
             FixedPoint accel_x = input->stick.x * attr.airAccel;
             player->data.velocity.x += accel_x;   
         }
@@ -73,7 +74,7 @@ void AirborneState::tick() {
 
     player->data.position += player->data.velocity;
     // Only apply friction if player is not vectoring 
-    if (hyp <= StickState::DEADZONE) player->data.velocity.x *= attr.airFriction;
+    if (input->stick.hyp <= StickState::DEADZONE) player->data.velocity.x *= attr.airFriction;
 
     data.frame += 1;
 }

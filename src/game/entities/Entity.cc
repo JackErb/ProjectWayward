@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include <WaywardGL.h>
 #include "SpriteBuffer.h"
+#include "GameController.h"
 
 using std::vector;
 using std::iterator;

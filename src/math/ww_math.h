@@ -14,6 +14,7 @@ struct FixedPoint {
 
     long long n;
     float toFloat() const;
+    int toInt() const;
 
     /* Static members */
     static FixedPoint ZERO;

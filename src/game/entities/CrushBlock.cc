@@ -1,4 +1,5 @@
 #include "CrushBlock.h"
+#include "PhysicsTypes.h"
 #include <WaywardGL.h>
 #include <SpriteBuffer.h>
 
@@ -8,11 +9,13 @@ CrushBlock::CrushBlock(int x, int y, int w, int h) {
     int texture = 4;
     sprite_handle = WaywardGL::tileBuffer()->addSprite(x, y, w, h, texture);
    
-    addHurtbox(poly_square(0,0,w,h));
-    data.hurtbox_handle = 0;
-    data.hurtbox_bitmask = Bitmask::Chunk;
+    addHurtbox({poly_square(0,0,w,h)});
+    addHitbox({poly_square(w*-3,0,w*-6,h)});
 
-    data.hitbox_handle = -1;
+    data.hurtbox_handle = 0;
+    data.hurtbox_bitmask = Bitmask::Stage;
+
+    data.hitbox_handle = 0;
     data.hitbox_bitmask = Bitmask::None;
     data.bitmask = Bitmask::Stage;
 }
@@ -22,12 +25,18 @@ CrushBlock::~CrushBlock() {
 }
 
 void CrushBlock::tick() {
-
+    data.position += data.velocity;
 }
 
-void CrushBlock::handleCollision(Entity *entity, const Vector2D &pv, int bitmask) {
-    data.velocity = Vector2D();
-    data.position += pv;
+void CrushBlock::handleCollision(const CollisionManifold &manifold) {
+    if (manifold.mask & Bitmask::Stage) {
+        data.velocity = Vector2D();
+        data.position += manifold.pv;
+    }
+}
+
+void CrushBlock::handleHit(const CollisionManifold &manifold) {
+
 }
 
 void CrushBlock::updateSprite() {

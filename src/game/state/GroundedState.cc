@@ -46,7 +46,7 @@ void GroundedState::pretick() {
         break;
       case Grounded_Jumpsquat:
         if (input->isReleased(Button_Jump)) data.shorthop = true;
-        if (data.frame == 8) {
+        if (data.frame == 5) {
             int dir = 0;
             if (input->stick.inDir(Left)) dir = -1;
             if (input->stick.inDir(Right)) dir = 1;

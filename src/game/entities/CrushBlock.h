@@ -9,7 +9,8 @@ class CrushBlock: public Entity {
     ~CrushBlock();
 
     void tick();
-    void handleCollision(Entity *entity, const Vector2D &pv, int bitmask);
+    void handleCollision(const CollisionManifold &manifold);
+    void handleHit(const CollisionManifold &manifold);
 
     void updateSprite();
     void removeSprite();
