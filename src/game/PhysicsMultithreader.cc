@@ -49,18 +49,19 @@ static queue<CollisionManifold> ReturnQueue;
 ChunkController   *ChunkController;
 PhysicsController *PhysicsController;
 
-bool finished_batch = false;
-bool terminate_pool = false;
+bool FinishedBatch = false;
+bool TerminatePool = false;
 
-atomic<int> thread_execution_count;
+static mutex ThreadExecutionMutex;
+int ThreadExecutionCount;
 
 void blockForJob() {
     while (true) {
         pair<int, int> chunk;
         {
             unique_lock<mutex> lock(JobMutex);
-            JobCondition.wait(lock, []{ return !JobQueue.empty() || terminate_pool; });
-            if (terminate_pool) return;
+            JobCondition.wait(lock, []{ return !JobQueue.empty() || TerminatePool; });
+            if (TerminatePool) return;
 
             chunk = JobQueue.front();
             JobQueue.pop();
@@ -90,12 +91,12 @@ void blockForJob() {
         }
 
         {
-            unique_lock<mutex> lock(ReturnQueueMutex);
-            thread_execution_count -= 1;
-            if (thread_execution_count == 0) {
+            unique_lock<mutex> lock(ThreadExecutionMutex);
+            ThreadExecutionCount -= 1;
+            if (ThreadExecutionCount == 0) {
                 // Yield control back to the main thread; this batch is finished.
                 BatchLock.unlock();
-                finished_batch = true;
+                FinishedBatch = true;
                 BatchCondition.notify_all();
             }
         }
@@ -116,7 +117,7 @@ void PhysicsMultithreader::init() {
 }
 
 void PhysicsMultithreader::shutdown() {
-    terminate_pool = true;
+    TerminatePool = true;
     JobCondition.notify_all();
     for (int i = 0; i < NumThreads; i++) {
         ThreadPool[i].join();
@@ -135,14 +136,14 @@ void execute_jobs() {
                 JobQueue.push({x,y});
             }
         }
-        thread_execution_count = width * height;
-        finished_batch = false;
+        ThreadExecutionCount = width * height;
+        FinishedBatch = false;
     }
     JobCondition.notify_one();
 
     // Wait for job to complete
     unique_lock<mutex> lock(JobMutex);
-    BatchCondition.wait(lock, []{ return finished_batch; });
+    BatchCondition.wait(lock, []{ return FinishedBatch; });
 }
 
 void PhysicsMultithreader::run_partitioning(class PhysicsController *pc, class ChunkController *cc) {
