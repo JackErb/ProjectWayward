@@ -58,6 +58,7 @@ int main(int, char**) {
 
         controller.pretick();
         controller.tick();
+
         auto now = Timer::now();
         fc_game += duration_cast<microseconds>(now-start).count();
         controller.render();

@@ -75,7 +75,6 @@ void Player::handleCollision(const CollisionManifold &manifold) {
     if (pv.x == 0 && pv.y > 0 && data.velocity.y < 0) {
         data.velocity.y = 0;
         if (state->type() == State_Airborne) {
-            cout << "Landing lag" << endl;
             data.velocity.x = 0;
             GroundedState *landing_lag = new GroundedState(this, Grounded_Land);
             state->switchState(landing_lag);

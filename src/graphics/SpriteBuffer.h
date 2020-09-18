@@ -33,7 +33,6 @@ typedef struct SpriteBuffer {
     void setSpriteDir(unsigned int sprite_handle, int dir);
     void removeSprite(unsigned int sprite_handle);
 
-
     std::unordered_map<unsigned int, int> handle_to_index;
 } SpriteBuffer;
 

@@ -9,6 +9,7 @@
 using std::vector;
 using std::map;
 using std::set;
+using std::list;
 
 PhysicsController::PhysicsController(GameController *gc) {
     game_controller = gc;
@@ -24,37 +25,52 @@ void PhysicsController::setChunkController(ChunkController *cc) {
     chunk_controller = cc;
 }
 
+template <class Iter>
+void runHurtboxChecks(Entity *e1, const Iter &entities, vector<CollisionManifold> &collisions) {
+    CollisionManifold manifold;
+    for (Entity *e2 : entities) {
+        if (e1 == e2) continue;
+
+        int mask = e1->data.hurtbox_bitmask & e2->data.bitmask;
+        if (mask) {
+            bool collision = PhysicsEngine::checkCollision(e1, e2, &manifold);
+            if (!collision) continue;
+
+            collisions.push_back(manifold);
+        }
+    }
+}
+
+template <class Iter>
+void runHitboxChecks(Entity *e1, const Iter &entities, vector<CollisionManifold> &collisions) {
+    CollisionManifold manifold;
+    for (Entity *e2 : entities) {
+        if (e1 == e2) continue;
+
+        int mask = e1->data.bitmask && e2->data.hitbox_bitmask;
+        if (mask) {
+            bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &manifold);
+            if (!collision) continue;
+
+            collisions.push_back(manifold);
+        }
+    }
+}
+
 void runCollisionChecksOnEntity(Entity *e1, const ChunkContainer &chunk, vector<CollisionManifold> &collisions) {
     CollisionManifold manifold;
 
     /* Hurtbox collisions */
-    int hurtbox_mask = e1->data.hurtbox_bitmask;
-    if (hurtbox_mask != 0 && e1->data.hurtbox_handle != -1) {
-        for (Entity *e2 : chunk.entities) {
-            if (e1 == e2) continue;
-
-            int mask = hurtbox_mask & e2->data.bitmask;
-            if (mask) {
-                bool collision = PhysicsEngine::checkCollision(e1, e2, &manifold);
-                if (!collision) continue;
-
-                collisions.push_back(manifold);
-            }
-        }
+    if (e1->data.hurtbox_bitmask != 0 && e1->data.hurtbox_handle != -1) {
+        runHurtboxChecks(e1, chunk.entities, collisions);
+        runHurtboxChecks(e1, chunk.static_entities, collisions);
+        runHurtboxChecks(e1, chunk.other_entities, collisions);
     }
 
     if (e1->data.hitbox_handle != -1) {
-        for (Entity *e2 : chunk.entities) {
-            if (e1 == e2) continue;
-
-            int mask = e1->data.bitmask && e2->data.hitbox_bitmask;
-            if (mask) {
-                bool collision = PhysicsEngine::checkHitboxCollision(e1, e2, &manifold);
-                if (!collision) continue;
-
-                collisions.push_back(manifold);
-            }
-        }
+        runHitboxChecks(e1, chunk.entities, collisions);
+        runHitboxChecks(e1, chunk.static_entities, collisions);
+        runHitboxChecks(e1, chunk.other_entities, collisions);
     }
 }
 
@@ -63,10 +79,17 @@ vector<CollisionManifold> PhysicsController::runCollisionChecks(const ChunkConta
     for (Entity *entity : chunk.entities) {
         runCollisionChecksOnEntity(entity, chunk, collisions);
     }
+
+    for (Entity *entity : chunk.other_entities) {
+        runCollisionChecksOnEntity(entity, chunk, collisions);
+    }
+
     return collisions;
 }
 
 void PhysicsController::runCollisionChecks() {
+    chunk_controller->resetFrame();
+
     // Partition entities into chunks. The returned vector contains entities that
     // have moved chunks and need to be updated.
     PhysicsMultithreader::run_partitioning(this, chunk_controller);

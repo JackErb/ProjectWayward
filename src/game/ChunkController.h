@@ -21,9 +21,13 @@ typedef struct MapDimensions {
 typedef struct ChunkContainer {
     std::mutex chunk_mutex;
 
+    Circle boundary;
     Vector2D position;
+
     std::list<Entity*> entities;
     std::list<Entity*> static_entities;
+
+    std::set<Entity*> other_entities;
 } ChunkContainer;
 
 class ChunkController {
@@ -32,7 +36,9 @@ class ChunkController {
     ~ChunkController();
 
     void generateMap(StackAllocator &alloc);
-    
+
+    void resetFrame();
+
     void updatePartitionForChunk(int x, int y);
     void setPhysicsController(PhysicsController *pc);
 
@@ -44,14 +50,16 @@ class ChunkController {
     int height() { return dimensions.map_height; }
 
   private:
+    void checkAdjacentChunks(Entity *entity, int x, int y);
     void updatePartitionForEntity(Entity *entity);
 
     GameController *game_controller;
     MapDimensions dimensions;
     PhysicsController *physics_controller;
-    
+
     Vector2D chunk_size;
     ChunkContainer **chunks;
+    Vector2D origin;
 };
 
 #endif

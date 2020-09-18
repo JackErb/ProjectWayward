@@ -22,16 +22,22 @@ class GameController {
     void render();
 
     StackAllocator *allocator();
+
     void addWaterEntity(WaterEntity *entity);
     void addEntity(Entity *entity);
+    void addStaticEntity(Entity *entity);
     void removeEntity(Entity *entity);
 
+  private:
     PhysicsController physics;
     ChunkController chunks;
 
     unsigned int entity_id = 0;
     std::vector<Entity*> entities;
+    std::vector<Entity*> static_entities;
     std::vector<WaterEntity*> water_entities;
+
+    bool chunk_reindex = false;
 
     PlayerInput player_input;
 };

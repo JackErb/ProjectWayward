@@ -25,7 +25,6 @@ class PhysicsController {
     void notifyPriorityManifolds(const std::map<Entity*, std::vector<CollisionManifold>> &manifolds);
     void notifyRemainingManifolds(const std::map<Entity*, std::vector<CollisionManifold>> &manifolds);
 
-  private:
     std::map<Entity*, std::vector<CollisionManifold>> manifolds;
     GameController *game_controller;
     ChunkController *chunk_controller;

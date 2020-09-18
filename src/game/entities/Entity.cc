@@ -23,7 +23,10 @@ void flipPolys(CollisionBox &box) {
     }
 }
 
+static CollisionBox Empty;
+
 const CollisionBox& Entity::polygons_hurt() {
+    if (data.hurtbox_handle == -1) return Empty;
     CollisionBox &box = hurtboxes[data.hurtbox_handle];
     if (data.dir != box.dir) {
         flipPolys(box);
@@ -33,6 +36,7 @@ const CollisionBox& Entity::polygons_hurt() {
 }
 
 const CollisionBox& Entity::polygons_hit() {
+    if (data.hitbox_handle == -1) return Empty;
     CollisionBox &box = hitboxes[data.hitbox_handle];
     if (data.dir != box.dir) {
         flipPolys(box);

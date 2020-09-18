@@ -20,12 +20,12 @@ using std::cerr;
 using std::endl;
 using std::vector;
 
-StackAllocator alloc(10000000);
+StackAllocator alloc(1000000000);
 
-const int map_w = 10;
-const int map_h = 10;
-const int chunk_w = 10;
-const int chunk_h = 10;
+const int map_w = 20;
+const int map_h = 20;
+const int chunk_w = 20;
+const int chunk_h = 20;
 const int tile_size = 900;
 
 MapDimensions map_dimensions = { map_w, map_h, chunk_w, chunk_h, tile_size };
@@ -42,8 +42,8 @@ GameController::GameController() : physics(this), chunks(this, map_dimensions) {
     chunks.generateMap(alloc);
 
     void *ptr = alloc.raw_allocate<CrushBlock>();
-    CrushBlock *crush = new(ptr) CrushBlock(4 * tile_size, 3 * tile_size, tile_size, tile_size);
-    addEntity(crush);
+    //CrushBlock *crush = new(ptr) CrushBlock(4 * tile_size, 3 * tile_size, tile_size, tile_size);
+    //addEntity(crush);
 }
 
 GameController::~GameController() {}
@@ -89,6 +89,12 @@ void GameController::tick() {
             }
         }
     }
+
+    if (chunk_reindex) {
+
+        chunk_reindex = false;
+    }
+
     physics.runCollisionChecks();
 }
 
@@ -113,14 +119,33 @@ void GameController::addEntity(Entity *entity) {
     entities.push_back(entity);
 }
 
+void GameController::addStaticEntity(Entity *entity) {
+    entity->gc = this;
+    entity->ID = entity_id;
+    entity_id += 1;
+
+    static_entities.push_back(entity);
+}
+
+
 void GameController::removeEntity(Entity *entity) {
     entity->removeSprite();
+    entity->data.hurtbox_handle = -1;
+    entity->data.hitbox_handle = -1;
 
     vector<Entity*> updated_entities;
     for (Entity *e : entities) {
         if (e != entity) updated_entities.push_back(e);
     }
     entities = updated_entities;
+
+    updated_entities.clear();
+    for (Entity *e : static_entities) {
+        if (e != entity) updated_entities.push_back(e);
+    }
+    static_entities = updated_entities;
+    
+    chunk_reindex = true;
 }
 
 StackAllocator *GameController::allocator() {
