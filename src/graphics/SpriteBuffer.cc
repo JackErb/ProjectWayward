@@ -11,13 +11,14 @@
 using std::vector;
 using std::string;
 
-void SpriteBuffer::init(int max, std::string id, vector<string> texture_files) {
+void SpriteBuffer::init(int max, std::string id, unsigned int texture_handle, bool is_texture_array) {
     this->id = id;
     MaxSprites = max;
     vertices = new float[MaxSprites * VerticesLen];
     textures = new int[MaxSprites * TexturesLen];
 
-    TextureArray = WaywardGL::loadTextures(texture_files);
+    TextureHandle = texture_handle;
+    TextureType = is_texture_array ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D;
 
     // Generate buffers
     glGenVertexArrays(1, &VAO);
@@ -77,6 +78,12 @@ void SpriteBuffer::setSpritePos(unsigned int sprite_handle, float x, float y) {
     vertices[vert_index+1] = y;
 }
 
+void SpriteBuffer::setSpriteSize(unsigned int sprite_handle, float x, float y) {
+    int vert_index = handle_to_index[sprite_handle] * VerticesLen;
+    vertices[vert_index+2]   = x;
+    vertices[vert_index+3] = y;
+}
+
 void SpriteBuffer::setSpriteTexture(unsigned int sprite_handle, int t) {
     int text_index = handle_to_index[sprite_handle] * TexturesLen;
     textures[text_index] = t;
@@ -99,7 +106,7 @@ void SpriteBuffer::updateBuffer() {
 void SpriteBuffer::render(WaywardGL::DisplayData d) {
     updateBuffer();
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, TextureArray);
+    glBindTexture(TextureType, TextureHandle);
 
     glBindVertexArray(VAO);
     glUseProgram(ShaderProg);
@@ -114,7 +121,6 @@ void SpriteBuffer::render(WaywardGL::DisplayData d) {
 
 void SpriteBuffer::removeSprite(unsigned int sprite_handle) {
     // TODO: Update this to properly remove the sprite
-   // index -= 1;
     int sprite_index = handle_to_index[sprite_handle];
 
     float *vert_index_ptr = &vertices[sprite_index * VerticesLen];
@@ -127,13 +133,6 @@ void SpriteBuffer::removeSprite(unsigned int sprite_handle) {
     int *text_index_ptr = &textures[sprite_index * TexturesLen];
     int *text_end_ptr = &textures[index * TexturesLen];
     for (int i = 0; i < TexturesLen; i++) {
-        text_index_ptr[i] = -1;//text_end_ptr[i];
-    }
-
-    // Update handle to index mapping
-    for (auto it = handle_to_index.begin(); it != handle_to_index.end(); it++) {
-        if (it->second == index) {
-            //handle_to_index[it->first] = sprite_handle;
-        }
+        text_index_ptr[i] = 0;//text_end_ptr[i];
     }
 }

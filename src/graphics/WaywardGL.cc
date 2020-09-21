@@ -2,7 +2,7 @@
 
 #include "resource_path.h"
 #include "TextureLoader.h"
-#include "Shader.h"
+#include "ShaderLoader.h"
 #include "SpriteBuffer.h"
 #include "ShapeBuffer.h"
 #include "MetaballBuffer.h"
@@ -57,13 +57,16 @@ void WaywardGL::init(int width, int height) {
     Display.WindowHeight = height;
     Display.WindowScale = 0.15;
 
-    PlayerSpriteBuffer.init(MaxSprites, "PlayerSpriteBuffer", 
-                            animationFileNames({{"jump", 4}, {"land", 4}, {"dash", 10}}));
+    unsigned int player_handle = loadTextures(
+        animationFileNames(
+              {{"jump", 4}, {"land", 4}, {"dash", 10}}
+        ));
+    PlayerSpriteBuffer.init(MaxSprites, "PlayerSpriteBuffer", player_handle, true);
     PlayerSpriteBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "basic.frag"));
 
-    TileSpriteBuffer.init(MaxTiles, "TileSpriteBuffer",
-                          {"tile_grass.png", "tile_grass2.png",
-                           "tile_sand.png", "tile_dirt.png"});
+    unsigned int tile_handle = loadTextures({"tile_grass.png", "tile_grass2.png",
+                                             "tile_sand.png", "tile_dirt.png"});
+    TileSpriteBuffer.init(MaxTiles, "TileSpriteBuffer", tile_handle, true);
     TileSpriteBuffer.setShader(loadShaderProgram("tile.vert", "basic.geom", "basic.frag"));
 
     ShapeDisplayBuffer.init(MaxShapes);

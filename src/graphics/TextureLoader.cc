@@ -14,7 +14,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-unsigned int WaywardGL::loadTexture(string file_name) {
+unsigned int loadTexture(string file_name) {
     unsigned int texture_id;
     glGenTextures(1, &texture_id);
     glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -38,7 +38,7 @@ unsigned int WaywardGL::loadTexture(string file_name) {
     return texture_id;
 }
 
-unsigned int WaywardGL::loadTextures(vector<string> file_names) {
+unsigned int loadTextures(vector<string> file_names) {
     unsigned texture_id;
     glGenTextures(1, &texture_id);
     glBindTexture(GL_TEXTURE_2D_ARRAY, texture_id);

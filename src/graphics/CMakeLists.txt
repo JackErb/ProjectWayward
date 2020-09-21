@@ -1,5 +1,5 @@
 set(SOURCES TextureLoader.cc SpriteBuffer.h SpriteBuffer.cc
-            WaywardGL.h WaywardGL.cc Shader.h Shader.cc ResourceManager.h
+            WaywardGL.h WaywardGL.cc ShaderLoader.h ShaderLoader.cc ResourceManager.h
             ResourceManager.cc ShapeBuffer.h ShapeBuffer.cc MetaballBuffer.h
             MetaballBuffer.cc)
 
