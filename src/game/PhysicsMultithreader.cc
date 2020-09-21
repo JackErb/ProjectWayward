@@ -61,7 +61,10 @@ void blockForJob() {
         {
             unique_lock<mutex> lock(JobMutex);
             JobCondition.wait(lock, []{ return !JobQueue.empty() || TerminatePool; });
-            if (TerminatePool) return;
+            if (TerminatePool) {
+                JobCondition.notify_one();
+                return;
+            }
 
             chunk = JobQueue.front();
             JobQueue.pop();
@@ -117,7 +120,11 @@ void PhysicsMultithreader::init() {
 }
 
 void PhysicsMultithreader::shutdown() {
-    TerminatePool = true;
+    {
+        unique_lock<mutex> lock(ThreadExecutionMutex);
+        TerminatePool = true;
+    }
+
     JobCondition.notify_all();
     for (int i = 0; i < NumThreads; i++) {
         ThreadPool[i].join();
@@ -127,7 +134,8 @@ void PhysicsMultithreader::shutdown() {
 void execute_jobs() {
     BatchLock.lock();
     {
-        unique_lock<mutex> lock(JobMutex);
+        unique_lock<mutex> job_lock(JobMutex);
+        unique_lock<mutex> thread_lock(ThreadExecutionMutex);
 
         int width = ChunkController->width();
         int height = ChunkController->height();
