@@ -44,6 +44,7 @@ class Entity {
     GameController *gc;
 
     unsigned int ID;
+    bool is_static;
 
     // Game data
     struct GameData {

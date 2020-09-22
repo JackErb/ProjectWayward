@@ -13,6 +13,7 @@ using std::cerr;
 using std::endl;
 using std::unique_lock;
 using std::mutex;
+using std::pair;
 
 ChunkController::ChunkController(GameController *gc, const MapDimensions &dim) : game_controller(gc), dimensions(dim) {
     // Initialize chunk containers
@@ -119,6 +120,11 @@ void ChunkController::checkAdjacentChunks(Entity *entity, int x, int y) {
     }
 }
 
+pair<int, int> ChunkController::getChunk(Entity *entity) {
+    Vector2D position = (entity->data.position - origin) / chunk_size;
+    return { position.x.toInt(), position.y.toInt() };
+}
+
 void ChunkController::updatePartitionForChunk(int x, int y) {
     if (!inMap(dimensions, x, y)) return;
 
@@ -127,8 +133,9 @@ void ChunkController::updatePartitionForChunk(int x, int y) {
     while (it != chunk.entities.end()) {
         Entity *entity = *it;
 
-        Vector2D position = (entity->data.position - origin) / chunk_size;
-        int new_x = position.x.toInt(), new_y = position.y.toInt();
+        pair<int, int> new_chunk = getChunk(entity); 
+        int new_x = new_chunk.first;
+        int new_y = new_chunk.second;
 
         bool has_moved_chunks = x != new_x || y != new_y;
         if (has_moved_chunks) {
@@ -155,5 +162,34 @@ void ChunkController::updatePartitionForChunk(int x, int y) {
         }
 
         checkAdjacentChunks(entity, new_x, new_y);
+    }
+}
+
+void ChunkController::clearChunks(bool clear_dynamic, bool clear_static) {
+    for (int x = 0; x < dimensions.map_width; x++) {
+        for (int y = 0; y < dimensions.map_height; y++) {
+            ChunkContainer &chunk = chunks[x][y];
+
+            if (clear_dynamic) {
+                chunk.entities.clear();
+                chunk.other_entities.clear();
+            }
+
+            if (clear_static) {
+                chunk.static_entities.clear();
+            }
+        }
+    }
+}
+
+void ChunkController::indexEntity(Entity *entity) {
+    pair<int, int> chunk = getChunk(entity);
+    int chunk_x = chunk.first;
+    int chunk_y = chunk.second;
+    if (inMap(dimensions, chunk_x, chunk_y)) {
+        ChunkContainer &chunk = chunks[chunk_x][chunk_y];
+
+        if (entity->is_static) chunk.static_entities.push_back(entity);
+        else                   chunk.entities.push_back(entity);
     }
 }

@@ -50,6 +50,10 @@ void SpriteBuffer::setShader(unsigned int shader_handle) {
     ShaderProg = shader_handle;
 }
 
+void SpriteBuffer::setTextureHandle(unsigned int texture_handle) {
+    TextureHandle = texture_handle;
+}
+
 unsigned int SpriteBuffer::addSprite(float x, float y, float w, float h, int t) {
     if (index >= MaxSprites) {
         std::cerr << "Ran out of sprite space : " << id << std::endl;

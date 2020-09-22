@@ -7,6 +7,7 @@
 #include "WaterEntity.h"
 #include "CrushBlock.h"
 #include "ChunkController.h"
+#include "FlowerGenerator.h"
 
 #include <TextureLoader.h>
 #include <iostream>
@@ -22,24 +23,29 @@ using std::vector;
 
 StackAllocator alloc(1000000000);
 
-const int map_w = 20;
-const int map_h = 20;
+const int map_w = 5;
+const int map_h = 5;
 const int chunk_w = 20;
 const int chunk_h = 20;
 const int tile_size = 900;
 
 MapDimensions map_dimensions = { map_w, map_h, chunk_w, chunk_h, tile_size };
 
-GameController::GameController() : physics(this), chunks(this, map_dimensions) {
-    physics.setChunkController(&chunks);
-    chunks.setPhysicsController(&physics);
+Flower flower;
+
+GameController::GameController() : physics_controller(this), chunk_controller(this, map_dimensions) {
+    physics_controller.setChunkController(&chunk_controller);
+    chunk_controller.setPhysicsController(&physics_controller);
 
     player_input.gc_index = 0;
     Player *player = alloc.allocate<Player>();
     player->data.position.y = FixedPoint::fromInt(4000);
+    players.push_back(player);
     addEntity(player);
     
-    chunks.generateMap(alloc);
+    chunk_controller.generateMap(alloc);
+
+    flower = generateFlower();
 
     void *ptr = alloc.raw_allocate<CrushBlock>();
     //CrushBlock *crush = new(ptr) CrushBlock(4 * tile_size, 3 * tile_size, tile_size, tile_size);
@@ -56,7 +62,7 @@ void GameController::pretick() {
     tick_ = player_input.isPressed(Button_Other, false) || !fbf_mode;
 
     if (!tick_) return;
-    entities[0]->processInput(player_input);
+    players[0]->processInput(player_input);
 }
 
 void GameController::tick() {
@@ -90,18 +96,33 @@ void GameController::tick() {
         }
     }
 
-    if (chunk_reindex) {
+    if (reindex_entities || reindex_static_entities) {
+        /*chunk_controller.clearChunks(reindex_entities, reindex_static_entities);
 
-        chunk_reindex = false;
+        if (reindex_entities) {
+            for (Entity *entity : entities) {
+                chunk_controller.indexEntity(entity);
+            }
+        }
+
+        if (reindex_static_entities) {
+            for (Entity *entity: static_entities) {
+                chunk_controller.indexEntity(entity);
+            }
+        }*/
+        reindex_entities = reindex_static_entities = false;
     }
 
-    physics.runCollisionChecks();
+    physics_controller.runCollisionChecks();
 }
 
 void GameController::render() {
     for (Entity *entity : entities) {
         entity->updateSprite();
     }
+
+    WaywardGL::renderSprite(2000, 1000, flower.width, flower.height, flower.texture_handle);
+    WaywardGL::render();
 }
 
 void GameController::addWaterEntity(WaterEntity *entity) {
@@ -115,7 +136,8 @@ void GameController::addEntity(Entity *entity) {
     entity->ID = entity_id;
     entity_id += 1;
 
-    chunks.getChunk(0,0).entities.push_back(entity);
+    entity->is_static = false;
+    chunk_controller.indexEntity(entity);
     entities.push_back(entity);
 }
 
@@ -124,6 +146,8 @@ void GameController::addStaticEntity(Entity *entity) {
     entity->ID = entity_id;
     entity_id += 1;
 
+    entity->is_static = true;
+    chunk_controller.indexEntity(entity);
     static_entities.push_back(entity);
 }
 
@@ -134,18 +158,13 @@ void GameController::removeEntity(Entity *entity) {
     entity->data.hitbox_handle = -1;
 
     vector<Entity*> updated_entities;
-    for (Entity *e : entities) {
-        if (e != entity) updated_entities.push_back(e);
+    if (entity->is_static) {
+        static_entities = updated_entities;
+        reindex_static_entities = true;
+    } else {
+        entities = updated_entities;
+        reindex_entities = true;
     }
-    entities = updated_entities;
-
-    updated_entities.clear();
-    for (Entity *e : static_entities) {
-        if (e != entity) updated_entities.push_back(e);
-    }
-    static_entities = updated_entities;
-    
-    chunk_reindex = true;
 }
 
 StackAllocator *GameController::allocator() {

@@ -5,6 +5,7 @@
 #include <set>
 #include <list>
 #include <mutex>
+#include <utility>
 
 class GameController;
 class PhysicsController;
@@ -38,7 +39,9 @@ class ChunkController {
     void generateMap(StackAllocator &alloc);
 
     void resetFrame();
+    void clearChunks(bool clear_dynamic, bool clear_static);
 
+    void indexEntity(Entity *entity);
     void updatePartitionForChunk(int x, int y);
     void setPhysicsController(PhysicsController *pc);
 
@@ -52,6 +55,7 @@ class ChunkController {
   private:
     void checkAdjacentChunks(Entity *entity, int x, int y);
     void updatePartitionForEntity(Entity *entity);
+    std::pair<int, int> getChunk(Entity *entity);
 
     GameController *game_controller;
     MapDimensions dimensions;

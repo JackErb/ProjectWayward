@@ -29,15 +29,18 @@ class GameController {
     void removeEntity(Entity *entity);
 
   private:
-    PhysicsController physics;
-    ChunkController chunks;
+    PhysicsController physics_controller;
+    ChunkController chunk_controller;
 
     unsigned int entity_id = 0;
+    std::vector<Entity*> players;
+
     std::vector<Entity*> entities;
     std::vector<Entity*> static_entities;
     std::vector<WaterEntity*> water_entities;
 
-    bool chunk_reindex = false;
+    bool reindex_entities = false;
+    bool reindex_static_entities = false;
 
     PlayerInput player_input;
 };

@@ -22,6 +22,8 @@ void init(int width, int height);
 void render();
 void deinit();
 
+void renderSprite(float x, float y, float w, float h, unsigned int texture_handle);
+
 SpriteBuffer   *spriteBuffer();
 SpriteBuffer   *tileBuffer();
 ShapeBuffer    *shapeBuffer();

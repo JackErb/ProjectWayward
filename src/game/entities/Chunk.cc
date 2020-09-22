@@ -46,6 +46,7 @@ void Chunk::updateSprite() {
 }
 
 void Chunk::removeSprite() {
-    WaywardGL::tileBuffer()->removeSprite(sprite_handle);
-    sprite_handle = -1;
+    WaywardGL::tileBuffer()->setSpriteSize(sprite_handle, 0, 0);
+    //WaywardGL::tileBuffer()->removeSprite(sprite_handle);
+    //sprite_handle = -1;
 }

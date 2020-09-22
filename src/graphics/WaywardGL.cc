@@ -36,6 +36,8 @@ static ShapeBuffer ShapeDisplayBuffer;
 static const int MaxWaterMetaballs = 400;
 static MetaballBuffer WaterBuffer;
 
+static SpriteBuffer GenericSpriteBuffer;
+
 vector<string> animationFileNames(vector<pair<string, int>> files) {
     vector<string> res;
     for (auto pair : files) {
@@ -55,14 +57,16 @@ void WaywardGL::init(int width, int height) {
 
     Display.WindowWidth = width;
     Display.WindowHeight = height;
-    Display.WindowScale = 0.15;
+    Display.WindowScale = 0.3;
+
+    unsigned int basicShaderProg = loadShaderProgram("basic.vert", "basic.geom", "basic.frag");
 
     unsigned int player_handle = loadTextures(
         animationFileNames(
               {{"jump", 4}, {"land", 4}, {"dash", 10}}
         ));
     PlayerSpriteBuffer.init(MaxSprites, "PlayerSpriteBuffer", player_handle, true);
-    PlayerSpriteBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "basic.frag"));
+    PlayerSpriteBuffer.setShader(basicShaderProg);
 
     unsigned int tile_handle = loadTextures({"tile_grass.png", "tile_grass2.png",
                                              "tile_sand.png", "tile_dirt.png"});
@@ -75,7 +79,9 @@ void WaywardGL::init(int width, int height) {
     WaterBuffer.init(MaxWaterMetaballs, "WaterBuffer");
     WaterBuffer.setShader(loadShaderProgram("metaball.vert", "metaball.frag"));
 
-    cout << "Max " << GL_MAX_FRAGMENT_UNIFORM_COMPONENTS << endl;
+    GenericSpriteBuffer.init(1, "GenericSpriteBuffer", -1, false);
+    GenericSpriteBuffer.setShader(loadShaderProgram("basic.vert", "basic.geom", "basic-noatlas.frag"));
+    GenericSpriteBuffer.addSprite(0,0,0,0,0);
 }
 
 void WaywardGL::render() {
@@ -90,6 +96,14 @@ void WaywardGL::render() {
 
 void WaywardGL::deinit() {
     // Clean up resources
+}
+
+void WaywardGL::renderSprite(float x, float y, float w, float h, unsigned int texture_handle) {
+    GenericSpriteBuffer.setSpritePos(0, x, y);
+    GenericSpriteBuffer.setSpriteSize(0, w, h);
+    GenericSpriteBuffer.setTextureHandle(texture_handle);
+
+    GenericSpriteBuffer.render(Display);
 }
 
 SpriteBuffer *WaywardGL::spriteBuffer() { return &PlayerSpriteBuffer; }

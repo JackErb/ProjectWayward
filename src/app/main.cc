@@ -48,7 +48,8 @@ int main(int, char**) {
     glClearColor(0.1, 0.1, 0.2, 0.0);
     while (!quit) {
         auto start = Timer::now();
-         
+     
+        glViewport(0, 0, WIDTH, HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT);
 
         SDL_Event event;
@@ -68,7 +69,6 @@ int main(int, char**) {
             reportGLError(error);
         }
 
-        WaywardGL::render();
         now = Timer::now();
         fc_render += duration_cast<microseconds>(now - start).count();
     

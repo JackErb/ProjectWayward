@@ -25,6 +25,7 @@ typedef struct SpriteBuffer {
 
     void init(int max, std::string id, unsigned int texture_handle, bool is_texture_array);
     void setShader(unsigned int shader_handle);
+    void setTextureHandle(unsigned int texture_handle);
     void updateBuffer();
     void render(WaywardGL::DisplayData d);
 
