@@ -13,15 +13,15 @@ find_package(OpenGL REQUIRED)
 add_library(glad ../libs/glad/glad.c)
 target_include_directories(glad PUBLIC ../libs/glad)
 
-set(SOURCES main.cc ../inc/SDL.h)
-file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
+set(WAYWARD_SOURCES main.cc logs.cc resources.cc ../inc/stb_image.h ../inc/SDL.h ../inc/logs.h ../inc/resources.h)
+file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../resources/*")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     message("Debug build.")
 endif()
 
 if (APPLE)
-    add_executable(wayward MACOSX_BUNDLE ${SOURCES} ${RES_SOURCES})
+    add_executable(wayward MACOSX_BUNDLE ${WAYWARD_SOURCES} ${RES_SOURCES})
     set_source_files_properties(${RES_SOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION resources/)
 	set(SDL_LIBS "/Library/Frameworks/SDL2.framework"
                  "/Library/Frameworks/SDL2_image.framework"
@@ -34,6 +34,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OPTIMIZATION_FLAG}")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OPTIMIZATION_FLAG}")
 set_property(TARGET wayward PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 
-#add_subdirectory(math)
-target_include_directories(wayward PUBLIC ../inc/)
-target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad)
+add_subdirectory(graphics)
+target_include_directories(wayward_graphics PRIVATE ../inc/)
+#target_link_libraries(wayward_graphics ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad)
+
+target_include_directories(wayward PRIVATE ../inc/)
+target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad wayward_graphics)
