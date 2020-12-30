@@ -36,7 +36,9 @@ set_property(TARGET wayward PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 
 add_subdirectory(graphics)
 target_include_directories(wayward_graphics PRIVATE ../inc/)
-#target_link_libraries(wayward_graphics ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad)
+
+add_subdirectory(input)
+target_include_directories(wayward_input PRIVATE ../inc/)
 
 target_include_directories(wayward PRIVATE ../inc/)
-target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad wayward_graphics)
+target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad wayward_graphics wayward_input)

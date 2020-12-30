@@ -1,6 +1,7 @@
 #include <glad.h>
 #include <SDL.h>
 #include <graphics.h>
+#include <input.h>
 
 #include <iostream>
 #include <string>
@@ -36,6 +37,7 @@ int main(int, char**) {
       return EXIT_FAILURE;
   }
 
+  input::Init();
   graphics::Init();
 
   int buffer = graphics::InitBuffer(10);
@@ -64,9 +66,12 @@ int main(int, char**) {
       if (event.type == SDL_QUIT) quit = true;
     }
 
-    if (frame % 100 == 0) {
-      sprite_data.x += 1.f;
-    }
+    input::Update();
+    auto input = input::GetInput(0);
+    sprite_data.x += 60.f * (input->stick_x / 100.f);
+    sprite_data.y += 60.f * (input->stick_y / -100.f);
+    graphics::UpdateSprite(buffer, sprite, sprite_data);
+
     graphics::UpdateSprite(buffer, sprite, sprite_data);
     graphics::Render();
 
