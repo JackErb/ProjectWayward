@@ -10,6 +10,8 @@ class GameController {
 
  private:
    Entity player_;
+   PlayerInputSystem* player_input_system_;
+   GraphicsSystem* graphics_system_;
    PhysicsSystem* physics_system_;
    GameStateCoordinator coordinator_;
 };

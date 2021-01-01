@@ -11,9 +11,10 @@ void cprintf(string msg) {
 }
 
 void fassert(bool condition, string msg) {
-  if (!condition) {
-    fatalerror(msg);
+  if (condition) {
+    return;
   }
+  fatalerror(msg);
 }
 
 void fatalerror(string msg) {

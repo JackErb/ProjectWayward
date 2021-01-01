@@ -54,7 +54,7 @@ void update_sticks(struct input_device *device) {
    case input::DevKeyboard: {
     const Uint8 *keys = device->keys;
     device->input.stick_x = keys[SDL_SCANCODE_D] - keys[SDL_SCANCODE_A];
-    device->input.stick_y = keys[SDL_SCANCODE_S] - keys[SDL_SCANCODE_W];
+    device->input.stick_y = keys[SDL_SCANCODE_W] - keys[SDL_SCANCODE_S];
     break;
    }
    case input::DevJoystick: {

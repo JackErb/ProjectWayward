@@ -17,8 +17,10 @@ class GameStateCoordinator {
     const char *type_name = typeid(T).name();
     fassert(systems_.find(type_name) == systems_.end(), "RegisterSystem() : system already registered");
 
-    systems_[type_name] = new T();
-    return static_cast<T*>(systems_[type_name]);
+    T *system = new T();
+    system->coordinator = this;
+    systems_[type_name] = system;
+    return system;
   }
 
   template <typename T>
@@ -37,6 +39,11 @@ class GameStateCoordinator {
   template <typename T>
   void AddComponent(Entity entity) {
     component_manager_.AddComponent(entity, T());
+  }
+
+  template <typename T>
+  T* GetComponent(Entity entity) {
+    return component_manager_.GetComponent<T>(entity);
   }
 
   // creates entity and adds it to relevant systems

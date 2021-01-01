@@ -1,12 +1,15 @@
 #pragma once
 
+#include <logs.h>
 #include <cstdint>
 #include <queue>
 #include <unordered_map>
-#include <logs.h>
+#include <set>
 
 const int MaxEntities = 10000;
 const int MaxComponents = 64;
+
+class GameStateCoordinator;
 
 
 /* ENTITIES */
@@ -45,11 +48,11 @@ class ComponentArray: public AbstractComponentArray {
      size_++;
    }
 
-   T& GetData(Entity entity) {
+   T* GetData(Entity entity) {
      fassert(entity_to_index_.find(entity) != entity_to_index_.end(),
              "GetData() : entity does not have component");
 
-     return components_[entity_to_index_[entity]];
+     return &components_[entity_to_index_[entity]];
    }
 
  private:
@@ -62,14 +65,6 @@ class ComponentManager {
  public:
   ComponentManager();
   ~ComponentManager();
-
-  template <typename T>
-  ComponentArray<T>* GetComponentArray() {
-    const char *type_name = typeid(T).name();
-    fassert(component_arrays_.find(type_name) != component_arrays_.end(),
-            "GetComponentArray() : component is not registered");
-    return static_cast<ComponentArray<T>*>(component_arrays_[type_name]);
-  }
 
   template <typename T>
   void RegisterComponent() {
@@ -85,13 +80,21 @@ class ComponentManager {
     GetComponentArray<T>()->Insert(entity, component);
   }
 
+  template <typename T>
+  T* GetComponent(Entity entity) {
+    return GetComponentArray<T>()->GetData(entity);
+  }
+
  private:
   // Maps from component class name string pointer to component array
   std::unordered_map<const char*, AbstractComponentArray*> component_arrays_;
 
   template <typename T>
-  T& GetComponent(Entity entity) {
-    return GetComponentArray<T>()->GetData(entity);
+  ComponentArray<T>* GetComponentArray() {
+    const char *type_name = typeid(T).name();
+    fassert(component_arrays_.find(type_name) != component_arrays_.end(),
+            "GetComponentArray() : component is not registered");
+    return static_cast<ComponentArray<T>*>(component_arrays_[type_name]);
   }
 };
 
@@ -99,5 +102,7 @@ class ComponentManager {
 
 /* SYSTEMS */
 class System {
-
+ public:
+  GameStateCoordinator *coordinator;
+  std::set<Entity> entities;
 };

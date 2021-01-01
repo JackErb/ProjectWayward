@@ -49,7 +49,7 @@ int main(int, char**) {
   SpriteData sprite_data = {0, 0, 750, 850, 0, 1};
   graphics::UpdateSprite(buffer, sprite, sprite_data);
 
-  WindowDisplay display = {WIDTH, HEIGHT, 0, 0, 1.0f};
+  WindowDisplay display = {WIDTH, HEIGHT, 0, 0, 0.4f};
   graphics::SetDisplay(display);
 
   GameController controller;
@@ -69,12 +69,7 @@ int main(int, char**) {
     }
 
     input::Update();
-    auto input = input::GetInput(0);
-    sprite_data.x += 60.f * (input->stick_x / 100.f);
-    sprite_data.y += 60.f * (input->stick_y / -100.f);
-    graphics::UpdateSprite(buffer, sprite, sprite_data);
-
-    graphics::UpdateSprite(buffer, sprite, sprite_data);
+    controller.Update();
     graphics::Render();
 
     GLenum error;
@@ -83,7 +78,7 @@ int main(int, char**) {
     }
 
     SDL_GL_SwapWindow(window);
-    
+
     auto now = timernow();
     while (duration_cast<microseconds>(now - start).count() < 13000) {
       std::this_thread::sleep_for(milliseconds(1));
@@ -107,11 +102,11 @@ void printSdlError(string msg) {
 }
 
 bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIGHT) {
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) { 
-      printSdlError("Failed to initialize SDL."); 
-      return false; 
-  } 
- 
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+      printSdlError("Failed to initialize SDL.");
+      return false;
+  }
+
   // Set OpenGL attributes
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -163,8 +158,8 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
   glViewport(0, 0, WIDTH, HEIGHT);
 
   cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;
-  cout << "SDL & OpenGL succesfully initialized" << endl; 
-  return true; 
+  cout << "SDL & OpenGL succesfully initialized" << endl;
+  return true;
 }
 
 void reportGLError(GLenum error) {

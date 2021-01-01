@@ -14,7 +14,7 @@ using std::cerr;
 using std::endl;
 
 vector unit_vec(const vector &v) {
-  return v / fp::sqrt(v.x * v.x + v.y * v.y); 
+  return v / fp::sqrt(v.x * v.x + v.y * v.y);
 }
 
 vector geometric_center(const polygon &p) {

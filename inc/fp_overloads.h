@@ -50,22 +50,22 @@ inline fixed_point operator-(fixed_point v) {
     return fixed_point(-v.n);
 }
 
-inline fixed_point operator+=(fixed_point v1, fixed_point v2) {
+inline fixed_point& operator+=(fixed_point& v1, fixed_point v2) {
     v1.n += v2.n;
     return v1;
 }
 
-inline fixed_point operator*=(fixed_point v1, fixed_point v2) {
+inline fixed_point& operator*=(fixed_point& v1, fixed_point v2) {
     v1.n = v1.n * v2.n / FP_MULT;
     return v1;
 }
 
-inline fixed_point operator-=(fixed_point v1, fixed_point v2) {
+inline fixed_point& operator-=(fixed_point& v1, fixed_point v2) {
     v1.n = v1.n - v2.n;
     return v1;
 }
 
-inline fixed_point operator/=(fixed_point v1, fixed_point v2) {
+inline fixed_point& operator/=(fixed_point& v1, fixed_point v2) {
     v1.n = v1.n * FP_MULT / v2.n;
     return v1;
 }
