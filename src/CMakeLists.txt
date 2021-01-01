@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 
 cmake_policy(SET CMP0079 NEW)
 cmake_policy(SET CMP0076 NEW)
- 
+
 project(Wayward)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,7 +13,7 @@ find_package(OpenGL REQUIRED)
 add_library(glad ../libs/glad/glad.c)
 target_include_directories(glad PUBLIC ../libs/glad)
 
-set(WAYWARD_SOURCES main.cc logs.cc resources.cc ww_math.cc ../inc/stb_image.h ../inc/SDL.h ../inc/logs.h ../inc/resources.h)
+set(WAYWARD_SOURCES main.cc util/logs.cc util/resources.cc util/ww_math.cc)
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../resources/*")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -35,17 +35,12 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OPTIMIZATION_FLAG}")
 set_property(TARGET wayward PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 
 add_subdirectory(graphics)
-target_include_directories(wayward_graphics PRIVATE ../inc/)
-
 add_subdirectory(input)
-target_include_directories(wayward_input PRIVATE ../inc/)
-
-add_subdirectory(ecs)
-target_include_directories(wayward_ecs PRIVATE ../inc/)
-
 add_subdirectory(game)
-target_include_directories(wayward_game PRIVATE ../inc/)
 
+target_include_directories(wayward_graphics PRIVATE ../inc/)
+target_include_directories(wayward_input PRIVATE ../inc/)
+target_include_directories(wayward_game PRIVATE ../inc/)
 target_include_directories(wayward PRIVATE ../inc/)
 target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad
-                              wayward_graphics wayward_input wayward_game wayward_ecs)
+                              wayward_graphics wayward_input wayward_game)
