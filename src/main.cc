@@ -7,6 +7,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <controller.h>
 
 using std::chrono::time_point;
 using std::chrono::high_resolution_clock;
@@ -51,6 +52,7 @@ int main(int, char**) {
   WindowDisplay display = {WIDTH, HEIGHT, 0, 0, 1.0f};
   graphics::SetDisplay(display);
 
+  GameController controller;
 
   int frame = 0;
   glClearColor(0.1, 0.1, 0.2, 0.0);

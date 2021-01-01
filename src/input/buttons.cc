@@ -1,5 +1,6 @@
 #include <input.h>
 #include <logs.h>
+#include <SDL.h>
 
 bool is_kb_button_pressed(const struct input::input_device *dev, int button) {
   int key;

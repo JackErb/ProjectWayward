@@ -1,6 +1,8 @@
 #include <input.h>
 #include <logs.h>
 
+#include <SDL.h>
+
 #if defined(__APPLE__)
 #include <SDL2/SDL_gamecontroller.h>
 #endif

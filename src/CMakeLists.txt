@@ -13,7 +13,7 @@ find_package(OpenGL REQUIRED)
 add_library(glad ../libs/glad/glad.c)
 target_include_directories(glad PUBLIC ../libs/glad)
 
-set(WAYWARD_SOURCES main.cc logs.cc resources.cc ../inc/stb_image.h ../inc/SDL.h ../inc/logs.h ../inc/resources.h)
+set(WAYWARD_SOURCES main.cc logs.cc resources.cc ww_math.cc ../inc/stb_image.h ../inc/SDL.h ../inc/logs.h ../inc/resources.h)
 file(GLOB_RECURSE RES_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../resources/*")
 
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -40,5 +40,12 @@ target_include_directories(wayward_graphics PRIVATE ../inc/)
 add_subdirectory(input)
 target_include_directories(wayward_input PRIVATE ../inc/)
 
+add_subdirectory(ecs)
+target_include_directories(wayward_ecs PRIVATE ../inc/)
+
+add_subdirectory(game)
+target_include_directories(wayward_game PRIVATE ../inc/)
+
 target_include_directories(wayward PRIVATE ../inc/)
-target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad wayward_graphics wayward_input)
+target_link_libraries(wayward ${OPENGL_gl_LIBRARY} ${SDL_LIBS} glad
+                              wayward_graphics wayward_input wayward_game wayward_ecs)

@@ -1,6 +1,9 @@
 #pragma once
 
-#include <SDL.h>
+#include <cstdint>
+
+typedef struct _SDL_GameController SDL_GameController;
+typedef uint8_t Uint8;
 
 namespace input {
 
