@@ -2,45 +2,7 @@
 #include <ecs.h>
 #include <coordinator.h>
 #include <logs.h>
-
-#include <ww_math.h>
-#include <fp_overloads.h>
-#include <input.h>
 #include <graphics.h>
-#include <graphics.h>
-#include <iostream>
-
-// Physics
-void PhysicsSystem::RegisterEntity(Entity e) {
-  entities.insert(e);
-}
-
-void PhysicsSystem::Update() {
-  for (Entity e: entities) {
-
-  }
-}
-
-// PlayerInput
-void PlayerInputSystem::RegisterPlayer(Entity player) {
-  entities.insert(player);
-
-  // Init input component
-  Input *input = coordinator->GetComponent<Input>(player);
-  input->input = input::GetInput(0);
-}
-
-void PlayerInputSystem::Update() {
-  for (Entity e : entities) {
-    Input *input_component = coordinator->GetComponent<Input>(e);
-    Transform *transform = coordinator->GetComponent<Transform>(e);
-
-    const struct input::player_input *input = input_component->input;
-    transform->position.x += fp::from_int(input->stick_x * 100);
-    transform->position.y += fp::from_int(input->stick_y * 100);
-    std::cout << input->stick_x * 75 << " " << fp::to_int(transform->position.x) << std::endl;
-  }
-}
 
 // Graphics & Rendering
 GraphicsSystem::GraphicsSystem() {
@@ -66,10 +28,9 @@ void GraphicsSystem::Update() {
 
     float x = fp::to_float(transform_component->position.x);
     float y = fp::to_float(transform_component->position.y);
-    std::cout << x << std::endl;
     float w = sprite_component->width;
     float h = sprite_component->height;
-    graphics::SpriteData sprite_data = {x, y, w, h, 0, 1};
+    graphics::SpriteData sprite_data = { x, y, w, h, 0, 1 };
 
     unsigned int sprite_handle = sprite_component->sprite_handle;
     graphics::UpdateSprite(pbuffer, sprite_handle, sprite_data);
