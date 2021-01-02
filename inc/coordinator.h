@@ -32,7 +32,7 @@ class GameStateCoordinator {
   }
 
   template <typename T>
-  void AddComponent(Entity entity, T component) {
+  void AddComponent(Entity entity, const T& component) {
     component_manager_.AddComponent(entity, component);
   }
 

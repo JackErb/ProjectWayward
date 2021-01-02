@@ -39,11 +39,12 @@ class ComponentArray: public AbstractComponentArray {
    ComponentArray() { size_ = 0; }
    ~ComponentArray() {}
 
-   void Insert(Entity entity, T Component) {
+   void Insert(Entity entity, const T &component) {
      fassert(entity_to_index_.find(entity) == entity_to_index_.end(),
              "Insert() : Component added to same entity twice.");
 
      int index = size_;
+     components_[index] = component;
      entity_to_index_[index] = entity;
      size_++;
    }
@@ -76,7 +77,7 @@ class ComponentManager {
   }
 
   template <typename T>
-  void AddComponent(Entity entity, T component) {
+  void AddComponent(Entity entity, const T &component) {
     GetComponentArray<T>()->Insert(entity, component);
   }
 

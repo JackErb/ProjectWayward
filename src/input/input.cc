@@ -1,5 +1,6 @@
 #include <input.h>
 #include <logs.h>
+#include <iostream>
 
 #include <SDL.h>
 
@@ -70,11 +71,12 @@ void update_buttons(struct input_device *device) {
     bool is_pressed = IsButtonPressed(device, i);
 
     if (was_released && is_pressed) {
+      std::cout << "Pressed " << i << std::endl;
       device->input.buttons[i] = input::ButtonPressed;
-    } else if (!was_released && !is_pressed) {
-      device->input.buttons[i] = input::ButtonReleased;
-    } else {
+    } else if (is_pressed) {
       device->input.buttons[i] = input::ButtonHeld;
+    } else {
+      device->input.buttons[i] = input::ButtonReleased;
     }
   }
 }

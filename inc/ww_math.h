@@ -41,16 +41,28 @@ typedef struct vector {
   fixed_point y;
 } vector;
 
-typedef struct circle {
-  vector position;
-  fixed_point radius;
-} circle;
+typedef enum polygon_type {
+  poly_circle, poly_rectangle
+} polygon_type;
 
-typedef std::vector<vector> polygon;
-// x y w h
-polygon poly_square(int, int, int ,int);
-// x y r
-polygon poly_circle(int, int, int);
+typedef struct polygon {
+  polygon() : type(poly_circle), circle() {}
+
+  polygon_type type;
+  union {
+    struct {
+      vector position;
+      fixed_point radius;
+    } circle;
+    struct {
+      vector position;
+      vector size;
+    } rectangle;
+  };
+} polygon;
+
+polygon make_rectangle(int, int, int, int);
+polygon make_circle(int, int, int);
 
 vector unit_vec(const vector&);
 fixed_point dot(const vector&, const vector&);

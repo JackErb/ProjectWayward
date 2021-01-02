@@ -9,6 +9,9 @@ class GameController {
   void Update();
 
  private:
+   Entity CreatePlayer(int x, int y);
+   Entity CreateTile(int x, int y);
+
    Entity player_;
    PlayerInputSystem* player_input_system_;
    GraphicsSystem* graphics_system_;

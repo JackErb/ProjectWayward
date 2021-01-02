@@ -38,6 +38,10 @@ inline bool operator==(fixed_point v1, fixed_point v2) {
     return v1.n == v2.n;
 }
 
+inline bool operator !=(fixed_point v1, fixed_point v2) {
+    return v1.n != v2.n;
+}
+
 inline bool operator>=(fixed_point v1, fixed_point v2) {
     return v1 > v2 || v1 == v2;
 }

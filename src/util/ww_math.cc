@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <math.h>
+#include <logs.h>
 
 using fp::fixed_point;
 using fp::vector;
@@ -19,21 +20,8 @@ vector unit_vec(const vector &v) {
 
 vector geometric_center(const polygon &p) {
   // Special case for circles
-  if (p.size() == 2) {
-    vector v = p[0];
-    return v;
-  }
-
-  vector center = {fp::ZERO, fp::ZERO};
-  for (auto it = p.begin(); it != p.end(); it++) {
-    center.x += it->x;
-    center.y += it->y;
-  }
-
-  fixed_point size = fp::from_int(p.size());
-  center.x = center.x / size;
-  center.y = center.y / size;
-  return center;
+  fatalerror("geometric_center() : not implemented");
+  return vector();
 }
 
 fixed_point fp::dist(const vector &v1, const vector &v2) {
@@ -46,31 +34,24 @@ fixed_point fp::distsqr(const vector &v1, const vector &v2) {
   return x * x + y * y;
 }
 
-polygon fp::poly_square(int nx, int ny, int nw, int nh) {
-  polygon poly;
+polygon fp::make_rectangle(int x, int y, int w, int h) {
+  polygon rect;
+  rect.type = poly_rectangle;
 
-  fixed_point x = fp::from_int(nx),
-         y = fp::from_int(ny),
-         w = fp::from_int(nw),
-         h = fp::from_int(nh);
-
-  fixed_point TWO = fp::from_int(2);
-  poly.push_back(vector(x - w / TWO, y - h / TWO));
-  poly.push_back(vector(x + w / TWO, y - h / TWO));
-  poly.push_back(vector(x + w / TWO, y + h / TWO));
-  poly.push_back(vector(x - w / TWO, y + h / TWO));
-  return poly;
+  fixed_point fx = fp::from_int(x),  fy = fp::from_int(y);
+  fixed_point fw = fp::from_int(w), fh = fp::from_int(h);
+  rect.rectangle.position = {fx, fy};
+  rect.rectangle.size = {fw, fh};
+  return rect;
 }
 
-polygon fp::poly_circle(int nx, int ny, int nr) {
-  polygon poly;
+polygon fp::make_circle(int x, int y, int r) {
+  polygon circle;
+  circle.type = poly_circle;
 
-  fixed_point x = fp::from_int(nx),
-        y = fp::from_int(ny),
-        r = fp::from_int(nr);
-  poly.push_back(vector(x, y));
-  poly.push_back(vector(r, 0));
-  return poly;
+  circle.circle.position = {fp::from_int(x), fp::from_int(y)};
+  circle.circle.radius = fp::from_int(r);
+  return circle;
 }
 
 fixed_point fp::dot(const vector &v1, const vector &v2) {
@@ -123,8 +104,10 @@ fixed_point fp::max(fixed_point n1, fixed_point n2) {
   return n1 > n2 ? n1 : n2;
 }
 
+long long temp_abs(long long n) { return abs(n); }
+
 fixed_point fp::abs(fixed_point n) {
-  return fixed_point(abs(n.n));
+  return fixed_point(temp_abs(n.n));
 }
 
 fixed_point fp::sign(fixed_point n) {

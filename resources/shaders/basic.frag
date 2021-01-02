@@ -8,5 +8,5 @@ in GS_OUT {
 uniform sampler2D textureSampler;
 
 void main() {
-    FragColor = texture(textureSampler, fs_in.texCoord);
-} 
+  FragColor = texture(textureSampler, fs_in.texCoord);
+}

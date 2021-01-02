@@ -38,6 +38,7 @@ void graphics::Init() {
   buffers_index = 0;
   for (int i = 0; i < MAX_BUFFERS; i++) {
     buffers[i].in_use = false;
+    buffers[i].index = 0;
     buffers[i].updated = true;
   }
 
@@ -66,11 +67,11 @@ void graphics::Render() {
 
     // Set shader program uniforms
     int prog = buf->shader_prog;
-    glUseProgram(buf->shader_prog);
+    glUseProgram(prog);
     glUniform2f(glGetUniformLocation(prog, "screenSize"), display.width, display.height);
     glUniform2f(glGetUniformLocation(prog, "cameraPos"), display.camera_x, display.camera_y);
     glUniform1f(glGetUniformLocation(prog, "screenScale"), display.scale);
-
+    
     // Bind the buffer's VAO & shader program then draw to screen
     glBindVertexArray(buf->vao);
     glDrawArrays(GL_POINTS, 0, buf->index);
@@ -90,7 +91,7 @@ unsigned int graphics::InitBuffer(int max_sprites) {
   }
 
   if (i == MAX_BUFFERS) {
-    fatalerror("Buffers array is full. Cannot initialize another.");  
+    fatalerror("Buffers array is full. Cannot initialize another.");
   }
 
   struct buffer *buffer = &buffers[buffers_index];
@@ -170,6 +171,10 @@ void graphics::UpdateSprite(int buf_handle, int sprite_handle, const struct spri
 
 void graphics::RemoveSprite(int buf_handle, int sprite_handle) {
   fatalerror("RemoveSprite() : not implemented.");
+}
+
+struct graphics::window_display graphics::GetDisplay() {
+  return display;
 }
 
 void graphics::SetDisplay(const struct window_display &win_display) {

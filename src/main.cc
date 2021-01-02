@@ -18,9 +18,6 @@ using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
-using graphics::WindowDisplay;
-using graphics::SpriteData;
-
 
 time_point<high_resolution_clock> timernow();
 bool initSdl(SDL_Window**, SDL_GLContext*, int, int);
@@ -41,18 +38,13 @@ int main(int, char**) {
   input::Init();
   graphics::Init();
 
-  int buffer = graphics::InitBuffer(10);
-  graphics::SetBufferShaderProg(buffer, graphics::LoadShaderProgram("basic.vert", "basic.geom", "basic.frag"));
-  graphics::SetBufferTexture(buffer, graphics::LoadTexture("jump_3.png"));
-
-  int sprite = graphics::AddSprite(buffer);
-  SpriteData sprite_data = {0, 0, 750, 850, 0, 1};
-  graphics::UpdateSprite(buffer, sprite, sprite_data);
-
-  WindowDisplay display = {WIDTH, HEIGHT, 0, 0, 0.4f};
+  struct graphics::window_display display = {WIDTH, HEIGHT, 0, 0, 0.4f};
   graphics::SetDisplay(display);
 
   GameController controller;
+
+  long frame_time = 0;
+  long render_time = 0;
 
   int frame = 0;
   glClearColor(0.1, 0.1, 0.2, 0.0);
@@ -70,6 +62,10 @@ int main(int, char**) {
 
     input::Update();
     controller.Update();
+
+    auto now = timernow();
+    frame_time += duration_cast<microseconds>(now - start).count();
+
     graphics::Render();
 
     GLenum error;
@@ -79,13 +75,22 @@ int main(int, char**) {
 
     SDL_GL_SwapWindow(window);
 
-    auto now = timernow();
+    now = timernow();
+    render_time += duration_cast<microseconds>(now - start).count();
     while (duration_cast<microseconds>(now - start).count() < 13000) {
       std::this_thread::sleep_for(milliseconds(1));
       now = timernow();
     }
     while (duration_cast<microseconds>(now - start).count() < 16666) {
       now = timernow();
+    }
+
+    if (frame % 60 == 0) {
+      std::cout << "Frame time: " << frame_time / 60 << " ms" << std::endl;
+      std::cout << " Render time: " << (render_time - frame_time) / 60 << " ms" << std::endl;
+
+      frame_time = 0;
+      render_time = 0;
     }
   }
 
@@ -127,8 +132,6 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(
     SDL_WINDOW_OPENGL
@@ -154,7 +157,8 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
   }
 
   SDL_GL_MakeCurrent(*window, *gl_context);
-  SDL_GL_SetSwapInterval(1);
+  // Vsync :
+  SDL_GL_SetSwapInterval(0);
   glViewport(0, 0, WIDTH, HEIGHT);
 
   cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;

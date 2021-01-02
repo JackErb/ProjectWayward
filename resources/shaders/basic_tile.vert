@@ -18,7 +18,8 @@ void main() {
 	vec2 pos = (aPos + cameraPos) / screenSize * screenScale;
   gl_Position = vec4(pos, 0.0, 1.0);
 
-	vs_out.size = aSize / screenSize * screenScale;
+	vec2 pixel_offset = 5.0 / screenSize;
+	vs_out.size = aSize / screenSize * screenScale + pixel_offset;
   vs_out.texture = aTexture;
   vs_out.dir = aDir;
 }

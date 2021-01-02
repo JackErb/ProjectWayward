@@ -6,7 +6,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-void cprintf(string msg) {
+void cprint(string msg) {
   cout << msg << endl;
 }
 

@@ -6,7 +6,7 @@ bool is_kb_button_pressed(const struct input::input_device *dev, int button) {
   int key;
   switch (button) {
    case input::ButtonA:
-    key = SDL_SCANCODE_Z;
+    key = SDL_SCANCODE_SPACE;
     break;
    case input::ButtonB:
     key = SDL_SCANCODE_X;
