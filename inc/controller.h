@@ -6,6 +6,7 @@
 class GameController {
  public:
   GameController();
+  ~GameController();
   void Update();
 
  private:

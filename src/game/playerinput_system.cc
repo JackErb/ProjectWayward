@@ -55,7 +55,6 @@ void PlayerInputSystem::UpdatePlayer(Entity player) {
   }
 
  if (input->buttons[input::ButtonA] == input::ButtonPressed) {
-   cprint("Jump!");
    transform->velocity.y = DoubleJump;
  }
 

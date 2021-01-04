@@ -23,7 +23,7 @@ time_point<high_resolution_clock> timernow();
 bool initSdl(SDL_Window**, SDL_GLContext*, int, int);
 void reportGLError(GLenum error);
 
-int main(int, char**) {
+int main(int len, char** args) {
   bool quit = false;
 
   SDL_Window *window;
@@ -158,7 +158,7 @@ bool initSdl(SDL_Window **window, SDL_GLContext *gl_context, int WIDTH, int HEIG
 
   SDL_GL_MakeCurrent(*window, *gl_context);
   // Vsync :
-  SDL_GL_SetSwapInterval(0);
+  SDL_GL_SetSwapInterval(1);
   glViewport(0, 0, WIDTH, HEIGHT);
 
   cout << "OpenGL version " << GLVersion.major << "." << GLVersion.minor << endl;

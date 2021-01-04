@@ -3,10 +3,7 @@
 #include <iostream>
 
 #include <SDL.h>
-
-#if defined(__APPLE__)
-#include <SDL2/SDL_gamecontroller.h>
-#endif
+#include <cstring>
 
 using input::input_device;
 
@@ -34,6 +31,7 @@ void input::Init() {
   player_device.in_use = true;
   player_device.connected = false;
   player_device.device_type = input::DevKeyboard;
+  memset(&player_device.input, 0, sizeof(player_device.input));
 }
 
 void input::Update() {
@@ -71,7 +69,6 @@ void update_buttons(struct input_device *device) {
     bool is_pressed = IsButtonPressed(device, i);
 
     if (was_released && is_pressed) {
-      std::cout << "Pressed " << i << std::endl;
       device->input.buttons[i] = input::ButtonPressed;
     } else if (is_pressed) {
       device->input.buttons[i] = input::ButtonHeld;

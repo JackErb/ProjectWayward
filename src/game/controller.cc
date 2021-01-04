@@ -2,6 +2,7 @@
 #include <ecs_defs.h>
 #include <fp.h>
 #include <iostream>
+#include <rbnetwork.h>
 
 GameController::GameController() : coordinator_() {
   coordinator_.RegisterComponent<Hitbox>();
@@ -14,9 +15,19 @@ GameController::GameController() : coordinator_() {
   player_input_system_ = coordinator_.RegisterSystem<PlayerInputSystem>();
 
   CreatePlayer(0,0);
-  for (int i = -5; i <= 5; i++) {
-    CreateTile(i * 500, -500);
+  for (int y = 0; y < 5; y++) {
+    for (int i = -20; i <= 20; i++) {
+      if (y != 0 && i >= -2 - y * 2 && i <= 2 - y * 2) continue;
+      CreateTile(i * 500, -500 + 1500 * y);
+    }
   }
+
+  rb::Init();
+}
+
+GameController::~GameController() {
+  // shutdown systems (graphics, input?)
+  rb::Shutdown();
 }
 
 Entity GameController::CreatePlayer(int x, int y) {

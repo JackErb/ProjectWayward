@@ -11,7 +11,7 @@ GraphicsSystem::GraphicsSystem() {
   graphics::SetBufferShaderProg(pbuffer_, pshader_prog);
   graphics::SetBufferTexture(pbuffer_, graphics::LoadTexture("jump_3.png"));
 
-  tbuffer_ = graphics::InitBuffer(100);
+  tbuffer_ = graphics::InitBuffer(1000);
   unsigned int tshader_prog = graphics::LoadShaderProgram("basic_tile.vert", "basic.geom", "basic.frag");
   graphics::SetBufferShaderProg(tbuffer_, tshader_prog);
   graphics::SetBufferTexture(tbuffer_, graphics::LoadTexture("tile_grass.png"));
